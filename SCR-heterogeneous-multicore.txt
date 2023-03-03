@@ -1,0 +1,37 @@
+NXP Software Content Register
+
+Release Name: Heterogeneous Multicore Library and Application
+Release Version: 0.1
+
+--------------------------------------------
+Package:                     Heterogeneous_Multicore
+Version:                     0.1
+Outgoing License:            BSD-3-Clause
+License Files:               LICENSE.txt
+Type of Content:             source code, project files, linker files
+Description and comments:    Library and applications to support inter-core communication and resource sharing between heterogeneous multicore.
+Release Location:            https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore
+                             branch: master (tag: Real-Time-Edge-v2.5-202303)
+Origin:                      NXP (BSD-3-Clause)
+--------------------------------------------
+Package:                     MCUXpresso_SDK
+Version:                     2.12.0
+Outgoing License:            LA_OPT_NXP_Software_License - Additional distribution license granted - Section 2.3 applies
+License File:                mcux-sdk/LA_OPT_NXP_Software_License.txt
+Type of Content:             source code
+Description and comments:    Full SDK including device system files,
+                             middleware components, board peripheral drivers, etc.
+Release Location:            https://github.com/nxp-mcuxpresso/mcux-sdk
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.5-202303)
+Origin:                      NXP (LA_OPT_NXP_Software_License)
+--------------------------------------------
+Package:                     FreeRTOS-Kernel
+Version:                     10.4.3
+Outgoing License:            MIT
+License File:                FreeRTOS-Kernel/License.md
+Type of Content:             source code
+Description and comments:    IoT operating system for microcontrollers with added ARM Cortex-A53 support
+Release Location:            https://github.com/nxp-mcuxpresso/FreeRTOS-Kernel
+                             branch: feature/aarch64_support (tag: MCUX_2.12.0_aarch64_0.1)
+Origin:                      Amazon (MIT)
+--------------------------------------------
