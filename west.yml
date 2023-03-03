@@ -1,0 +1,22 @@
+# The west manifest file for heterogeneous-multicore
+
+manifest:
+  defaults:
+    remote: nxp-rt-edge
+
+  remotes:
+    - name: nxp-rt-edge
+      url-base: https://github.com/nxp-real-time-edge-sw
+    - name: nxp-mcuxpresso
+      url-base: https://github.com/nxp-mcuxpresso
+
+  projects:
+    - name: mcux-sdk
+      remote: nxp-mcuxpresso
+      revision: feature/heterogeneous_multicore
+    - name: FreeRTOS-Kernel
+      remote: nxp-mcuxpresso
+      revision: feature/aarch64_support
+  self:
+    path: heterogeneous-multicore
+
