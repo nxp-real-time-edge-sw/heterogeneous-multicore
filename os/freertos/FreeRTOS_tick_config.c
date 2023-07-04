@@ -86,9 +86,6 @@ void vConfigureTickInterrupt( void )
     /* Set the timer tick interval. */
     ARM_TIMER_SetInterval(ARM_TIMER, FreeRTOS_tick_interval);
 
-    /* Enable GIC firstly*/
-    GIC_Enable(1);
-
     /* Set the interrupt priority (must be the lowest possible). */
     GIC_SetRedistPriority(VirtualTimer_IRQn,
                 portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT);

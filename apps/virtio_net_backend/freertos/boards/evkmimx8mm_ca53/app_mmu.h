@@ -23,8 +23,14 @@
 	MMU_REGION_FLAT_ENTRY("MEMORY1",				\
 			      0x80000000, MB(0x13c),			\
 			      MT_NORMAL | MT_P_RW_U_RW | MT_NS),	\
-	MMU_REGION_FLAT_ENTRY("VIRTIO_DMA_BUF",				\
-			      0xb3c00000, MB(0x40),			\
+	MMU_REGION_FLAT_ENTRY("MEMORY2",				\
+			      0x94c00000, MB(0x238),			\
+			      MT_NORMAL | MT_P_RW_U_RW | MT_NS),	\
+	MMU_REGION_FLAT_ENTRY("MEMORY3",				\
+			      0xb8501000, KB(0x3ffc),			\
+			      MT_NORMAL | MT_P_RW_U_RW | MT_NS),	\
+	MMU_REGION_FLAT_ENTRY("MEMORY4",				\
+			      0xb8600000, MB(0x7a),			\
 			      MT_NORMAL | MT_P_RW_U_RW | MT_NS),
 
 #endif /* _APP_MMU_H_ */

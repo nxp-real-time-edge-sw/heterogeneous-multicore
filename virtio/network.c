@@ -70,6 +70,13 @@ struct net_dev {
 	size_t				hdr_len;
 };
 
+static struct vnet_priv_stats {
+	uint64_t rx_pkts;
+	uint64_t tx_pkts;
+} priv_stats;
+
+static uint8_t default_mac[6] = {0x00, 0x04, 0x9f, 0x00, 0x01, 0x02};
+
 static bool has_virtio_feature(struct net_dev *ndev, uint32_t feature)
 {
 	return ndev->features & (1ULL << feature);
@@ -120,8 +127,8 @@ static void virtio_net_tx_task(void *p)
 		 */
 		for (i = 1; i < out; i++)
 			port_in_pkt(port, iov[i].addr, iov[i].len, false);
-		switch_notify(port);
-
+		notify_ports(port->switch_dev);
+		priv_stats.tx_pkts++;
 out:
 		virtio_queue_update_used_elem(vq, (uint16_t)head, len);
 
@@ -150,10 +157,21 @@ static void virtio_net_ctrl_task(void *p)
 			ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 		}
 
-		len = min(iov_size(iov, in), sizeof(ctrl));
+		len = min(iov_size(iov, 1), sizeof(ctrl));
 		memcpy_fromiovec((void *)&ctrl, iov, len);
 
 		switch (ctrl.class) {
+		case VIRTIO_NET_CTRL_MAC:
+			ack = VIRTIO_NET_ERR;
+			if (ctrl.cmd == VIRTIO_NET_CTRL_MAC_ADDR_SET) {
+				struct switch_port *port = ndev->port;
+				uint8_t mac[6];
+
+				memcpy_fromiovec((void *)mac, iov + 1, 6);
+				port_update_addr(port, mac);
+				ack = VIRTIO_NET_OK;
+			}
+			break;
 		case VIRTIO_NET_CTRL_MQ:
 			ack = VIRTIO_NET_OK;
 			break;
@@ -162,7 +180,7 @@ static void virtio_net_ctrl_task(void *p)
 			break;
 		}
 
-		memcpy_toiovec(iov + in, &ack, sizeof(ack));
+		memcpy_toiovec(iov + out, &ack, sizeof(ack));
 		virtio_queue_update_used_elem(vq, (uint16_t)head, sizeof(ack));
 
 		if (virtio_queue_must_notify(vq))
@@ -177,6 +195,8 @@ static uint64_t get_host_features(struct net_dev *ndev)
 	features = 1UL << VIRTIO_NET_F_MAC
 		| 1UL << VIRTIO_RING_F_EVENT_IDX
 		| 1UL << VIRTIO_RING_F_INDIRECT_DESC
+		| 1UL << VIRTIO_NET_F_CTRL_VQ
+		| 1UL << VIRTIO_NET_F_CTRL_MAC_ADDR
 		| 1ULL << VIRTIO_F_ACCESS_PLATFORM;
 
 	if (ndev->queue_pairs > 1)
@@ -339,7 +359,7 @@ static void set_config(struct net_dev *ndev, void *addr)
 
 	ndev->config->max_virtqueue_pairs = ndev->queue_pairs;
 	for (i = 0 ; i < 6 ; i++) {
-		ndev->config->mac[i] = i;
+		ndev->config->mac[i] = default_mac[i];
 	}
 }
 
@@ -430,6 +450,8 @@ static int virtio_net_rx_callback(struct switch_port *port, void *data_paket)
 		virtio_queue_add_used_elem(vq, head, iovsize, num_buffers++);
 	} while (copied < len);
 
+	priv_stats.rx_pkts++;
+
 	virtio_queue_update_used_idx(vq, num_buffers);
 
 	if (virtio_queue_must_notify(vq))
@@ -451,6 +473,13 @@ static int virtio_net_port_init(struct net_dev *ndev)
 	return 0;
 }
 
+static void print_priv_stats(void)
+{
+	os_printf("[Virtio_Net_Backend]:\r\t\t\tRX packets\t%llu\tTX packets\t%llu\r\n",
+			priv_stats.rx_pkts,
+			priv_stats.tx_pkts);
+}
+
 static int virtio_net_port_add(struct net_dev *ndev)
 {
 	struct switch_port *port = ndev->port;
@@ -460,11 +489,12 @@ static int virtio_net_port_add(struct net_dev *ndev)
 	memset(&config, 0, sizeof(struct port_config));
 	config.is_local = true;
 	config.port_out_cb = virtio_net_rx_callback;
+	config.print_priv_stats = print_priv_stats;
 	for (i = 0 ; i < 6 ; i++) {
 		config.mac_addr[i] = ndev->config->mac[i];
 	}
 	config.dev_end_on = &ndev->link_on;
-	strlcpy(config.name, "virtio_net_port", sizeof(config.name));
+	strlcpy(config.name, "VirtIO_Switch_Port", sizeof(config.name));
 	switch_add_port(port, &config);
 
 	return 0;

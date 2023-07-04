@@ -1,13 +1,18 @@
 /*
  * Copyright 2022-2023 NXP
- * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <app_virtio_config.h>
+
 #include <common/list.h>
 #include <net/data_pkt.h>
 #include <net/net_switch.h>
+#include <net/port_enet.h>
+#ifdef CONFIG_CPU_STATS
+#include <os/cpu_load.h>
+#endif
 #include <os/stdlib.h>
 #include <os/stdio.h>
 #include "os/unistd.h"
@@ -17,9 +22,8 @@
 #define STATS_PRINT_DELAY	1000	/* 1000ms */
 #define STATS_PRINT_PERIOD	10	/* print cycle is 10*1000ms */
 
-#define MAX_NODE_COUNT		10	/* The maximum count of node in data_in list */
 
-static bool is_broadcase_pkt(uint8_t *mac_addr)
+static bool is_broadcast_pkt(uint8_t *mac_addr)
 {
 	int i;
 
@@ -53,7 +57,7 @@ static struct switch_port *find_dst_port(struct switch_device *dev, struct switc
 	return NULL;
 }
 
-static void notify_ports(struct switch_device *dev)
+void notify_ports(struct switch_device *dev)
 {
 	struct port_event p_event;
 	struct switch_port *port;
@@ -61,14 +65,14 @@ static void notify_ports(struct switch_device *dev)
 	p_event.type = PORT_SEND;
 
 	if (dev->remote_port && dev->remote_port->need_notify) {
-		os_mq_send(&dev->remote_port->mqueue, &p_event, 0, 0);
 		dev->remote_port->need_notify = false;
+		os_mq_send(&dev->remote_port->mqueue, &p_event, 0, 0);
 	}
 
 	list_for_each_entry(port, &dev->local_port_list, port_node) {
 		if (port->need_notify) {
-			os_mq_send(&port->mqueue, &p_event, 0, 0);
 			port->need_notify = false;
+			os_mq_send(&port->mqueue, &p_event, 0, 0);
 		}
 	}
 }
@@ -124,67 +128,26 @@ static void broadcast_pkt(struct switch_device *dev, struct switch_port *src_por
 		}
 	}
 
-	if (need_free) {
-		os_sem_take(&src_port->data_in_sem, 0, OS_SEM_TIMEOUT_MAX);
-		list_del(&pkt->pkt_entry);
-		os_sem_give(&src_port->data_in_sem, 0);
+	if (need_free)
 		data_pkt_free(pkt);
-	}
 }
 
-static void switch_pkts(struct switch_port *port)
+static void switch_pkt(struct switch_port *port, struct data_pkt *data_entry)
 {
-	struct data_pkt *data_entry, *tmp;
 	struct switch_port *out_port;
 
-	list_for_each_entry_safe(data_entry, tmp,  &port->data_in, pkt_entry) {
-		/* Remove from in-port data_in list */
-		os_sem_take(&port->data_in_sem, 0, OS_SEM_TIMEOUT_MAX);
-		list_del(&data_entry->pkt_entry);
-		os_sem_give(&port->data_in_sem, 0);
-
-		if (is_broadcase_pkt(data_entry->data)) {
-			broadcast_pkt(port->switch_dev, port, data_entry);
-		} else {
-			out_port = find_dst_port(port->switch_dev, port, data_entry->data);
-			if (out_port && cable_link_is_on(&out_port->cable))
-				port_out_pkt(out_port, data_entry);
-			else {
-				/* Don't find any match out-port, discard it */
-				data_pkt_free(data_entry);
-				port->stats.in_dropped++;
-			}
+	if (is_broadcast_pkt(data_entry->data)) {
+		broadcast_pkt(port->switch_dev, port, data_entry);
+	} else {
+		out_port = find_dst_port(port->switch_dev, port, data_entry->data);
+		if (out_port && cable_link_is_on(&out_port->cable))
+			port_out_pkt(out_port, data_entry);
+		else {
+			/* Don't find any match out-port, discard it */
+			data_pkt_free(data_entry);
+			port->stats.in_dropped++;
 		}
 	}
-
-	notify_ports(port->switch_dev);
-}
-
-void switch_process_pkts(void *switch_dev)
-{
-	struct switch_device *dev = switch_dev;
-	struct switch_port *port;
-	struct switch_event s_event;
-
-	do {
-		if (!os_mq_receive(&dev->mqueue, &s_event, 0, OS_QUEUE_EVENT_TIMEOUT_MAX) && dev->power_on) {
-			if (s_event.type == SWITCH_STOP)
-				break;
-
-			os_sem_take(&dev->sem, 0, OS_SEM_TIMEOUT_MAX);
-			/* Switch packets from remote port */
-			if (dev->remote_port)
-				switch_pkts(dev->remote_port);
-			/* Switch packets from local port */
-			list_for_each_entry(port, &dev->local_port_list, port_node) {
-				if (!port->power_on)
-					continue;
-
-				switch_pkts(port);
-			}
-			os_sem_give(&dev->sem, 0);
-		}
-	} while (1);
 }
 
 void port_process_pkts(void *port_dev)
@@ -211,27 +174,16 @@ void port_process_pkts(void *port_dev)
 	} while (1);
 }
 
-void switch_notify(void *port_dev)
-{
-	struct switch_port *port = port_dev;
-	struct switch_event s_event;
-
-	s_event.type = SWITCH_SEND;
-	os_mq_send(&port->switch_dev->mqueue, &s_event, 0, 0);
-}
-
 void port_in_pkt_nocpy(void *port_dev, void *data_pkt, bool notify)
 {
 	struct switch_port *port = port_dev;
 	struct data_pkt *pkt = data_pkt;
 
-	os_sem_take(&port->data_in_sem, 0, OS_SEM_TIMEOUT_MAX);
-	list_add_tail(&port->data_in, &pkt->pkt_entry);
 	port->stats.in++;
-	os_sem_give(&port->data_in_sem, 0);
+	switch_pkt(port, pkt);
 
-	if (notify || port->data_in.count >= MAX_NODE_COUNT)
-		switch_notify(port);
+	if (notify)
+		notify_ports(port->switch_dev);
 }
 
 void port_in_pkt(void *port_dev, void *data, uint32_t data_len, bool notify)
@@ -283,11 +235,10 @@ void switch_add_port(void *port_dev, struct port_config *config)
 	port->port_out_cb = config->port_out_cb;
 	port->is_local = config->is_local;
 
-	list_init(&port->data_in);
+	port->print_priv_stats = config->print_priv_stats;
+
 	list_init(&port->data_out);
 
-	err = os_sem_init(&port->data_in_sem, 1);
-	os_assert(!err, "port data_in semaphore initialization failed");
 	err = os_sem_init(&port->data_out_sem, 1);
 	os_assert(!err, "port data_out semaphore initialization failed");
 
@@ -350,7 +301,6 @@ void switch_remove_port(void *port_dev)
 	os_mq_send(&port->mqueue, &event, 0, 0);
 
 	os_sem_take(&port->data_out_sem, 0, OS_SEM_TIMEOUT_MAX);
-	os_sem_take(&port->data_in_sem, 0, OS_SEM_TIMEOUT_MAX);
 	port->power_on = false;
 
 	if (port->is_local) {
@@ -365,12 +315,6 @@ void switch_remove_port(void *port_dev)
 
 	/* Discard all packets */
 	list_for_each_entry_safe(data_entry, tmp, &port->data_out, pkt_entry) {
-		if (data_entry->flags & DATA_PKT_FLAG_CAN_FREE) {
-			list_del(&data_entry->pkt_entry);
-			data_pkt_free(data_entry);
-		}
-	}
-	list_for_each_entry_safe(data_entry, tmp,  &port->data_in, pkt_entry) {
 		if (data_entry->flags & DATA_PKT_FLAG_CAN_FREE) {
 			list_del(&data_entry->pkt_entry);
 			data_pkt_free(data_entry);
@@ -399,8 +343,6 @@ void *switch_init(void)
 
 	err = os_mq_open(&dev->mqueue, "switch_mqueue", 10, sizeof(struct switch_event));
 	os_assert(!err, "switch mqueue initialization failed");
-
-	create_switch_thread(dev);
 
 	dev->power_on = true;
 
@@ -441,16 +383,30 @@ void switch_print_stats(void *switch_dev)
 		} else
 			period = STATS_PRINT_PERIOD;
 
-		if (dev->remote_port)
-			os_printf("[%s-remote]:\r\t\t\t\tin packets %d\tdropped %d\tout packets %d\r\n",
+		if (dev->remote_port) {
+			os_printf("[%s]:\r\t\t\tswitch in packets\t%llu\tswitch dropped\t%llu\tswitch out packets\t%llu\r\n",
 				dev->remote_port->name, dev->remote_port->stats.in,
 				dev->remote_port->stats.in_dropped,
 				dev->remote_port->stats.out);
+			os_printf("\r\t\t\tpackets in out queue\t%d\r\n",
+				dev->remote_port->data_out.count);
+			if (dev->remote_port->print_priv_stats)
+				dev->remote_port->print_priv_stats();
+		}
 		list_for_each_entry_safe(port, tmp, &dev->local_port_list, port_node) {
-			os_printf("[%s-local]:\r\t\t\t\tin packets %d\tdropped %d\tout packets %d\r\n",
+			os_printf("[%s]:\r\t\t\tswitch in packets\t%llu\tswitch dropped\t%llu\tswitch out packets\t%llu\r\n",
 				port->name, port->stats.in, port->stats.in_dropped,
 				port->stats.out);
+			os_printf("\r\t\t\tpackets in out queue\t%d\r\n",
+				port->data_out.count);
+			if (port->print_priv_stats)
+				port->print_priv_stats();
 		}
+
 		os_printf("\r\n");
+#ifdef CONFIG_CPU_STATS
+		os_cpu_load_stats();
+		os_printf("\r\n");
+#endif
 	} while(1);
 }

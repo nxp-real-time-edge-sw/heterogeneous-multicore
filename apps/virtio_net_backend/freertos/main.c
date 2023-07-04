@@ -72,10 +72,8 @@ static void virtio_task(void *pvParameters)
 	ret = virtio_net_init((void *)VIRTIO_NET_MEM_BASE, switch_dev);
 	os_printf("virtio network device initialization %s!\r\n", ret ? "failed": "succeed");
 
-	enet_port_init(switch_dev);
-	os_printf("Switch enabled with enet remote port\r\n");
-
-	os_printf("Done\r\n");
+	ret = enet_port_init(switch_dev);
+	os_printf("Switch enabled with enet remote port %s!\r\n", ret ? "failed": "succeed");
 
 #ifndef KEEP_SILENT
 	/* dead loop */

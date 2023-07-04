@@ -1,6 +1,5 @@
 /*
  * Copyright 2022-2023 NXP
- * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,7 +8,7 @@
 #include "virtio.h"
 #include "virtio-mmio-transport.h"
 #include "os/stdio.h"
-#include "platform.h"
+#include "mailbox.h"
 #include "app_virtio_config.h"
 
 #ifdef VM_DEBUG
@@ -38,7 +37,7 @@ int virtio_mmio_interrupt_front(struct virtio_dev *vdev, bool is_vring)
 		status |= VIRTIO_MMIO_INT_CONFIG;
 
 	vmmio->hdr->interrupt_status = status;
-	platform_kick_front(vmmio->mmio);
+	mbox_kick_front(vmmio->mmio);
 
 	return 0;
 }
@@ -165,10 +164,10 @@ int virtio_mmio_init(struct virtio_dev *vdev, void *mmio_base,
 
 	vmmio->mmio = (uint32_t)(uintptr_t)mmio_base;
 
-	platform_interrupt_disable(vmmio->mmio);
-	platform_init(false);
-	platform_register_callback(vmmio->mmio, virtio_mmio_mmio_callback, vdev);
-	platform_interrupt_enable(vmmio->mmio);
+	mbox_interrupt_disable(vmmio->mmio);
+	mbox_init(false);
+	mbox_register_callback(vmmio->mmio, virtio_mmio_mmio_callback, vdev);
+	mbox_interrupt_enable(vmmio->mmio);
 
 	vmmio->hdr		= mmio_base;
 	vmmio->hdr->magic[0]	= 'v';

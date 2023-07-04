@@ -7,12 +7,16 @@
 
 #include "fsl_common.h"
 #include "fsl_iomuxc.h"
+#include "fsl_rdc.h"
 #include "board.h"
 #include "mmu.h"
 #include "uart.h"
 /*******************************************************************************
  * Variables
  ******************************************************************************/
+
+/* Enable Cortex-A53 access (domain 0) */
+#define RDC_DISABLE_A53_ACCESS 0x03
 
 /*******************************************************************************
  * Code
@@ -52,4 +56,10 @@ void BOARD_InitMemory(void)
 
 void BOARD_RdcInit(void)
 {
+    rdc_periph_access_config_t periphConfig;
+
+    RDC_GetDefaultPeriphAccessConfig(&periphConfig);
+    periphConfig.policy = RDC_DISABLE_A53_ACCESS;
+    periphConfig.periph = kRDC_Periph_UART4;
+    RDC_SetPeriphAccessConfig(RDC, &periphConfig);
 }

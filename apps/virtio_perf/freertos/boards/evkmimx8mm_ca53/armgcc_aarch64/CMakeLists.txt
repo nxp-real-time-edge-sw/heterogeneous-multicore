@@ -24,12 +24,13 @@ SET(SdkDirPath "${ProjRootPath}/../mcux-sdk")
 SET(RtosPath "${ProjRootPath}/../FreeRTOS-Kernel")
 SET(BoardPath "${ProjRootPath}/os/freertos/boards/evkmimx8mm")
 SET(OsPath "${ProjRootPath}/os")
+SET(MailboxPath "${ProjRootPath}/mailbox")
+SET(PlatPortsPath "${ProjRootPath}/plat_ports")
 SET(LibsPath "${ProjRootPath}/libs")
 SET(VirtioPath "${ProjRootPath}/virtio")
 SET(IncludePath "${ProjRootPath}/include")
 SET(AppPath "${ProjRootPath}/apps/virtio_perf")
 SET(OsPath "${ProjRootPath}/os")
-SET(PlatformPath "${ProjRootPath}/ports/platforms/imx8mm_ca53")
 
 SET(EXECUTABLE_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
 SET(LIBRARY_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
@@ -56,10 +57,11 @@ target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
 )
 
 set(CMAKE_MODULE_PATH
-    ${PlatformPath}
     ${OsPath}/freertos
     ${OsPath}/freertos/core/armv8a
+    ${PlatPortsPath}
     ${LibsPath}/log
+    ${MailboxPath}
     ${RtosPath}
     ${SdkDirPath}
     ${VirtioPath}
@@ -86,6 +88,7 @@ include(component_serial_manager_uart)
 include(driver_clock)
 include(driver_common)
 include(driver_iuart)
+include(driver_rdc)
 
 include(middleware_freertos-kernel_extension)
 include(middleware_freertos-kernel_heap_4)
@@ -93,10 +96,12 @@ include(middleware_freertos-kernel_aarch64)
 
 include(utility_assert)
 include(utility_debug_console)
-include(utilities_misc_utilities)
+include(utilities_misc_utilities_aarch64)
 
 include(lib_virtio_trans)
-include(platform_imx8mm_ca53)
+
+include(generic_software_mailbox)
+include(plat_ports_ca)
 
 TARGET_LINK_LIBRARIES(${MCUX_SDK_PROJECT_NAME} PRIVATE -Wl,--start-group)
 

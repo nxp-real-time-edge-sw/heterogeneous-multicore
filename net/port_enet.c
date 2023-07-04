@@ -1,6 +1,5 @@
 /*
  * Copyright 2023 NXP
- * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,13 +18,9 @@
 
 #define ENET_PHY_ADDRESS		BOARD_PHY0_ADDRESS
 #define ENET_PHY_MIIMODE		BOARD_NET_PORT0_MII_MODE
-/* MDIO operations. */
-#define ENET_MDIO_OPS			BOARD_PHY0_MDIO_OPS
 /* PHY operations. */
 #define ENET_PHY_OPS			BOARD_PHY0_OPS
-#ifndef PHY_AUTONEGO_TIMEOUT_COUNT
-#define PHY_AUTONEGO_TIMEOUT_COUNT	(10000)
-#endif
+#define PHY_TASK_PERIOD_MS		1000
 
 #define ENET_RXBD_NUM			(256)
 #define ENET_TXBD_NUM			(512)
@@ -62,11 +57,50 @@ NONCACHEABLE(static uint8_t enet_rx_buffer[STATIC_BUFF_COUNT][SDK_SIZEALIGN(ENET
 NONCACHEABLE(static uint8_t enet_tx_buffer[ENET_TXBD_NUM][SDK_SIZEALIGN(ENET_TXBUFF_SIZE, APP_ENET_BUFF_ALIGNMENT)], ENET_BUFF_ALIGNMENT);
 #endif
 
-/* ENET, PHY and MDIO interface handler */
-static mdio_handle_t mdio_handle = {.ops = ENET_MDIO_OPS};
-static phy_handle_t phy_handle = {.phyAddr = ENET_PHY_ADDRESS, .mdioHandle = &mdio_handle, .ops = ENET_PHY_OPS};
+/* ENET, PHY interface handler */
+static phy_handle_t phy_handle;
 static enet_handle_t enet_handle;
 static uint8_t default_mac_addr[6] = {0x00, 0x04, 0x9f, 0x06, 0x01, 0x02};
+
+struct enet_err_stats {
+	uint64_t truncate_err;
+	uint64_t crc_err;
+	uint64_t over_run_err;
+	uint64_t align_err;
+	uint64_t rx_len_greater_err;
+};
+
+static struct enet_priv_stats {
+	/* Received pkts by hardware port without any error */
+	uint64_t rx_pkts;
+	/* Dropped pkts by hardware port because of no rx buffer available */
+	uint64_t rx_dropped;
+	/* Error pkts reported by hardware port */
+	struct enet_err_stats err_stats;
+
+	/* Transmitted pkts by hardware port */
+	uint64_t tx_pkts;
+	/* Transmitted pkts with errors */
+	uint64_t tx_err_pkts;
+} priv_stats;
+
+static status_t MDIO_Write(uint8_t phyAddr, uint8_t regAddr, uint16_t data)
+{
+	return ENET_MDIOWrite(ENET_PORT_BASE, phyAddr, regAddr, data);
+}
+
+static status_t MDIO_Read(uint8_t phyAddr, uint8_t regAddr, uint16_t *pData)
+{
+	return ENET_MDIORead(ENET_PORT_BASE, phyAddr, regAddr, pData);
+}
+
+static void MDIO_Init(uint32_t enet_ipg_freq)
+{
+	ENET_SetSMI(ENET_PORT_BASE, enet_ipg_freq, false);
+
+	phy_resource.write = MDIO_Write;
+	phy_resource.read = MDIO_Read;
+}
 
 void enet_process_pkts(void *param)
 {
@@ -87,8 +121,9 @@ void enet_process_pkts(void *param)
 			need_notify = false;
 			do {
 				/* Get the Frame size */
-				status = ENET_GetRxFrame(ENET, handle, &rx_frame, 0);
+				status = ENET_GetRxFrame(ENET_PORT_BASE, handle, &rx_frame, 0);
 				if (status == kStatus_Success) {
+					priv_stats.rx_pkts++;
 					addr = rx_buffer.buffer;
 					pkt = data_pkt_get(addr);
 					data_pkt_set_len(pkt, rx_buffer.length);
@@ -96,11 +131,23 @@ void enet_process_pkts(void *param)
 					need_notify = true;
 				} else if (status == kStatus_ENET_RxFrameEmpty)
 					break;
-				else	/* Error packets */
-					port->stats.in_dropped++;
+				else if (status == kStatus_ENET_RxFrameDrop)
+					priv_stats.rx_dropped++;
+				else {	/* Error packets */
+					if (rx_frame.rxFrameError.statsRxTruncateErr)
+						priv_stats.err_stats.truncate_err++;
+					if (rx_frame.rxFrameError.statsRxOverRunErr)
+						priv_stats.err_stats.over_run_err++;
+					if (rx_frame.rxFrameError.statsRxFcsErr)
+						priv_stats.err_stats.crc_err++;
+					if (rx_frame.rxFrameError.statsRxAlignErr)
+						priv_stats.err_stats.align_err++;
+					if (rx_frame.rxFrameError.statsRxLenGreaterErr)
+						priv_stats.err_stats.rx_len_greater_err++;
+				}
 			} while (1);
 			if (need_notify)
-				switch_notify(port);
+				notify_ports(port->switch_dev);
 		}
 	} while (1);
 }
@@ -133,57 +180,83 @@ int enet_output(struct switch_port *port, void *data_paket)
 	status_t status;
 
 	if (pkt->data_len >= ENET_FRAME_MAX_FRAMELEN)
-		return -1;
-	status = ENET_SendFrame(ENET, &enet_handle, pkt->data, pkt->data_len, 0, false, NULL);
+		goto err;
+
+	status = ENET_SendFrame(ENET_PORT_BASE, &enet_handle, pkt->data, pkt->data_len, 0, false, NULL);
 	if (status != kStatus_Success)
-		return -1;
+		goto err;
+	priv_stats.tx_pkts++;
 
 	return 0;
+
+err:
+	priv_stats.tx_err_pkts++;
+	return -1;
 }
 
 static int phy_setup(uint32_t enet_ipg_freq)
 {
 	phy_config_t phy_config = {0};
-	uint32_t count;
-	bool link = false;
-	bool autonego = false;
 	status_t status;
+
+	MDIO_Init(enet_ipg_freq);
 
 	phy_config.phyAddr = ENET_PHY_ADDRESS;
 	phy_config.autoNeg = true;
-	mdio_handle.resource.base = ENET;
-	mdio_handle.resource.csrClock_Hz = enet_ipg_freq;
+	phy_config.ops = ENET_PHY_OPS;
+	phy_config.resource = &phy_resource;
 	/* Initialize PHY */
 	status = PHY_Init(&phy_handle, &phy_config);
 	if (status != kStatus_Success) {
 		os_printf("ENET: PHY init failed!\r\n");
 		return -1;
 	}
-	os_printf("ENET: Wait for PHY link up...\r\n");
-	/* Wait for auto-negotiation success and link up */
-	count = PHY_AUTONEGO_TIMEOUT_COUNT;
-	do {
-		PHY_GetAutoNegotiationStatus(&phy_handle, &autonego);
-		PHY_GetLinkStatus(&phy_handle, &link);
-		if (autonego && link)
-			break;
-		os_msleep(10);
-	} while (--count);
-
-	if (!count) {
-		os_printf("ENET: PHY Auto-negotiation (%s) and link (%s)\r\n",
-				autonego ? "compeleted" : "failed", link ? "up" : "down");
-		return -1;
-	}
 
 	return 0;
 }
 
-extern void ENET_DriverIRQHandler(void);
-
-void enet_irq_handler(void *param)
+void enet_phy_status(void *dev)
 {
-	ENET_DriverIRQHandler();
+	struct enet_device *enet_dev = dev;
+	bool autonego = false;
+	bool link = false;
+	phy_duplex_t duplex;
+	phy_speed_t speed;
+
+	do {
+		os_msleep(PHY_TASK_PERIOD_MS);
+
+		PHY_GetLinkStatus(&phy_handle, &link);
+		/* link status is not changed */
+		if (link == enet_dev->link_up)
+			continue;
+
+		/* link comes to be up */
+		if (link) {
+			PHY_GetAutoNegotiationStatus(&phy_handle, &autonego);
+			if (!autonego)
+				continue;
+			/* Get the actual PHY link speed. */
+			PHY_GetLinkSpeedDuplex(&phy_handle, &speed, &duplex);
+			if (speed != enet_dev->speed || duplex != enet_dev->duplex) {
+				ENET_SetMII(ENET_PORT_BASE, speed, duplex);
+				enet_dev->speed = speed;
+				enet_dev->duplex = duplex;
+			}
+
+			os_printf("ENET: PHY link is up with speed %s %s-duplex\r\n",
+					speed ? ((speed == 2) ? "1000M" : "100M") : "10MB",
+					duplex ? "full" : "half");
+		} else
+			os_printf("ENET: PHY link is down\r\n");
+
+		enet_dev->link_up = link;
+	} while (1);
+}
+/* enet_hal_irq_handler() is ENET_DriverIRQHandler() in hal driver */
+static void enet_irq_handler(void *param)
+{
+	enet_hal_irq_handler();
 }
 
 static void static_buff_init(void)
@@ -221,13 +294,15 @@ static void rx_buff_free(ENET_Type *base, void *buffer,  void *user_data, uint8_
 	pkt->used = false;
 }
 
-static int enet_setup(void *enet_dev)
+static int enet_setup(struct enet_device *enet_dev)
 {
 	enet_buffer_config_t buffer_config = {0};
 	enet_intcoalesce_config_t coalescing_cfg = {0};
 	enet_config_t config;
 	phy_duplex_t duplex;
 	phy_speed_t speed;
+	bool link = false;
+	bool autonego = false;
 	uint32_t enet_ipg_freq;
 	uint32_t enet_rx_ic_timer;
 	int ret;
@@ -236,7 +311,7 @@ static int enet_setup(void *enet_dev)
 		"Data packet header room must be aligned with enet buffer\r\n" );
 	static_buff_init();
 
-	enet_ipg_freq = CLOCK_GetFreq(kCLOCK_EnetIpgClk);
+	enet_ipg_freq = BOARD_ENET_CLOCK_FREQ;
 
 	ret = phy_setup(enet_ipg_freq);
 	if (ret)
@@ -251,8 +326,10 @@ static int enet_setup(void *enet_dev)
 	buffer_config.txBdStartAddrAlign = &enet_tx_buffer_desc[0];
 	buffer_config.rxBufferAlign = NULL;
 	buffer_config.txBufferAlign = &enet_tx_buffer[0][0];
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && (FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL)
 	buffer_config.rxMaintainEnable = true;
 	buffer_config.txMaintainEnable = true;
+#endif
 	buffer_config.txFrameInfo = NULL;
 
 	ENET_GetDefaultConfig(&config);
@@ -265,15 +342,27 @@ static int enet_setup(void *enet_dev)
 	config.rxBuffFree = rx_buff_free;
 
 	/* Get the actual PHY link speed. */
-	PHY_GetLinkSpeedDuplex(&phy_handle, &speed, &duplex);
-	os_printf("ENET: PHY link speed %s %s-duplex\r\n",
+	PHY_GetLinkStatus(&phy_handle, &link);
+	PHY_GetAutoNegotiationStatus(&phy_handle, &autonego);
+	if (link && autonego) {
+		PHY_GetLinkSpeedDuplex(&phy_handle, &speed, &duplex);
+		os_printf("ENET: PHY link speed %s %s-duplex\r\n",
 			speed ? ((speed == 2) ? "1000M" : "100M") : "10MB", duplex ? "full" : "half");
+		enet_dev->link_up = true;
+	} else {
+		/* Link is down, use default value */
+		speed = kENET_MiiSpeed1000M;
+		duplex = kENET_MiiFullDuplex;
+		enet_dev->link_up = false;
+	}
+	enet_dev->speed = speed;
+	enet_dev->duplex = duplex;
 	/* Change the MII speed and duplex for actual link status. */
 	config.miiSpeed  = (enet_mii_speed_t)speed;
 	config.miiDuplex = (enet_mii_duplex_t)duplex;
 	config.interrupt = kENET_RxFrameInterrupt;
 	config.callback = enet_callback;
-	config.userData = enet_dev;
+	config.userData = (void *)enet_dev;
 
 	enet_rx_ic_timer = ENET_RX_ICS_TIMEOUT_US * (enet_ipg_freq / 64000) / 1000;
 
@@ -281,18 +370,18 @@ static int enet_setup(void *enet_dev)
 	coalescing_cfg.rxCoalesceTimeCount[0]  = enet_rx_ic_timer;
 	config.intCoalesceCfg = &coalescing_cfg;
 
-	ENET_Init(ENET, &enet_handle, &config, &buffer_config, default_mac_addr,  enet_ipg_freq);
+	ENET_Init(ENET_PORT_BASE, &enet_handle, &config, &buffer_config, default_mac_addr,  enet_ipg_freq);
 
-	ret = os_irq_register(ENET_IRQn, enet_irq_handler, NULL, ENET_IRQ_PRIO);
+	ret = os_irq_register(ENET_PORT_IRQ, enet_irq_handler, NULL, ENET_IRQ_PRIO);
 	if (ret)
-		os_printf("Register ENET IRQ failed\r\n", ENET_IRQn);
+		os_printf("Register ENET IRQ failed\r\n", ENET_PORT_IRQ);
 
 	return 0;
 }
 
 static void enet_active(void)
 {
-	ENET_ActiveRead(ENET);
+	ENET_ActiveRead(ENET_PORT_BASE);
 }
 
 /*
@@ -323,6 +412,21 @@ static int enet_setup_macaddr(uint8_t addr_ops, uint8_t *new_addr, uint8_t *old_
 	return 0;
 }
 
+static void print_priv_stats(void)
+{
+	os_printf("[ENET_Driver]:\r\t\t\tRX packets\t%llu\tTX packets\t%llu\tTX Err packets\t%llu\r\n",
+			priv_stats.rx_pkts,
+			priv_stats.tx_pkts,
+			priv_stats.tx_err_pkts);
+	os_printf("[ENET_Hardware]:\r\t\t\tRX dropped\t%llu\ttruncate_err\t%llu\tcrc_err\t\t%llu\r\n\t\t\toverrun_err\t%llu\talign_err\t%llu\tlen_greater_err\t%llu\r\n",
+			priv_stats.rx_dropped,
+			priv_stats.err_stats.truncate_err,
+			priv_stats.err_stats.crc_err,
+			priv_stats.err_stats.over_run_err,
+			priv_stats.err_stats.align_err,
+			priv_stats.err_stats.rx_len_greater_err);
+}
+
 int enet_port_init(void *switch_dev)
 {
 	struct enet_device *enet_dev;
@@ -347,20 +451,20 @@ int enet_port_init(void *switch_dev)
 		return -1;
 	}
 
-	enet_dev->link_up = true;
 	config.dev_end_on = &enet_dev->link_up;
 
 	config.is_local = false;
 	config.port_out_cb = enet_output;
+	config.print_priv_stats = print_priv_stats;
 	memset(config.mac_addr, 0, 6);
 	config.setup_address_cb = enet_setup_macaddr;
-	strlcpy(config.name, "enet_port", sizeof(config.name));
+	strlcpy(config.name, "ENET_Switch_Port", sizeof(config.name));
 	switch_add_port(switch_port, &config);
 
 	create_enet_thread(enet_dev);
 
 	enet_active();
-	os_irq_enable(ENET_IRQn);
+	os_irq_enable(ENET_PORT_IRQ);
 
 	return 0;
 }

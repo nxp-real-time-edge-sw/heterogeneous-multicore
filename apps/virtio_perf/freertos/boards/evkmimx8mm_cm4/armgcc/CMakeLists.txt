@@ -22,11 +22,12 @@ SET(ProjDirPath ${CMAKE_CURRENT_SOURCE_DIR})
 SET(ProjRootPath "${ProjDirPath}/../../../../../../")
 SET(VirtioPath "${ProjRootPath}/virtio")
 SET(IncludePath "${ProjRootPath}/include")
+SET(MailboxPath "${ProjRootPath}/mailbox")
+SET(PlatPortsPath "${ProjRootPath}/plat_ports")
 SET(SdkDirPath "${ProjRootPath}/../mcux-sdk")
 SET(RtosPath "${ProjRootPath}/../FreeRTOS-Kernel")
 SET(RtosCommonPath "${ProjRootPath}/../mcux-sdk/rtos")
 SET(OsPath "${ProjRootPath}/os")
-SET(PlatformPath "${ProjRootPath}/ports/platforms/imx8mm_m4")
 
 SET(EXECUTABLE_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
 SET(LIBRARY_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
@@ -61,7 +62,8 @@ target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
 )
 
 set(CMAKE_MODULE_PATH
-    ${PlatformPath}
+    ${PlatPortsPath}
+    ${MailboxPath}
     ${RtosPath}
     ${SdkDirPath}
     ${VirtioPath}
@@ -110,7 +112,9 @@ include(utilities_misc_utilities_MIMX8MM6)
 include(device_system)
 
 include(lib_virtio_trans)
-include(platform_imx8mm_m4)
+
+include(mu_mailbox)
+include(plat_ports_cm)
 
 TARGET_LINK_LIBRARIES(${MCUX_SDK_PROJECT_NAME} PRIVATE -Wl,--start-group)
 

@@ -21,10 +21,9 @@ enum {
 };
 
 struct port_pkts_stat {
-	uint32_t in;
-	uint32_t in_dropped;
-	uint32_t out;
-	uint32_t err;
+	uint64_t in;
+	uint64_t in_dropped;
+	uint64_t out;
 };
 
 struct switch_device {
@@ -47,7 +46,7 @@ struct vnet_cable {
 	bool *dev_end_on;
 };
 
-#define MAX_NAME_LEN 18
+#define MAX_NAME_LEN 20
 
 struct switch_port {
 	struct switch_device *switch_dev;
@@ -63,16 +62,17 @@ struct switch_port {
 	bool power_on;
 	struct vnet_cable cable;
 
-	struct list_head data_in;
 	struct list_head data_out;
 
-	os_sem_t data_in_sem;
 	os_sem_t data_out_sem;
 
 	os_mqd_t mqueue;
 
 	/* Callback function to transmit data packets through this port */
 	int (*port_out_cb)(struct switch_port *port, void *data_paket);
+
+	/* Optional print function for port's private statitistics */
+	void (*print_priv_stats)(void);
 
 	/* The fields only used by local port */
 	struct list_head port_node;
@@ -97,6 +97,9 @@ struct port_config {
 	bool *dev_end_on;
 
 	int (*port_out_cb)(struct switch_port *port, void *data_paket);
+
+	/* Optional print function for port's private statitistics */
+	void (*print_priv_stats)(void);
 
 	/* The fields only used by remote port */
 	/* Callback function to update addresses */
@@ -133,7 +136,7 @@ void port_on(void *port_dev, bool on);
 void port_in_pkt(void *port_dev, void *data, uint32_t data_len, bool notify);
 void port_in_pkt_nocpy(void *port_dev, void *data_pkt, bool notify);
 void switch_print_stats(void *switch_dev);
-void switch_notify(void *port_dev);
+void notify_ports(struct switch_device *dev);
 
 static inline bool cable_link_is_on(struct vnet_cable *cable)
 {
