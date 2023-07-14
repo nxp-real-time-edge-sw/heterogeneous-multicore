@@ -12,7 +12,7 @@ manifest:
     - name: mcux-sdk
       revision: feature/heterogeneous_multicore
     - name: FreeRTOS-Kernel
-      revision: feature/aarch64_support
+      revision: feature/heterogeneous_multicore
     - name: CMSIS_5
       path: mcux-sdk/CMSIS
       revision: feature/heterogeneous_multicore
