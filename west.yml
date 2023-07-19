@@ -2,20 +2,25 @@
 
 manifest:
   defaults:
-    remote: dnind
+    remote: nxprealtimeedgesw
 
   remotes:
-    - name: dnind
-      url-base: ssh://git@bitbucket.sw.nxp.com/dnind
+    - name: nxprealtimeedgesw
+      url-base: https://github.com/nxp-real-time-edge-sw
+    - name: nxpmcuxpresso
+      url-base: https://github.com/nxp-mcuxpresso
 
   projects:
     - name: mcux-sdk
-      revision: feature/heterogeneous_multicore
+      remote: nxpmcuxpresso
+      revision: Real-Time-Edge-v2.6-202307
     - name: FreeRTOS-Kernel
-      revision: feature/heterogeneous_multicore
+      remote: nxpmcuxpresso
+      revision: Real-Time-Edge-v2.6-202307
     - name: CMSIS_5
+      remote: nxpmcuxpresso
       path: mcux-sdk/CMSIS
-      revision: feature/heterogeneous_multicore
+      revision: Real-Time-Edge-v2.6-202307
 
   self:
     path: heterogeneous-multicore
