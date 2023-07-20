@@ -1,37 +1,47 @@
 NXP Software Content Register
 
 Release Name: Heterogeneous Multicore Library and Application
-Release Version: 0.1
+Release Version: 0.2
 
 --------------------------------------------
 Package:                     Heterogeneous_Multicore
-Version:                     0.1
+Version:                     0.2
 Outgoing License:            BSD-3-Clause
 License Files:               LICENSE.txt
 Type of Content:             source code, project files, linker files
 Description and comments:    Library and applications to support inter-core communication and resource sharing between heterogeneous multicore.
 Release Location:            https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore
-                             branch: master (tag: Real-Time-Edge-v2.5-202303)
+                             branch: main (tag: Real-Time-Edge-v2.6-202307)
 Origin:                      NXP (BSD-3-Clause)
 --------------------------------------------
 Package:                     MCUXpresso_SDK
-Version:                     2.12.0
+Version:                     2.13.1
 Outgoing License:            LA_OPT_NXP_Software_License - Additional distribution license granted - Section 2.3 applies
 License File:                mcux-sdk/LA_OPT_NXP_Software_License.txt
 Type of Content:             source code
 Description and comments:    Full SDK including device system files,
                              middleware components, board peripheral drivers, etc.
 Release Location:            https://github.com/nxp-mcuxpresso/mcux-sdk
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.5-202303)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.6-202307)
 Origin:                      NXP (LA_OPT_NXP_Software_License)
 --------------------------------------------
 Package:                     FreeRTOS-Kernel
-Version:                     10.4.3
+Version:                     10.5.0
 Outgoing License:            MIT
 License File:                FreeRTOS-Kernel/License.md
 Type of Content:             source code
-Description and comments:    IoT operating system for microcontrollers with added ARM Cortex-A53 support
+Description and comments:    IoT operating system for microcontrollers with added ARM Cortex-A Core support
 Release Location:            https://github.com/nxp-mcuxpresso/FreeRTOS-Kernel
-                             branch: feature/aarch64_support (tag: MCUX_2.12.0_aarch64_0.1)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.6-202307)
 Origin:                      Amazon (MIT)
+--------------------------------------------
+Package:                     CMSIS_5
+Outgoing License:            Apache-2.0
+License File:                mcux-sdk/CMSIS/LICENSE.txt
+Type of Content:             source code
+Description and comments:    Vendor-independent hardware abstraction layer for microcontrollers that are based
+                             on Arm Cortex processors.
+Release Location:            https://github.com/nxp-mcuxpresso/CMSIS_5
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.6-202307)
+Origin:                      ARM (Apache-2.0) - https://github.com/ARM-software/CMSIS_5.git
 --------------------------------------------
