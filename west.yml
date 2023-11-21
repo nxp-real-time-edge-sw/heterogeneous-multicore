@@ -13,14 +13,26 @@ manifest:
   projects:
     - name: mcux-sdk
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v2.6-202307
+      revision: Real-Time-Edge-v2.7-202312
     - name: FreeRTOS-Kernel
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v2.6-202307
+      revision: Real-Time-Edge-v2.7-202312
     - name: CMSIS_5
       remote: nxpmcuxpresso
       path: mcux-sdk/CMSIS
-      revision: Real-Time-Edge-v2.6-202307
+      revision: Real-Time-Edge-v2.7-202312
+    - name: lwip
+      remote: nxpmcuxpresso
+      revision: Real-Time-Edge-v2.7-202312
+      path: middleware/lwip
+    - name: mcux-sdk-middleware-multicore
+      remote: nxpmcuxpresso
+      revision: Real-Time-Edge-v2.7-202312
+      path: middleware/multicore
+    - name: rpmsg-lite
+      remote: nxpmcuxpresso
+      revision: Real-Time-Edge-v2.7-202312
+      path: middleware/multicore/rpmsg_lite
 
   self:
     path: heterogeneous-multicore
