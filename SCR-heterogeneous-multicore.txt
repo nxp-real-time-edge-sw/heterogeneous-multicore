@@ -11,7 +11,7 @@ License Files:               LICENSE.txt
 Type of Content:             source code, project files, linker files
 Description and comments:    Library and applications to support inter-core communication and resource sharing between heterogeneous multicore.
 Release Location:            https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore
-                             branch: main (tag: Real-Time-Edge-v2.6-202307)
+                             branch: main (tag: Real-Time-Edge-v2.7-202312)
 Origin:                      NXP (BSD-3-Clause)
 --------------------------------------------
 Package:                     MCUXpresso_SDK
@@ -22,7 +22,7 @@ Type of Content:             source code
 Description and comments:    Full SDK including device system files,
                              middleware components, board peripheral drivers, etc.
 Release Location:            https://github.com/nxp-mcuxpresso/mcux-sdk
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.6-202307)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.7-202312)
 Origin:                      NXP (LA_OPT_NXP_Software_License)
 --------------------------------------------
 Package:                     FreeRTOS-Kernel
@@ -32,7 +32,7 @@ License File:                FreeRTOS-Kernel/License.md
 Type of Content:             source code
 Description and comments:    IoT operating system for microcontrollers with added ARM Cortex-A Core support
 Release Location:            https://github.com/nxp-mcuxpresso/FreeRTOS-Kernel
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.6-202307)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.7-202312)
 Origin:                      Amazon (MIT)
 --------------------------------------------
 Package:                     CMSIS_5
@@ -42,6 +42,33 @@ Type of Content:             source code
 Description and comments:    Vendor-independent hardware abstraction layer for microcontrollers that are based
                              on Arm Cortex processors.
 Release Location:            https://github.com/nxp-mcuxpresso/CMSIS_5
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.6-202307)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.7-202312)
 Origin:                      ARM (Apache-2.0) - https://github.com/ARM-software/CMSIS_5.git
+--------------------------------------------
+Package:                     lwIP TCP/IP Stack
+Outgoing License:            BSD-3-Clause
+License File:                middleware/lwip/COPYING
+Type of Content:             source code
+Description and comments:    A light-weight TCP/IP stack.
+Release Location:            https://github.com/nxp-mcuxpresso/lwip
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.7-202312)
+Origin:                      Swedish Institute of Computer Science - http://savannah.nongnu.org/projects/lwip
+--------------------------------------------
+Package:                     Multicore SDK
+Outgoing License:            2.13.0
+License File:                COPYING-BSD-3
+Type of Content:             source code
+Description and comments:    NXP Multicore Software Development Kit.
+Release Location:            https://github.com/nxp-mcuxpresso/mcux-sdk-middleware-multicore
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.7-202312)
+Origin:                      NXP (BSD-3-Clause)
+--------------------------------------------
+Package:                     RPMsg-Lite
+Outgoing License:            5.0.0
+License File:                COPYING-BSD-3
+Type of Content:             source code
+Description and comments:    Open Asymmetric Multi Processing (OpenAMP) framework project.
+Release Location:            https://github.com/nxp-mcuxpresso/rpmsg-lite
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v2.7-202312)
+Origin:                      Mentor Graphics Corporation & community contributors.
 --------------------------------------------
