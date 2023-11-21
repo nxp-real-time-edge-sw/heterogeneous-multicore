@@ -25,15 +25,15 @@ SET(ProjDirPath ${CMAKE_CURRENT_SOURCE_DIR})
 SET(ProjRootPath "${ProjDirPath}/../../../../../../")
 SET(SdkDirPath "${ProjRootPath}/../mcux-sdk")
 SET(RtosPath "${ProjRootPath}/../FreeRTOS-Kernel")
-SET(BoardPath "${ProjRootPath}/os/freertos/boards/mcimx93evk")
+SET(BoardPath "${ProjRootPath}/os/freertos/Core_AArch64/boards/mcimx93evk")
 SET(OsPath "${ProjRootPath}/os")
 SET(LibsPath "${ProjRootPath}/libs")
-SET(VirtioPath "${ProjRootPath}/virtio")
+SET(VirtioDevPath "${ProjRootPath}/virtio/devices")
 SET(NetPath "${ProjRootPath}/net")
 SET(IncludePath "${ProjRootPath}/include")
 SET(AppPath "${ProjRootPath}/apps/virtio_net_backend")
-SET(MailboxPath "${ProjRootPath}/mailbox")
-SET(PlatPortsPath "${ProjRootPath}/plat_ports")
+SET(MailboxPath "${ProjRootPath}/virtio/mailbox")
+SET(PlatPortsPath "${ProjRootPath}/virtio/plat_ports")
 
 SET(EXECUTABLE_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
 SET(LIBRARY_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
@@ -64,13 +64,14 @@ target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
 set(CMAKE_MODULE_PATH
     ${MailboxPath}
     ${PlatPortsPath}
-    ${OsPath}/freertos
-    ${OsPath}/freertos/core/armv8a
+    ${OsPath}/freertos/Core_AArch64
+    ${OsPath}/freertos/Core_AArch64/core/armv8a
+    ${LibsPath}/gen_sw_mbox
     ${LibsPath}/log
     ${RtosPath}
     ${SdkDirPath}
     ${NetPath}
-    ${VirtioPath}
+    ${VirtioDevPath}
 )
 
 # include entry for cmake components

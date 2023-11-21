@@ -15,7 +15,5 @@ void virtio_board_init(void)
     BOARD_RdcInit();
     /* Enable GIC before register any interrupt handler*/
     GIC_Enable(1);
-    clock_config_uart4();
-    pin_mux_uart4();
     BOARD_InitDebugConsole();
 }

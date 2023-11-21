@@ -8,6 +8,13 @@
 
 #include "fsl_debug_console.h"
 
+#if SDK_DEBUGCONSOLE == DEBUGCONSOLE_RAM_CONSOLE
+
+#define os_printf RamConsole_Printf
+#define os_vprintf RamConsole_Vprintf
+
+#else
+
 static inline int os_printf(const char *fmt_s, ...)
 {
     int rc;
@@ -24,5 +31,7 @@ static inline int os_vprintf(const char *fmt_s, va_list ap)
 {
     return DbgConsole_Vprintf(fmt_s, ap);
 }
+
+#endif
 
 #endif /* #ifndef _FREERTOS_STDIO_H_ */

@@ -20,10 +20,11 @@ SET(CMAKE_EXECUTABLE_LIBRARY_SUFFIX)
 
 SET(ProjDirPath ${CMAKE_CURRENT_SOURCE_DIR})
 SET(ProjRootPath "${ProjDirPath}/../../../../../../")
-SET(VirtioPath "${ProjRootPath}/virtio")
+SET(VirtioDevPath "${ProjRootPath}/virtio/devices")
 SET(IncludePath "${ProjRootPath}/include")
-SET(MailboxPath "${ProjRootPath}/mailbox")
-SET(PlatPortsPath "${ProjRootPath}/plat_ports")
+SET(MailboxPath "${ProjRootPath}/virtio/mailbox")
+SET(OsBoardPath "${ProjRootPath}/os/freertos/Core_M/boards/evkmimx8mm_cm4")
+SET(PlatPortsPath "${ProjRootPath}/virtio/plat_ports")
 SET(SdkDirPath "${ProjRootPath}/../mcux-sdk")
 SET(RtosPath "${ProjRootPath}/../FreeRTOS-Kernel")
 SET(RtosCommonPath "${ProjRootPath}/../mcux-sdk/rtos")
@@ -40,7 +41,7 @@ project(virtio_net_backend_cm4)
 
 set(MCUX_SDK_PROJECT_NAME virtio_net_backend_cm4.elf)
 
-include(${ProjDirPath}/flags.cmake)
+include(${OsBoardPath}/armgcc/flags.cmake)
 
 include(${ProjDirPath}/config.cmake)
 
@@ -49,7 +50,6 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
 "${ProjDirPath}/../virtio_board.c"
 "${ProjDirPath}/../pin_mux.c"
 "${ProjDirPath}/../pin_mux.h"
-"${ProjDirPath}/../FreeRTOSConfig.h"
 "${ProjDirPath}/../board.c"
 "${ProjDirPath}/../board.h"
 "${ProjDirPath}/../clock_config.c"
@@ -63,6 +63,7 @@ target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
     ${IncludePath}
     ${ProjDirPath}/..
     ${OsPath}
+    ${OsBoardPath}
 )
 
 set(CMAKE_MODULE_PATH
@@ -71,7 +72,7 @@ set(CMAKE_MODULE_PATH
     ${NetPath}
     ${RtosPath}
     ${SdkDirPath}
-    ${VirtioPath}
+    ${VirtioDevPath}
 )
 
 #Include Entry cmake component

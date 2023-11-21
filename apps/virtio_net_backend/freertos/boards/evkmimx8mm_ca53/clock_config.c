@@ -26,6 +26,5 @@ static void clock_config_enet(void)
 
 void board_clock_setup(void)
 {
-	clock_config_uart4();
 	clock_config_enet();
 }

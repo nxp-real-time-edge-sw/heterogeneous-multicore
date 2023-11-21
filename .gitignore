@@ -100,3 +100,8 @@ debug
 *_debug
 release
 *_release
+*RTOS*.ld
+
+#tools binaries
+ram_console_dump
+rpmsg_perf

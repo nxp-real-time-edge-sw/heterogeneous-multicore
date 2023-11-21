@@ -16,12 +16,20 @@
 #include "os/unistd.h"
 #include "pin_mux.h"
 
+#include "hello_world_board.h"
+
+#ifndef RTOSID
+#define RTOSID		(0)
+#endif
+
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 
 /* Task priorities. */
 #define hello_task_PRIORITY (configMAX_PRIORITIES - 1)
+#define tictak_task_PRIORITY (configMAX_PRIORITIES - 1)
 
 /*******************************************************************************
  * Prototypes
@@ -36,11 +44,36 @@
  */
 static void hello_task(void *pvParameters)
 {
+	PRINTF("\r\n");
 	for (;;)
 	{
+		PRINTF("%s: RTOS%d: ", CPU_CORE_NAME, RTOSID);
 		PRINTF("Hello world! Real-time Edge on %s\r\n", BOARD_NAME);
+		print_ram_console_addr();
 		vTaskSuspend(NULL);
 	}
+}
+
+/*!
+ * @brief function responsible for printing of "tic tac" messages.
+ */
+static void tictac_task(void *pvParameters)
+{
+    unsigned long long count = 0;
+#define TIME_DELAY_SLEEP      (1 * configTICK_RATE_HZ)
+
+    for (;;)
+    {
+        vTaskDelay(TIME_DELAY_SLEEP);
+
+        if (++count % 2)
+            PRINTF("tic ");
+        else
+            PRINTF("tac ");
+
+        if (!(count % 20))
+            PRINTF("\r\n");
+    }
 }
 
 /*!
@@ -48,13 +81,7 @@ static void hello_task(void *pvParameters)
  */
 int main(void)
 {
-	BOARD_InitMemory();
-	BOARD_RdcInit();
-	/* Enable GIC before register any interrupt handler*/
-	GIC_Enable(1);
-	board_pins_setup();
-	board_clock_setup();
-	BOARD_InitDebugConsole();
+	hello_world_board_init();
 
 	if (xTaskCreate(hello_task, "Hello_task", configMINIMAL_STACK_SIZE + 100, NULL, hello_task_PRIORITY, NULL) !=
 			pdPASS)
@@ -63,6 +90,14 @@ int main(void)
 		while (1)
 			;
 	}
+	if (xTaskCreate(tictac_task, "tictak_task", configMINIMAL_STACK_SIZE + 100, NULL, tictak_task_PRIORITY, NULL) !=
+			pdPASS)
+	{
+		PRINTF("Task creation failed!.\r\n");
+		while (1)
+			;
+	}
+
 	vTaskStartScheduler();
 	for (;;)
 		;

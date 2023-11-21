@@ -80,6 +80,5 @@ static void pin_mux_enet(void)
 
 void board_pins_setup(void)
 {
-    pin_mux_uart4();
     pin_mux_enet();
 }
