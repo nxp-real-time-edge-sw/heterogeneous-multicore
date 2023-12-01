@@ -9,7 +9,6 @@
 #include <common/list.h>
 #include <net/data_pkt.h>
 #include <net/net_switch.h>
-#include <net/port_enet.h>
 #ifdef CONFIG_CPU_STATS
 #include <os/cpu_load.h>
 #endif

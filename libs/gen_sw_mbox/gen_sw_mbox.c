@@ -315,6 +315,10 @@ int gen_sw_mbox_register(void *base, int irq, int remote_irq, uint32_t irq_prio)
 		goto err_map;
 	}
 
+	ret = os_sem_init(&mbox->lock, 1);
+	if (ret)
+		goto err_semaphore;
+
 	for (i = 0; i < MAX_CH; i++) {
 		mbox->mmio->rx_status[i] = 0;
 		mbox->mmio->tx_status[i] = 0;
@@ -326,8 +330,6 @@ int gen_sw_mbox_register(void *base, int irq, int remote_irq, uint32_t irq_prio)
 	os_irq_register(irq, gen_sw_mbox_handler, mbox, irq_prio);
 	os_irq_enable(irq);
 
-	os_sem_init(&mbox->lock, 1);
-
 	mbox->ref_cnt = 0;
 
 	gen_sw_mbox_add_mbox(mbox);
@@ -336,6 +338,8 @@ int gen_sw_mbox_register(void *base, int irq, int remote_irq, uint32_t irq_prio)
 
 	return 0;
 
+err_semaphore:
+	os_mmu_unmap((uintptr_t)mbox->mmio, KB(4));
 err_map:
 	os_free(mbox);
 exit:

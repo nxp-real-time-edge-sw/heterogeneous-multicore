@@ -9,7 +9,6 @@
 #include "virtio-mmio-transport.h"
 #include "os/stdio.h"
 #include "mailbox.h"
-#include "app_virtio_config.h"
 
 #ifdef VM_DEBUG
 #define VM_DBG(fmt, ...)			\

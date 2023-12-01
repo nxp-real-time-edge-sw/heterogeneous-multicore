@@ -21,7 +21,6 @@
 #include "virtio-net.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "app_virtio_config.h"
 
 #ifdef VN_DEBUG
 #define VN_DBG(fmt, ...)			\
@@ -92,6 +91,7 @@ static int virtio_net_hdr_len(struct net_dev *ndev)
 
 static void virtio_net_tx_task(void *p)
 {
+	//coverity[stack_use : FALSE ]
 	struct iovec iov[VIRTIO_NET_QUEUE_SIZE];
 	struct net_dev_queue *queue = p;
 	struct virtqueue *vq = &queue->vq;
@@ -139,6 +139,7 @@ out:
 
 static void virtio_net_ctrl_task(void *p)
 {
+	//coverity[stack_use : FALSE ]
 	struct iovec iov[VIRTIO_NET_QUEUE_SIZE];
 	struct net_dev_queue *queue = p;
 	struct virtqueue *vq = &queue->vq;

@@ -1,6 +1,5 @@
 /*
- * Copyright 2022 NXP
- * All rights reserved.
+ * Copyright 2022-2023 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -79,7 +78,7 @@ int virtio_init(struct virtio_dev *vdev, void *mmio_base,
 
 static inline void *virtio_get_vq(uint32_t pfn, uint32_t page_size)
 {
-	return (void *)(uintptr_t)(pfn * page_size);
+	return (void *)(((uintptr_t)pfn) * page_size);
 }
 
 static inline void virtio_init_device_vq(struct virtio_dev *vdev,
