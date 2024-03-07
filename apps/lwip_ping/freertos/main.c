@@ -98,7 +98,7 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-static phy_rtl8211f_resource_t phy_resource;
+static phy_resource_t phy_resource;
 static phy_handle_t phyHandle;
 
 /*******************************************************************************
@@ -189,7 +189,7 @@ int main(void)
 	board_clock_setup();
 	BOARD_InitDebugConsole();
 
-	enet_ipg_freq = CLOCK_GetFreq(kCLOCK_EnetIpgClk);
+	enet_ipg_freq = ENET_CLOCK_FREQ;
 	MDIO_Init(enet_ipg_freq);
 
 	/*

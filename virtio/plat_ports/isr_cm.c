@@ -8,6 +8,8 @@
 #include <string.h>
 #include "os/assert.h"
 
+#include "fsl_device_registers.h"
+
 void platform_global_isr_disable(void)
 {
 	__asm volatile("cpsid i");

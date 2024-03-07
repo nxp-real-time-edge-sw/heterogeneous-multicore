@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <app_virtio_config.h>
-
 #include <common/list.h>
 #include <net/data_pkt.h>
 #include <net/net_switch.h>
 #ifdef CONFIG_CPU_STATS
 #include <os/cpu_load.h>
 #endif
+#include <os/stdbool.h>
 #include <os/stdlib.h>
 #include <os/stdio.h>
+#include <os/string.h>
 #include "os/unistd.h"
 
 #include "switch_os.h"

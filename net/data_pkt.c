@@ -7,8 +7,10 @@
 
 #include <common/list.h>
 #include <net/data_pkt.h>
+#include <os/stdbool.h>
 #include <os/stdlib.h>
 #include <os/stdio.h>
+#include <os/string.h>
 
 struct data_pkt *data_pkt_build(void *addr, uint32_t buf_len, uint32_t flags)
 {

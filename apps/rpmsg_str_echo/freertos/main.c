@@ -21,7 +21,9 @@
 #define RPMSG_EPT_TASK_STACK_SIZE	(1024)
 
 /* Each RPMSG buffer can carry less than 512 payload */
+#ifndef	RPMSG_BUF_LEN
 #define	RPMSG_BUF_LEN			(512)
+#endif
 
 static TaskHandle_t rpmsg_ept_task_handle[RPMSG_EPT_NUM];
 

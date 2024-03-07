@@ -4,10 +4,9 @@ TARGET=ram_console_dump
 
 ${TARGET} : $(OBJS)
 	$(CC) -o $@ $^ $(LIBS) $(LDFLAGS)
-	$(STRIP) ${TARGET}
 
 %.o : %.c
-	$(CC) -c $< -o $@ -I${MCUX_SDK_PATH}/utilities/debug_console/debug_console
+	$(CC) -c $< -o $@ -I${MCUX_SDK_PATH}/utilities/debug_console
 
 clean :
 	rm -rf *.o ram_console_dump

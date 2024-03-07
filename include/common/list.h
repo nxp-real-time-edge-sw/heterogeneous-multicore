@@ -6,6 +6,8 @@
 #ifndef _COMMON_LIST_H_
 #define _COMMON_LIST_H_
 
+#include <stdbool.h>
+
 #include <os/assert.h>
 
 struct list_head {

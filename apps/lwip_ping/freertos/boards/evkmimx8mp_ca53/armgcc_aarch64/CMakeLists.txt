@@ -30,7 +30,6 @@ SET(BoardPath "${ProjRootPath}/os/freertos/Core_AArch64/boards/evkmimx8mp")
 SET(OsPath "${ProjRootPath}/os")
 SET(IncludePath "${ProjRootPath}/include")
 SET(AppPath "${ProjRootPath}/apps/lwip_ping")
-SET(OsPath "${ProjRootPath}/os")
 
 SET(EXECUTABLE_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
 SET(LIBRARY_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})

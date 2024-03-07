@@ -6,6 +6,8 @@
 
 #include "app_board.h"
 
+#include "fsl_debug_console.h"
+
 /* The remote side boot firstly and initialize the GICD */
 #define INIT_GICD			1
 

@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * Copyright 2023 NXP
  *
+ * SPDX-License-Identifier: BSD-3-Clause
  * author: Biwen Li (biwen.li@nxp.com)
  *         Hou Zhiqiang (Zhiqiang.Hou@nxp.com)
  */

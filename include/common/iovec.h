@@ -1,6 +1,5 @@
 /*
- * Copyright 2022 NXP
- * All rights reserved.
+ * Copyright 2022-2023 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,7 +9,6 @@
 
 #include <stddef.h>
 #include "common/util.h"
-#include "cmsis_compiler.h"
 
 struct iovec {
 	void *addr;

@@ -6,6 +6,8 @@
 
 #include "app_board.h"
 
+#include "fsl_debug_console.h"
+
 #if (RTOSID == 0)
 #define INIT_GICD			1
 #else

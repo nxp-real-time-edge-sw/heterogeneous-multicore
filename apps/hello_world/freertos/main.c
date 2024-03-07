@@ -18,6 +18,8 @@
 
 #include "hello_world_board.h"
 
+#include "fsl_debug_console.h"
+
 #ifndef RTOSID
 #define RTOSID		(0)
 #endif

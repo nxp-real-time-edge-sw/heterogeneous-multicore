@@ -101,7 +101,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         1
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
+#ifndef configTOTAL_HEAP_SIZE
 #define configTOTAL_HEAP_SIZE                   ((size_t)(1024 * 1024))
+#endif
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */
@@ -214,5 +216,9 @@ void vConfigureTickInterrupt( void );
 
 void vClearTickInterrupt( void );
 #define configCLEAR_TICK_INTERRUPT() vClearTickInterrupt()
+
+#if __has_include("app_FreeRTOSConfig.h")
+#include "app_FreeRTOSConfig.h"
+#endif
 
 #endif /* FREERTOS_CONFIG_H */

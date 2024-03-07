@@ -1,11 +1,12 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 extern uint64_t ullPortInterruptNesting;
 

@@ -50,6 +50,7 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
     "${ProjDirPath}/../app_board.c"
     "${ProjDirPath}/../pin_mux.c"
     "${ProjDirPath}/../rsc_table.c"
+    "${OsPath}/freertos/os/stdio.c"
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
