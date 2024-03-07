@@ -1,0 +1,18 @@
+#define IRQ_HIGHEST_PRIORITY	0
+
+/ {
+	aliases {
+		counter0 = &gpt1;
+		counter1 = &gpt2;
+	};
+};
+
+&gpt1 {
+	interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL
+		IRQ_HIGHEST_PRIORITY>;
+	status = "okay";
+};
+
+&gpt2 {
+	status = "okay";
+};

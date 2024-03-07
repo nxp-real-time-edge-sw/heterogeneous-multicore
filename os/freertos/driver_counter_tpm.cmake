@@ -1,16 +1,12 @@
 #Description: FreeRTOS specific implentation; user_visible: True
 include_guard(GLOBAL)
-if (NOT ${MCUX_DEVICE} STREQUAL "MIMX9352_ca55")
-message("counter driver component is included.")
+message("TPM counter driver component is included.")
 
 target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/os/counter.c
+    ${CMAKE_CURRENT_LIST_DIR}/os/counter_tpm.c
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
-    ${SdkDirPath}/drivers/gpt
+    ${SdkDirPath}/drivers/tpm
 )
-else()
-# TODO: add imx93 counter driver support
-message("counter driver component is not included!")
-endif()

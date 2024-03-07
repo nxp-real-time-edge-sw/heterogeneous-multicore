@@ -10,6 +10,8 @@
 #include "fsl_enet.h"
 #include "fsl_phyrtl8211f.h"
 
+typedef phy_rtl8211f_resource_t		phy_resource_t;
+
 #define ENET				ENET1
 #define ENET_IRQ			ENET1_IRQn
 #define ENET_PHY_ADDRESS		0x1U

@@ -39,6 +39,9 @@
 #define STACK_SIZE			0x1000
 #define TASK_PRIORITY			(configMAX_PRIORITIES - 3)
 
+#define VNET_COAL_CNT			100
+#define VNET_KICK_PERIOD		1
+
 enum net_dev_status {
 	VNET_RUN,
 	VNET_STOP,
@@ -67,6 +70,9 @@ struct net_dev {
 	void				*switch_dev;
 	void				*port;
 	size_t				hdr_len;
+
+	TaskHandle_t			kick_task;
+	os_sem_t			kick_sig;
 };
 
 static struct vnet_priv_stats {
@@ -101,6 +107,7 @@ static void virtio_net_tx_task(void *p)
 	int head;
 	int len;
 	int i;
+	uint64_t tx_cnt = 0;
 
 	os_sem_take(&queue->sig, 0, OS_SEM_TIMEOUT_MAX);
 	VN_DBG("%s: TX task started\r\n", __func__);
@@ -129,11 +136,18 @@ static void virtio_net_tx_task(void *p)
 			port_in_pkt(port, iov[i].addr, iov[i].len, false);
 		notify_ports(port->switch_dev);
 		priv_stats.tx_pkts++;
+		tx_cnt++;
 out:
 		virtio_queue_update_used_elem(vq, (uint16_t)head, len);
 
-		if (virtio_queue_must_notify(vq))
-			ndev->vdev.ops->interrupt_front(&ndev->vdev, true);
+		if (virtio_queue_must_notify(vq)) {
+			if (tx_cnt >= VNET_COAL_CNT) {
+				ndev->vdev.ops->interrupt_front(&ndev->vdev, true);
+			} else {
+				os_sem_give(&ndev->kick_sig, 0);
+			}
+			tx_cnt = 0;
+		}
 	}
 }
 
@@ -186,6 +200,21 @@ static void virtio_net_ctrl_task(void *p)
 
 		if (virtio_queue_must_notify(vq))
 			ndev->vdev.ops->interrupt_front(&ndev->vdev, true);
+	}
+}
+
+static void virtio_net_kick_task(void *p)
+{
+	const TickType_t kick_tick = pdMS_TO_TICKS(VNET_KICK_PERIOD) ? pdMS_TO_TICKS(VNET_KICK_PERIOD) : 1;
+	struct net_dev *ndev = p;
+
+	VN_DBG("%s: Kick task started\r\n", __func__);
+
+	while (1) {
+		os_sem_take(&ndev->kick_sig, 0, OS_SEM_TIMEOUT_MAX);
+		VN_DBG("%s: Get kick semophore\r\n", __func__);
+		ndev->vdev.ops->interrupt_front(&ndev->vdev, true);
+		vTaskDelay(kick_tick);
 	}
 }
 
@@ -299,6 +328,14 @@ static int virtio_net_create_tasks(struct net_dev *ndev)
 		VN_DBG("ctrl_task creation succeed!\r\n");
 	}
 
+	if (pdPASS != xTaskCreate(virtio_net_kick_task, "net_kick_task",
+	    configMINIMAL_STACK_SIZE + 100, ndev, TASK_PRIORITY, &ndev->kick_task)) {
+		os_printf("kick_task creation failed!\r\n");
+		return -1;
+	} else {
+		VN_DBG("kick_task creation succeed!\r\n");
+	}
+
 	return 0;
 }
 
@@ -391,6 +428,10 @@ static int virtio_net_dev_init(struct net_dev *ndev, void *mmio_base)
 	vdev->dev_features[0] = ndev->features;
 	vdev->dev_features[1] = ndev->features >> 32;
 
+	if (0 != os_sem_init(&ndev->kick_sig, 0)) {
+		os_printf("%s: kick_sig init failed\r\n", __func__);
+		return -1;
+	}
 
 	r = virtio_net_queue_pre_init(ndev);
 	if (r < 0) {
@@ -425,6 +466,7 @@ static int virtio_net_rx_callback(struct switch_port *port, void *data_paket)
 	int len, copied;
 	uint8_t *buffer;
 	int head;
+	static uint64_t rx_cnt;
 
 	if (ndev->status != VNET_RUN)
 		return 0;
@@ -440,9 +482,19 @@ static int virtio_net_rx_callback(struct switch_port *port, void *data_paket)
 	copied = num_buffers = 0;
 	do {
 		size_t iovsize;
+		bool wait_flag = false;
 
-		while ((head = virtio_queue_get_iov(vq, iov, &out, &in)) < 0)
+		while ((head = virtio_queue_get_iov(vq, iov, &out, &in)) < 0) {
 			vTaskDelay(1);
+			wait_flag = true;
+		}
+
+		if (wait_flag) {
+			/* TODO: remove this workaround */
+			/* delay here to reduce frontend notification */
+			vTaskDelay(1);
+			wait_flag = false;
+		}
 
 		iovsize = min_t(size_t, len - copied, iov_size(iov, in));
 
@@ -452,11 +504,17 @@ static int virtio_net_rx_callback(struct switch_port *port, void *data_paket)
 	} while (copied < len);
 
 	priv_stats.rx_pkts++;
+	rx_cnt++;
 
 	virtio_queue_update_used_idx(vq, num_buffers);
-
-	if (virtio_queue_must_notify(vq))
-		ndev->vdev.ops->interrupt_front(&ndev->vdev, true);
+	if (virtio_queue_must_notify(vq)) {
+		if (rx_cnt >= VNET_COAL_CNT) {
+			ndev->vdev.ops->interrupt_front(&ndev->vdev, true);
+		} else {
+			os_sem_give(&ndev->kick_sig, 0);
+		}
+		rx_cnt = 0;
+	}
 
 	return 0;
 }

@@ -97,11 +97,13 @@ Makefile
 *.obj
 *.map
 debug
+build
+build_RTOS*
 *_debug
 release
 *_release
 *RTOS*.ld
 
 #tools binaries
-ram_console_dump
-rpmsg_perf
+tools/ram_console/ram_console_dump
+tools/rpmsg_perf/rpmsg_perf

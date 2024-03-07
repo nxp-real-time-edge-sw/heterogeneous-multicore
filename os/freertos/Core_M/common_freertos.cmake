@@ -1,4 +1,4 @@
-#Description: Harpoon FreeRTOS specific implentation; user_visible: True
+#Description: FreeRTOS specific implentation; user_visible: True
 include_guard(GLOBAL)
 message("common_freertos component is included.")
 

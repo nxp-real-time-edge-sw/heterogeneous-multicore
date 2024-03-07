@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <app_virtio_config.h>
-
 #include <common/list.h>
 #include <net/data_pkt.h>
 #include <net/net_switch.h>

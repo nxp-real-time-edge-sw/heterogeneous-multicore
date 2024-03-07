@@ -26,7 +26,6 @@ SET(MailboxPath "${ProjRootPath}/virtio/mailbox")
 SET(PlatPortsPath "${ProjRootPath}/virtio/plat_ports")
 SET(SdkDirPath "${ProjRootPath}/../mcux-sdk")
 SET(RtosPath "${ProjRootPath}/../FreeRTOS-Kernel")
-SET(RtosCommonPath "${ProjRootPath}/../mcux-sdk/rtos")
 SET(OsPath "${ProjRootPath}/os")
 SET(OsBoardPath "${ProjRootPath}/os/freertos/Core_M/boards/mcimx93evk_cm33")
 SET(LibsPath "${ProjRootPath}/libs")
@@ -54,7 +53,6 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
 "${ProjDirPath}/../board.h"
 "${ProjDirPath}/../clock_config.c"
 "${ProjDirPath}/../clock_config.h"
-"${RtosCommonPath}/freertos/FreeRTOS_helper.c"
 "${OsPath}/freertos/os/mqueue.c"
 )
 
@@ -66,6 +64,7 @@ target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
 )
 
 set(CMAKE_MODULE_PATH
+    ${OsPath}/freertos/Core_M
     ${PlatPortsPath}
     ${MailboxPath}
     ${NetPath}
@@ -78,6 +77,8 @@ set(CMAKE_MODULE_PATH
 include(all_devices)
 
 # include modules
+include(common_freertos)
+
 include(middleware_freertos-kernel_heap_4)
 
 include(driver_clock)

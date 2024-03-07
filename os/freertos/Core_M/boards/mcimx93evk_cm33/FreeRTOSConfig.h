@@ -68,7 +68,9 @@
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         1
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
+#ifndef configTOTAL_HEAP_SIZE
 #define configTOTAL_HEAP_SIZE                   ((size_t)(120 * 1024))
+#endif
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */
@@ -141,10 +143,6 @@
 /* Redefine: Mutex is needed for SRTM communication */
 #undef configUSE_MUTEXES
 #define configUSE_MUTEXES                       1
-
-#ifndef configTOTAL_HEAP_SIZE
-#define configTOTAL_HEAP_SIZE ((size_t)(40 * 1024))
-#endif
 
 /* Interrupt nesting behaviour configuration. Cortex-M specific. */
 #ifdef __NVIC_PRIO_BITS

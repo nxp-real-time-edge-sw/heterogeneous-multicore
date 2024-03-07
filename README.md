@@ -82,16 +82,16 @@ Multiple applications are in "apps" directory:
 
 # Getting Started
 
-## Download and Compile
+## Download
 
 A cross compiler is required to build Cortex-A and Cortex-M applications, this project is compatible with the ARM GCC toolchain that you may download and install:
 
 ```bash
 mkdir ~/toolchains/; cd ~/toolchains/
-wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-tar xf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-wget https://developer.arm.com/-/media/Files/downloads/gnu-a/10.3-2021.07/binrel/gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf.tar.xz
-tar xf gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
+tar xf arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf.tar.xz
+tar xf arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf.tar.xz
 ```
 This project uses west to manage all related repos, west.yml provides the description and revision for other projects used by Heterogeneous Multicore. Install the following tools firstly in order to download and built the applications:
 
@@ -116,12 +116,14 @@ west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.gi
 cd workspace
 west update
 ```
+## Compile
 
+### FreeRTOS
 Building application on Cortex-M Core, for example, building network sharing backend firmware running on Cortex-M Core:
 
 ```bash
-export ARMGCC_DIR=~/toolchains/gcc-arm-none-eabi-10-2020-q4-major
-export PATH=$PATH:~/toolchains/gcc-arm-none-eabi-10-2020-q4-major/bin
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi
+export PATH=$PATH:~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/bin
 cd ~/workspace/heterogenous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm_cm4/armgcc
 $ ./build_release.sh
 ```
@@ -131,45 +133,69 @@ The backend firmware image "virtio_net_backend_cm4.bin" is in "release" director
 Building application on Cortex-A Core, for example, building network sharing backend firmware running on Cortex-A Core:
 
 ```bash
-export ARMGCC_DIR=~/toolchains/gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf
 cd ~/workspace/heterogeneous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm_ca53/armgcc_aarch64
 ./build_ddr_release.sh
 ```
 The backend firmware image "virtio_net_backend_ca53.bin" is in directory "ddr_release"
 
-## Build with Helper Script
-
-"build_all.sh" in the root directory of "heterogeneous-multicore" can be used to build single or all application for all boards.
-The following is help information for "build_all.sh" tool:
+### Zephyr
+Building application on Cortex-A Core, for example, building Zephyr hello_world running on Cortex-A Core:
 
 ```bash
-./build_all.sh core_type [directory]               - build all a-core or m-core applications in [directory]
-./build_all.sh [core_type] [directory] clean       - clean all a-core or m-core or for both applications building in [directory]
-                                                   - core_type: a-core or m-core
-
- For example:
-     ./build_all.sh a-core                         -build all a-core applications in apps directory
-     ./build_all.sh m-core apps/hello_world        -build all m-core applications in apps/hello_world directory
-     ./build_all.sh clean                          -clean all applications building in apps directory
-     ./build_all.sh a-core clean                   -clean all a-core applications building in apps directory
-     ./build_all.sh m-core apps/hello_world clean  -clean all m-core applications building in apps/hello_world directory
-     ./build_all.sh apps/hello_world clean         -clean all applications building in apps/hello_world directory
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf
+export Zephyr_DIR=~/workspace/zephyr
+cd ~/workspace/heterogeneous-multicore/apps/hello_world/zephyr/boards/evkmimx8mm_ca53/armgcc_aarch64
+./build.sh
+```
+Then the following binary Zephyr images are built out:
+```bash
+./build_RTOS2_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS2_RAM_CONSOLE.bin
+./build_RTOS3_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS3_RAM_CONSOLE.bin
+./build_RTOS3_UART2/zephyr/hello_world_ca53_RTOS3_UART2.bin
+./build_RTOS0_UART4/zephyr/hello_world_ca53_RTOS0_UART4.bin
+./build_RTOS1_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS1_RAM_CONSOLE.bin
+./build_RTOS0_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS0_RAM_CONSOLE.bin
 ```
 
-Need to set toolcharin enviroment variables "ARMGCC_DIR" firstly before using the tool.
+### Build with Helper Script
+
+"build_apps.sh" in the root directory of "heterogeneous-multicore" can be used to build single or all application for all boards.
+The following is help information for "build_apps.sh" tool:
+
+```bash
+./build_apps.sh [clean]                                        - build or clean all applications
+./build_apps.sh [clean] [os] [board-list] [app-list] [core]    - build or clean specified applications
+      - os: specify freertos or zephyr or both if no specified.
+      - core: a-core or m-core
+      - board-list: specify one or some or all boards if no specified: evkmimx8mm_ca53 evkmimx8mp_ca53 mcimx93evk_ca55 evkmimx8mm_cm4 evkmimx8mp_cm7 mcimx93evk_cm33
+      - app-list: specify one or some or all applications if no specified: hello_world lwip_ping rpmsg_perf rpmsg_pingpong rpmsg_str_echo rpmsg_uart_sharing soem_digital_io soem_servo virtio_net_backend virtio_perf
+```
+For example:
+```bash
+     ./build_apps.sh                                -build all m-core and a-core FreeRTOS and Zephyr applications
+     ./build_apps.sh m-core                         -build all m-core applications
+     ./build_apps.sh a-core hello_world zephyr -build all m-core Zephyr applications hello_world
+     ./build_apps.sh clean                          -clean all applications
+     ./build_apps.sh a-core clean                   -clean all a-core applications
+     ./build_apps.sh m-core hello_world clean  -clean all m-core applications hello_world
+```
+
+Need to set toolchain enviroment variables "ARMGCC_DIR" firstly before using the tool, and set enviroment variables "Zephyr_DIR" for Zephyr building.
 For example, use the tool to build all hello_world application on Cortex-M Core for all supported boards:
 ```bash
-export ARMGCC_DIR=~/toolchains/gcc-arm-none-eabi-10-2020-q4-major
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi
 cd ~/workspace/heterogeneous-multicore/
-./build_all.sh m-core apps/hello_world
+./build_apps.sh m-core hello_world
 ```
-use the tool to build all application on Cortex-A Core for all supported boards:
+Use the tool to build all Zephyr application on Cortex-A Core for all supported boards:
 ```bash
-export ARMGCC_DIR=~/toolchains/gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf
+export Zephyr_DIR=~/workspace/zephyr
 cd ~/workspace/heterogeneous-multicore/
-./build_all.sh a-core
+./build_apps.sh a-core zephyr
 ```
-After executing the tool, all binary images built out can be found in the directory: "binaries"
+After executing the tool, all binary images built out can be found in the directory: "deploy/images"
 
 # Running Multicore Applications
 

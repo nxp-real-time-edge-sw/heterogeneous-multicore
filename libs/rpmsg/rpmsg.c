@@ -223,6 +223,7 @@ struct rpmsg_ept *rpmsg_create_ept(struct rpmsg_instance *ri, int ept_addr, cons
 	ept->rl_ept->rfu = ept;
 
 	if (!ri->mode) {
+		log_info("Sending Nameservice string: %s\n", sn);
 		ret = rpmsg_ns_announce(ri->rl_inst, ept->rl_ept, sn, RL_NS_CREATE);
 		if (ret != RL_SUCCESS) {
 			log_err("Nameservice: Create channel failed\n");
