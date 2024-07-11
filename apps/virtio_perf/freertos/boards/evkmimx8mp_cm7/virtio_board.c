@@ -9,6 +9,7 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "board.h"
+#include "rsc_table.h"
 
 void virtio_board_init(void)
 {
@@ -23,4 +24,5 @@ void virtio_board_init(void)
 	BOARD_InitBootPins();
 	BOARD_BootClockRUN();
 	BOARD_InitDebugConsole();
+	copyResourceTable();
 }

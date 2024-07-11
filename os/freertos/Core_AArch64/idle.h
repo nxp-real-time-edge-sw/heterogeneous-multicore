@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022,2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,5 @@
 #define _IDLE_H_
 
 void vApplicationIdleHook(void);
-void cpu_load_stats(void);
 
 #endif /* _IDLE_H_ */

@@ -74,7 +74,7 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-static phy_rtl8211f_resource_t phy_resource;
+static phy_resource_t phy_resource;
 
 static struct enet_if_port if_port;
 

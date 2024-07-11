@@ -84,7 +84,7 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-static phy_rtl8211f_resource_t phy_resource;
+static phy_resource_t phy_resource;
 
 static struct enet_if_port if_port;
 
@@ -99,7 +99,7 @@ static volatile uint32_t ticks_last;
 /* The ticks per each period of rt_task */
 static volatile uint32_t ticks_per_period;
 
-static char IOmap[200];
+static char IOmap[1500];
 
 static StackType_t IdleTaskStack[configMINIMAL_STACK_SIZE];
 static StaticTask_t IdleTaskTCB;
@@ -357,11 +357,8 @@ void control_task(void *ifname)
 		goto err;
 	}
 
-	for (i = 0; i < MAX_SERVO; i++) {
-		servo_setup(&servo[i]);
-	}
-
-	if (servo_slave_check(servo, MAX_SERVO) < 0) {
+	i = servo_slave_check(servo, MAX_SERVO);
+	if (i < 0) {
 		os_printf("The infomation of Servo:%d is not consistent with scanned, please reconfirm\n", -i);
 		goto err;
 	}
@@ -376,10 +373,13 @@ void control_task(void *ifname)
 
 	for (i = 0; i < MAX_SERVO; i++) {
 		if(servo[i].slave->hasdc > 0) {
-			ec_dcsync0(servo[i].slave_id + 2, TRUE, CYCLE_PERIOD_NS, CYCLE_PERIOD_NS*3);
+			ec_dcsync0(servo[i].slave_id + 1, TRUE, CYCLE_PERIOD_NS, CYCLE_PERIOD_NS*3);
 		}
 	}
 
+	for (i = 0; i < MAX_SERVO; i++) {
+		servo_setup(&servo[i]);
+	}
 	ec_config_map(&IOmap);
 
 	for (i = 0; i < MAX_AXIS; i++) {
@@ -414,7 +414,7 @@ void control_task(void *ifname)
 	{
 		ec_send_processdata();
 		ec_receive_processdata(EC_TIMEOUTRET);
-		ec_statecheck(0, EC_STATE_OPERATIONAL, 50000);
+		ec_statecheck(1, EC_STATE_OPERATIONAL, 50000);
 	} while (chk-- && (ec_slave[0].state != EC_STATE_OPERATIONAL));
 
 	if (ec_slave[0].state != EC_STATE_OPERATIONAL) {

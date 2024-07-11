@@ -53,6 +53,7 @@ SET(CMAKE_C_FLAGS_DEBUG " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m33 \
@@ -78,6 +79,7 @@ SET(CMAKE_C_FLAGS_RELEASE " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m33 \
     -Wall \
@@ -99,6 +101,7 @@ SET(CMAKE_CXX_FLAGS_DEBUG " \
     -DDEBUG \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m33 \
@@ -122,6 +125,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE " \
     -DNDEBUG \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m33 \
     -Wall \

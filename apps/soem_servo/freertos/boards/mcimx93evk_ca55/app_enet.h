@@ -10,6 +10,8 @@
 #include "fsl_enet.h"
 #include "fsl_phyrtl8211f.h"
 
+typedef phy_rtl8211f_resource_t     phy_resource_t;
+
 extern void ENET_DriverIRQHandler(void);
 static inline void enet_hal_irq_handler(void)
 {

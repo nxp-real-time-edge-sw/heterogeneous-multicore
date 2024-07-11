@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 NXP
+ * Copyright 2021-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -225,11 +225,11 @@ void command_handler(void *ctx)
 
 	do
 	{
-		log_raw_info("\r\nPlease input the test case ID (1-6): ");
+		log_raw_info("\rPlease input the test case ID (1-6): ");
 		status = DbgConsole_TryGetchar(&input);
 		if (status != kStatus_Success)
 		{
-			vTaskDelay(pdMS_TO_TICKS(3000));
+			vTaskDelay(pdMS_TO_TICKS(500));
 			continue;
 		}
 		else
@@ -263,6 +263,8 @@ void main_task(void *pvParameters)
 	do {
 		if (!ctx->started)
 			command_handler(ctx);
+
+		vTaskDelay(pdMS_TO_TICKS(1000));
 	} while(1);
 }
 

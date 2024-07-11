@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,6 +10,7 @@
 #include "board.h"
 #include "clock_config.h"
 #include "pin_mux.h"
+#include "rsc_table.h"
 
 void hello_world_board_init(void)
 {
@@ -21,6 +22,7 @@ void hello_world_board_init(void)
     board_pins_setup();
     BOARD_BootClockRUN();
     BOARD_InitDebugConsole();
+    copyResourceTable();
 }
 
 void print_ram_console_addr(void)

@@ -9,8 +9,6 @@
 
 #include "FreeRTOS.h"
 
-#define CONFIG_CPU_STATS	1
-
 #define VIRTIO_TRANS_MEM_BASE	0xfc700000
 
 #endif /* _APP_VIRTIO_H_ */

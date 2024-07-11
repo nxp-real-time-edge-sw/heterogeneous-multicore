@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 NXP.
+ * Copyright 2021-2024 NXP.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,6 +9,9 @@
 #include "os/cache.h"
 #include "os/semaphore.h"
 #include "os/unistd.h"
+#ifdef CONFIG_CPU_LOAD_STATS
+#include "os/cpu_load.h"
+#endif
 
 #include "log/log.h"
 #include "stats/stats.h"
@@ -228,6 +231,9 @@ void print_stats(struct rt_latency_ctx *ctx)
 		log_info("\n");
 
 		ctx->stats_snapshot.pending = false;
+#ifdef CONFIG_CPU_LOAD_STATS
+		os_cpu_load_stats();
+#endif
 	}
 }
 

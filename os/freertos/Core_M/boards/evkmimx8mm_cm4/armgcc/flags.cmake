@@ -127,6 +127,7 @@ SET(CMAKE_C_FLAGS_DEBUG " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m4 \
@@ -158,6 +159,7 @@ SET(CMAKE_C_FLAGS_RELEASE " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m4 \
     -Wall \
@@ -184,6 +186,7 @@ SET(CMAKE_C_FLAGS_DDR_DEBUG " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m4 \
@@ -211,6 +214,7 @@ SET(CMAKE_C_FLAGS_DDR_RELEASE " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m4 \
     -Wall \
@@ -238,6 +242,7 @@ SET(CMAKE_C_FLAGS_FLASH_DEBUG " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m4 \
@@ -266,6 +271,7 @@ SET(CMAKE_C_FLAGS_FLASH_RELEASE " \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DSDK_OS_FREE_RTOS \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m4 \
     -Wall \
@@ -291,6 +297,7 @@ SET(CMAKE_CXX_FLAGS_DEBUG " \
     -DCPU_MIMX8MM6DVTLZ_cm4 \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m4 \
@@ -318,6 +325,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE " \
     -DCPU_MIMX8MM6DVTLZ_cm4 \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m4 \
     -Wall \
@@ -343,6 +351,7 @@ SET(CMAKE_CXX_FLAGS_DDR_DEBUG " \
     -DCPU_MIMX8MM6DVTLZ_cm4 \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m4 \
@@ -369,6 +378,7 @@ SET(CMAKE_CXX_FLAGS_DDR_RELEASE " \
     -DCPU_MIMX8MM6DVTLZ_cm4 \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m4 \
     -Wall \
@@ -394,6 +404,7 @@ SET(CMAKE_CXX_FLAGS_FLASH_DEBUG " \
     -DCPU_MIMX8MM6DVTLZ_cm4 \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -g \
     -O0 \
     -mcpu=cortex-m4 \
@@ -420,6 +431,7 @@ SET(CMAKE_CXX_FLAGS_FLASH_RELEASE " \
     -DCPU_MIMX8MM6DVTLZ_cm4 \
     -DSERIAL_PORT_TYPE_UART=1 \
     -DMCUXPRESSO_SDK \
+    -DPRINTF_FLOAT_ENABLE=1 \
     -Os \
     -mcpu=cortex-m4 \
     -Wall \

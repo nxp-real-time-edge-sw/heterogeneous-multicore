@@ -9,6 +9,10 @@ CMAKE_MINIMUM_REQUIRED (VERSION 3.10.0)
 SET (Tutorial_VERSION_MAJOR 1)
 SET (Tutorial_VERSION_MINOR 0)
 
+if(${CMAKE_BUILD_TYPE} STREQUAL "debug")
+       ADD_DEFINITIONS(-DCONFIG_CPU_LOAD_STATS=1)
+endif()
+
 # ENABLE ASM
 ENABLE_LANGUAGE(ASM)
 
@@ -52,6 +56,7 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
 "${ProjDirPath}/../clock_config.c"
 "${ProjDirPath}/../clock_config.h"
 "${ProjDirPath}/../fsl_iomuxc.h"
+"${ProjDirPath}/../rsc_table.c"
 "${OsPath}/freertos/os/stdio.c"
 )
 

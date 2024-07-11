@@ -1,6 +1,5 @@
 /*
- * Copyright 2022 NXP
- * All rights reserved.
+ * Copyright 2022,2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,8 +8,6 @@
 #define _APP_VIRTIO_H_
 
 #include "FreeRTOS.h"
-
-#define CONFIG_CPU_STATS	1
 
 #define VIRTIO_TRANS_MEM_BASE	0xb8400000
 

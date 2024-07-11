@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,8 +8,6 @@
 #define _APP_VIRTIO_H_
 
 #include "FreeRTOS.h"
-
-#define CONFIG_CPU_STATS	1
 
 #define ENET_IRQ_PRIO			(portLOWEST_USABLE_INTERRUPT_PRIORITY - 1)
 

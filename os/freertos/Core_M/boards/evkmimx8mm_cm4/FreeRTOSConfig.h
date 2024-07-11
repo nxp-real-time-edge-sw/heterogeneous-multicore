@@ -69,7 +69,7 @@
 #define configSUPPORT_STATIC_ALLOCATION         1
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
 #ifndef configTOTAL_HEAP_SIZE
-#define configTOTAL_HEAP_SIZE                   ((size_t)(120 * 1024))
+#define configTOTAL_HEAP_SIZE                   ((size_t)(40 * 1024))
 #endif
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
@@ -81,9 +81,16 @@
 #define configUSE_DAEMON_TASK_STARTUP_HOOK      0
 
 /* Run time and task stats gathering related definitions. */
-#define configGENERATE_RUN_TIME_STATS           0
 #define configUSE_TRACE_FACILITY                1
+#ifdef CONFIG_CPU_LOAD_STATS
+#define configGENERATE_RUN_TIME_STATS           1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()
+#define portGET_RUN_TIME_COUNTER_VALUE()        xTaskGetTickCount()
+#else
+#define configGENERATE_RUN_TIME_STATS           0
 #define configUSE_STATS_FORMATTING_FUNCTIONS    0
+#endif
 
 /* Task aware debugging. */
 #define configRECORD_STACK_HIGH_ADDRESS         1
@@ -111,7 +118,11 @@
 #define INCLUDE_xTaskGetSchedulerState          1
 #define INCLUDE_xTaskGetCurrentTaskHandle       1
 #define INCLUDE_uxTaskGetStackHighWaterMark     0
+#ifdef CONFIG_CPU_LOAD_STATS
+#define INCLUDE_xTaskGetIdleTaskHandle          1
+#else
 #define INCLUDE_xTaskGetIdleTaskHandle          0
+#endif
 #define INCLUDE_eTaskGetState                   0
 #define INCLUDE_xTimerPendFunctionCall          1
 #define INCLUDE_xTaskAbortDelay                 0

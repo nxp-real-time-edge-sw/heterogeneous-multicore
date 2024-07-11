@@ -50,6 +50,7 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
 "${ProjDirPath}/../clock_config.c"
 "${ProjDirPath}/../clock_config.h"
 "${ProjDirPath}/../hello_world_board.c"
+"${ProjDirPath}/../rsc_table.c"
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE

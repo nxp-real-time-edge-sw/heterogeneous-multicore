@@ -174,7 +174,7 @@ clean_cmd="./clean.sh"
 if [[ "${is_acore}" == "yes" ]]; then
 	target_dir="armgcc_aarch64"
 	freertos_cmd="./build_ddr_release.sh"
-	zephyr_cmd="./build.sh"
+	zephyr_cmd="./build_release.sh"
 elif [[ "${is_mcore}" == "yes" ]]; then
 	target_dir="armgcc"
 	freertos_cmd="./build_release.sh"
@@ -193,49 +193,55 @@ for each_app in "${apps_list[@]}"; do
                 else
                     target_dir="armgcc"
                 fi
-                build_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${each_board}/${target_dir}"
-                if [ -d "${build_dir}" ]; then
-                    cd "${build_dir}" || exit
-                    if [ -f "${clean_cmd}" ]; then
-                        ${clean_cmd}
-                        if [ $? -ne 0 ]; then
-                            echo "clean ${each_os} ${each_app} application on ${each_board} failed"
-                            exit 1
+                board_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${each_board}"
+                if [ -d "${board_dir}" ]; then
+                    cd "${board_dir}" || exit
+                    for build_dir in `find . -type d -name ${target_dir}`; do
+                        cd "${board_dir}/${build_dir}" || exit
+                        if [ -f "${clean_cmd}" ]; then
+                            ${clean_cmd}
+                            if [ $? -ne 0 ]; then
+                                echo "clean ${each_os} ${each_app} application on ${each_board} failed"
+                                exit 1
+                            fi
+                            # delete binary image
+                            bin_file="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}/${each_app}*.bin"
+                            rm -f ${bin_file}
+
+                            del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
+                            del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}"
+                            del_empty_dir "${multicore_dir}/${images_dir_name}"
+                            del_empty_dir "${multicore_dir}/${deploy_dir_name}"
                         fi
-                        # delete binary image
-                        bin_file="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}/${each_app}*.bin"
-                        rm -f ${bin_file}
-                        
-                        del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
-                        del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}"
-                        del_empty_dir "${multicore_dir}/${images_dir_name}"
-                        del_empty_dir "${multicore_dir}/${deploy_dir_name}"
-                    fi
+                    done
                 fi
             # build
             else
-                build_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${each_board}/${target_dir}"
-                if [ -d "${build_dir}" ]; then
-                    cd "${build_dir}" || exit
-                    for cmd in "${cmds[@]}"; do
-                        if [ -f "${cmd}" ]; then
-                            echo "building ${each_os} ${each_app} application on ${each_board} ..."
-                            ${cmd}
-                            if [ $? -ne 0 ]; then
-                                echo "build ${each_os} ${each_app} application on ${each_board} failed"
-                                exit 1
+                board_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${each_board}"
+                if [ -d "${board_dir}" ]; then
+                    cd "${board_dir}" || exit
+                    for build_dir in `find . -type d -name ${target_dir}`; do
+                        cd "${board_dir}/${build_dir}" || exit
+                        for cmd in "${cmds[@]}"; do
+                            if [ -f "${cmd}" ]; then
+                                echo "building ${each_os} ${each_app} application on ${each_board} ..."
+                                ${cmd}
+                                if [ $? -ne 0 ]; then
+                                    echo "build ${each_os} ${each_app} application on ${each_board} failed"
+                                    exit 1
+                                fi
+                                # copy binary image
+                                output_dir="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
+                                if [ ! -d "${output_dir}" ]; then
+                                    mkdir -p "${output_dir}"
+                                fi
+                                if [[ "${cmd}" =~ "smp" ]]; then
+                                    find . -name "${each_app}"_smp.bin -exec cp {} "${output_dir}" \;
+                                else
+                                    find . -name "${each_app}*".bin -exec cp {} "${output_dir}" \;
+                                fi
                             fi
-                            # copy binary image
-                            output_dir="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
-                            if [ ! -d "${output_dir}" ]; then
-                                mkdir -p "${output_dir}"
-                            fi
-                            if [[ "${cmd}" =~ "smp" ]]; then
-                                find . -name "${each_app}"_smp.bin -exec cp {} "${output_dir}" \;
-                            else
-                                find . -name "${each_app}*".bin -exec cp {} "${output_dir}" \;
-                            fi
-                        fi
+                        done
                     done
                 fi
                 # return back

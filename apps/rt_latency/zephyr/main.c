@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP.
+ * Copyright 2022-2024 NXP.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -286,7 +286,7 @@ void main(void)
 		if (!ctx->started)
 			command_handler(ctx);
 
-		k_msleep(100);
+		k_msleep(1000);
 
 	} while(1);
 }

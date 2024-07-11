@@ -19,6 +19,11 @@
 #ifdef configTIMER_QUEUE_LENGTH
 #undef configTIMER_QUEUE_LENGTH
 #endif
+#ifdef configTOTAL_HEAP_SIZE
+#undef configTOTAL_HEAP_SIZE
+#endif
+
+#define configTOTAL_HEAP_SIZE                   ((size_t)(115 * 1024))
 
 #define configUSE_TIMERS			1
 #define configTIMER_TASK_PRIORITY		(configMAX_PRIORITIES - 3)

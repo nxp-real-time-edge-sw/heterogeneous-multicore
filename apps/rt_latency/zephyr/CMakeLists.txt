@@ -26,6 +26,10 @@ set(CONFIG_USE_middleware_zephyr-kernel true)
 set(CONFIG_USE_middleware_multicore_rpmsg_lite_zephyr true)
 ADD_DEFINITIONS(-DAARCH64=1)
 
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	ADD_DEFINITIONS(-DCONFIG_CPU_LOAD_STATS=1)
+endif()
+
 zephyr_include_directories(
   ${AppPath}/common
   ${HeaderPath}

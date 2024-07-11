@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,9 +7,7 @@
 #include <common/list.h>
 #include <net/data_pkt.h>
 #include <net/net_switch.h>
-#ifdef CONFIG_CPU_STATS
 #include <os/cpu_load.h>
-#endif
 #include <os/stdbool.h>
 #include <os/stdlib.h>
 #include <os/stdio.h>
@@ -403,9 +401,6 @@ void switch_print_stats(void *switch_dev)
 		}
 
 		os_printf("\r\n");
-#ifdef CONFIG_CPU_STATS
 		os_cpu_load_stats();
-		os_printf("\r\n");
-#endif
 	} while(1);
 }

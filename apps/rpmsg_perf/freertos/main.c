@@ -1,18 +1,17 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include "os/stdio.h"
 #include "os/assert.h"
+#include "os/cpu_load.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "app_board.h"
 #include "app_rpmsg.h"
 #include "semphr.h"
-
-#define DUMP_CPU_LOAD
 
 /* Task priority and stack size */
 #define rpmsg_init_task_PRIORITY	(configMAX_PRIORITIES - 2)
@@ -62,18 +61,6 @@ static SemaphoreHandle_t send_packet_sig;
 static uint32_t sender_poll_times;
 static uint32_t delayed_packets_count;
 static bool wait_buffer;
-
-void DumpTaskSysFree(void)
-{
-#ifdef DUMP_CPU_LOAD
-    uint8_t CPU_RunInfo[400] = {0};
-
-    memset(CPU_RunInfo, 0, sizeof(CPU_RunInfo));
-    vTaskGetRunTimeStats((char *)&CPU_RunInfo);
-    os_printf("task name    running count    ultilization\r\n");
-    os_printf("%s\r\n", CPU_RunInfo);
-#endif
-}
 
 void APP_SendPacket(struct rpmsg_ept *ept, void *p_buf, uint32_t buf_size, bool no_copy, bool have_preamble)
 {
@@ -149,7 +136,7 @@ static void rpmsg_send_task(void *param)
 		xSemaphoreTake(send_packet_sig, portMAX_DELAY);
 		os_printf("Sender Start:\r\n");
 		os_printf("Test case: Packet size: %u, Buffer copy: %s\r\n", args.packet_size, args.no_copy ? "NO" : "YES");
-		DumpTaskSysFree();
+		os_cpu_load_stats();
 
 		do {
 			if (args.packet_size < sizeof(sender_buffer)) {
@@ -178,7 +165,7 @@ static void rpmsg_send_task(void *param)
 			}
 		} while (1);
 
-		DumpTaskSysFree();
+		os_cpu_load_stats();
 		os_printf("Sender End:\r\n");
 	}
 }
@@ -232,14 +219,14 @@ static void rpmsg_recv_task(void *param)
 			rx_len = 0;
 			os_printf("Receiver Start:\r\n");
 			os_printf("Test case: Packet size: %u, Buffer copy: %s\r\n", packet_size, no_copy ? "NO" : "YES");
-			DumpTaskSysFree();
+			os_cpu_load_stats();
 			break;
 		case RPMSG_PERF_PREAMBLE_SENDER_END:
 			out.packet_cnt = rx_len / packet_size;
 			out.preamble = RPMSG_PERF_PREAMBLE_SENDER_END_ACK;
 			/* send SENDER_END_ACK packet to remote core(Linux) */
 			APP_SendPacket(ept, &out, sizeof(out), no_copy, true);
-			DumpTaskSysFree();
+			os_cpu_load_stats();
 			os_printf("Receiver End:\r\n");
 			os_printf("Received packets: %u\r\n", out.packet_cnt);
 			rx_len = 0;
