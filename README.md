@@ -46,13 +46,20 @@ Multiple applications are in "apps" directory:
 
 	hello_world application is to demonstrate flexible Real-time System on MPU platforms, multiple images provided can be used to run single or multiple RTOS on Cortex-A Core or Cortex-M with or without runing Linux simulteneously.
 
+* RTOS Benchmark
+
+   * rt_latency
+
+    This is a benchmark application to measure the latency between hardware IRQ events and software actions including:
+    • irq delay: time to enter in the software IRQ handler after a hardware IRQ occurs (hardware + IRQ vector latency)
+    • irq to sched: time to enter in an RTOS task, scheduled by the IRQ handler (irq delay + RTOS scheduler)
+
 * RPMSG Applications
 
-	Heterogeneous Multicore Framework supports RPMSG communication between any Real-time Systems on MPU Platforms, such as:
+	Heterogeneous Multicore Framework supports RPMSG communication between Real-time Systems on MPU Platforms, such as:
    * RPMSG between RTOS on Cortex-M Core and Linux on Cortex-A core
    * RPMSG between RTOS on Cortex-A Core and Linux on Cortex-A Core
    * RPMSG between RTOS on Cortex-A Core and RTOS on Cortex-A Core
-   * RPMSG between RTOS on Cortex-M Core and RTOS on Cortex-A Core
 
 	The following applications provides filed trail for RPMSG related features
 
@@ -68,6 +75,10 @@ Multiple applications are in "apps" directory:
 
 	rpmsg_perf is a tool to evaluate RPMSG bandwitdth performance between RTOS and Linux Kenel.
 
+   * rpmsg_uart_sharing
+
+	This application is to demonstrate sharing the peripheral resource (UART) from Cortex-M RTOS to Cortex-A Linux through the SRTM protocol based on RPMsg channel.
+
 * Heterogeneous Multicore VirtIO Applications
 
    * virtio_perf
@@ -78,6 +89,25 @@ Multiple applications are in "apps" directory:
 
 	This application is to demonstrate how to use Heterogeneous Multicore VirtIO to share physical peripherals or other resource between different CPU Core or OS. The applicatons provides networking sharing, physical networking interface is controlled by Cortex-M Core or Cortex-A Core, then it is shared with Cortex-A Core on which virtual NIC device driver is provided in Linux, Heterogeneous Multicore VirtIO is used to established high performance data path between two sides.
 
+* Networking Stack
+
+   * lwip_ping
+
+    This application is to demonstrate how to integrate the lwIP networking stack into FreeRTOS.
+
+* Industrial Applications
+
+   * digital_io
+
+    EtherCAT SOEM digital_io example for IO control uses BECKHOFF EK1100 as EtherCAT slave and i.MX 8M Plus, i.MX 8M Mini, i.MX 93 boards as EtherCAT Master, EtherCAT Master controls LED status of EtherCAT Slave.
+
+   * servo_motor
+
+    EtherCAT SOEM servo_motor example uses Inovance SV680 servo as EtherCAT slave and i.MX 8M Plus, i.MX 8M Mini, i.MX 93 boards as EtherCAT Master, EtherCAT Master controls Inovance SV680 servo.
+
+   * servo_motor_rt1180
+
+    EtherCAT SOEM servo_motor_rt1180 example uses i.MX RT1180-EVK as EtherCAT slave and i.MX 8M Plus, i.MX 8M Mini, i.MX 93 boards as EtherCAT Master, EtherCAT Master sends EtherCAT frame to i.MX RT1180 to control motor.
 
 
 # Getting Started
