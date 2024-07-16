@@ -142,10 +142,13 @@ pip3 install west
 Use the following command to clone all the source code:
 
 ```bash
-west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git workspace
+export revision=Real-Time-Edge-v2.9-202407
+west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
 cd workspace
 west update
 ```
+Replace ${revision} with any Real-Time Edge release you wish to use, it can also be main if you want to use the latest release.
+
 ## Compile
 
 ### FreeRTOS
