@@ -52,6 +52,7 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
     "${AppPath}/common/rt_latency.c"
     "${BoardPath}/board.c"
     "${BoardPath}/mmu.c"
+    "${ProjDirPath}/../rt_latency_board.c"
     "${AppPath}/freertos/boards/${BoardName}/clock_config.c"
     "${AppPath}/freertos/boards/${BoardName}/pin_mux.c"
 )

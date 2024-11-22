@@ -46,6 +46,12 @@ struct vnet_cable {
 	bool *dev_end_on;
 };
 
+/* FDB Entry */
+struct fdb_entry {
+	struct list_head fdb_node;
+	uint8_t mac_addr[MAC_ADDR_LEN];
+};
+
 #define MAX_NAME_LEN 20
 
 struct switch_port {
@@ -76,6 +82,8 @@ struct switch_port {
 
 	/* The fields only used by local port */
 	struct list_head port_node;
+	bool fdb_enabled;
+	struct list_head fdb_table; /* Forwarding Data Base table */
 
 	/* The fields only used by remote port */
 	/* Callback function to update addresses */
@@ -137,6 +145,8 @@ void port_in_pkt(void *port_dev, void *data, uint32_t data_len, bool notify);
 void port_in_pkt_nocpy(void *port_dev, void *data_pkt, bool notify);
 void switch_print_stats(void *switch_dev);
 void notify_ports(struct switch_device *dev);
+int vs_port_add_fdb_entry(void *port_dev, void *mac_addr);
+int vs_port_remove_fdb_entry(void *port_dev, void *mac_addr);
 
 static inline bool cable_link_is_on(struct vnet_cable *cable)
 {

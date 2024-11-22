@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,11 +18,7 @@ void hello_world_board_init(void)
 	BOARD_InitMemory();
 	BOARD_RdcInit();
 	/* Enable GIC before register any interrupt handler*/
-#if (RTOSID == 0)
-	GIC_Enable(1);
-#else
-	GIC_Enable(0);
-#endif
+	GIC_Enable();
 	board_pins_setup();
 	board_clock_setup();
 #ifdef CONFIG_RAM_CONSOLE

@@ -24,4 +24,12 @@ do
 	if [ $? -ne 0 ]; then
 		exit 1
 	fi
+	# append RAM Console buffer address to image name
+	if [ $each_console = "RAM_CONSOLE" ]; then
+		# use helper to get the buffer address from rtos_memory.h
+		gcc -o  CMakeFiles/get_ram_console_addr -DRTOSID=${rtosid} -I../../../../../../../os/freertos/Core_AArch64/boards/evkmimx8mp/ ../../../../../../../tools/helper/get_ram_console_addr.c
+		buf_addr=$(./CMakeFiles/get_ram_console_addr)
+		mv ddr_debug/rpmsg_pingpong_remote_ca53_${each_console}.bin ddr_debug/rpmsg_pingpong_remote_ca53_${each_console}-${buf_addr}.bin
+		mv ddr_debug/rpmsg_pingpong_remote_ca53_${each_console}.elf ddr_debug/rpmsg_pingpong_remote_ca53_${each_console}-${buf_addr}.elf
+	fi
 done

@@ -1,0 +1,52 @@
+/*
+ * Copyright 2024 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "mcimx95evk_ca55/rtos_memory.h"
+
+#if (RTOSID == 0)
+#define MU		mu3
+#define MU_SRAM		445d1000
+#elif (RTOSID == 1)
+#define MU		mu4
+#define MU_SRAM		445f1000
+#elif (RTOSID == 2)
+#define MU		mu2
+#define MU_SRAM		445b1000
+#endif
+
+/delete-node/ &sram0;
+/delete-node/ &scmi_shmem0;
+
+/ {
+	sram0: memory@SRAM_BASE {
+		reg = <DT_ADDR(SRAM_BASE) DT_SIZE_M(1)>;
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		scmi_shmem0: memory@MU_SRAM {
+			compatible = "arm,scmi-shmem";
+			reg = <DT_ADDR(MU_SRAM) 0x80>;
+		};
+	};
+
+	firmware {
+		scmi {
+			mboxes = <&MU 0>;
+			shmem = <&scmi_shmem0>;
+		};
+	};
+};
+
+&mu2 {
+	status = "disabled";
+};
+
+&MU {
+	status = "okay";
+};

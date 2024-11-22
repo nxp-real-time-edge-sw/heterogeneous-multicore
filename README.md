@@ -118,10 +118,10 @@ A cross compiler is required to build Cortex-A and Cortex-M applications, this p
 
 ```bash
 mkdir ~/toolchains/; cd ~/toolchains/
-wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
-tar xf arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
-wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf.tar.xz
-tar xf arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+tar xf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-elf.tar.xz
+tar xf arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-elf.tar.xz
 ```
 This project uses west to manage all related repos, west.yml provides the description and revision for other projects used by Heterogeneous Multicore. Install the following tools firstly in order to download and built the applications:
 
@@ -142,12 +142,12 @@ pip3 install west
 Use the following command to clone all the source code:
 
 ```bash
-export revision=Real-Time-Edge-v2.9-202407
+export revision=Real-Time-Edge-v3.0-202412
 west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
 cd workspace
 west update
 ```
-Replace ${revision} with any Real-Time Edge release you wish to use, it can also be main if you want to use the latest release.
+Replace ${revision} with any Real-Time Edge release you wish to use, it can also be "main" if you want to use the latest release.
 
 ## Compile
 
@@ -155,10 +155,9 @@ Replace ${revision} with any Real-Time Edge release you wish to use, it can also
 Building application on Cortex-M Core, for example, building network sharing backend firmware running on Cortex-M Core:
 
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi
-export PATH=$PATH:~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi/bin
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
 cd ~/workspace/heterogenous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm_cm4/armgcc
-$ ./build_release.sh
+./build_release.sh
 ```
 
 The backend firmware image "virtio_net_backend_cm4.bin" is in "release" directory.
@@ -166,7 +165,7 @@ The backend firmware image "virtio_net_backend_cm4.bin" is in "release" director
 Building application on Cortex-A Core, for example, building network sharing backend firmware running on Cortex-A Core:
 
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf
 cd ~/workspace/heterogeneous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm_ca53/armgcc_aarch64
 ./build_ddr_release.sh
 ```
@@ -176,19 +175,19 @@ The backend firmware image "virtio_net_backend_ca53.bin" is in directory "ddr_re
 Building application on Cortex-A Core, for example, building Zephyr hello_world running on Cortex-A Core:
 
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf
 export Zephyr_DIR=~/workspace/zephyr
 cd ~/workspace/heterogeneous-multicore/apps/hello_world/zephyr/boards/evkmimx8mm_ca53/armgcc_aarch64
-./build.sh
+./build_release.sh
 ```
 Then the following binary Zephyr images are built out:
 ```bash
-./build_RTOS2_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS2_RAM_CONSOLE.bin
-./build_RTOS3_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS3_RAM_CONSOLE.bin
-./build_RTOS3_UART2/zephyr/hello_world_ca53_RTOS3_UART2.bin
 ./build_RTOS0_UART4/zephyr/hello_world_ca53_RTOS0_UART4.bin
-./build_RTOS1_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS1_RAM_CONSOLE.bin
-./build_RTOS0_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS0_RAM_CONSOLE.bin
+./build_RTOS0_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS0_RAM_CONSOLE-0x93d00000.bin
+./build_RTOS1_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS1_RAM_CONSOLE-0x94d00000.bin
+./build_RTOS2_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS2_RAM_CONSOLE-0x95d00000.bin
+./build_RTOS3_UART2/zephyr/hello_world_ca53_RTOS3_UART2.bin
+./build_RTOS3_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS3_RAM_CONSOLE-0x96d00000.bin
 ```
 
 ### Build with Helper Script
@@ -218,13 +217,13 @@ For example:
 Need to set toolchain enviroment variables "ARMGCC_DIR" firstly before using the tool, and set enviroment variables "Zephyr_DIR" for Zephyr building.
 For example, use the tool to build all hello_world application on Cortex-M Core for all supported boards:
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
 cd ~/workspace/heterogeneous-multicore/
 ./build_apps.sh m-core hello_world
 ```
 Use the tool to build all Zephyr application on Cortex-A Core for all supported boards:
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf
 export Zephyr_DIR=~/workspace/zephyr
 cd ~/workspace/heterogeneous-multicore/
 ./build_apps.sh a-core zephyr
@@ -234,6 +233,9 @@ After executing the tool, all binary images built out can be found in the direct
 # Running Multicore Applications
 
 Take Multicore Networking Sharing as example.
+
+Firstly need to download Real-Time Edge Software release pre-build root FS image from [Real-Time Edge Software](https://www.nxp.com/rtedge),
+and refer to Real-time Edge Software User Guide to deploy the image to the board.
 
 ## Running Multicore Networking Sharing
 
@@ -264,7 +266,7 @@ Executing the following command in uboot command line:
 => tftp 0x93c00000 virtio_net_backend_ca53.bin
 
 # Boot Backend on Cortex-A Core
-=> dcache flush&& dcache off && icache flush && icache off
+=> dcache flush; icache flush
 => cpu 3 release 0x93c00000
 
 # Then boot Linux Kernel:
@@ -308,4 +310,4 @@ root@imx8mm-lpddr4-evk:~# ping 192.168.1.1
 	64 bytes from 192.168.1.1: icmp_seq=5 ttl=64 time=1.73 ms
 ```
 
-Please refer to [Real-time Edge Software User Guide](https://www.nxp.com/design/software/development-software/real-time-edge-software:REALTIME-EDGE-SOFTWARE) for more details.
+Please refer to [Real-time Edge Software User Guide](https://www.nxp.com/rtedge) for more details.

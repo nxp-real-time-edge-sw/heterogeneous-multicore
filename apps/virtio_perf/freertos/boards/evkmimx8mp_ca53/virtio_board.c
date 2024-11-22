@@ -14,6 +14,6 @@ void virtio_board_init(void)
     BOARD_InitMemory();
     BOARD_RdcInit();
     /* Enable GIC before register any interrupt handler*/
-    GIC_Enable(1);
+    GIC_Enable();
     BOARD_InitDebugConsole();
 }

@@ -1,0 +1,20 @@
+/*
+ * Copyright 2024 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,console = &lpuart1;
+		zephyr,shell-uart = &lpuart1;
+	};
+};
+
+&lpuart1 {
+	status = "okay";
+};
+
+&lpuart3 {
+	status = "disabled";
+};

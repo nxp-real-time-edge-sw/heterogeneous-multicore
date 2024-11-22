@@ -55,5 +55,12 @@ do
 		if [ $? -ne 0 ]; then
 			exit 1
 		fi
+		# append RAM Console buffer address to image name
+		if [ $each_console = "RAM_CONSOLE" ]; then
+			gcc -o  CMakeFiles/get_ram_console_addr -DRTOSID=${each_rtos} -I../../../../../../os/freertos/Core_AArch64/boards/evkmimx8mp/ ../../../../../../tools/helper/get_ram_console_addr.c
+			buf_addr=$(./CMakeFiles/get_ram_console_addr)
+			mv ddr_release/hello_world_ca53_RTOS${each_rtos}_${each_console}.bin ddr_release/hello_world_ca53_RTOS${each_rtos}_${each_console}-${buf_addr}.bin
+			mv ddr_release/hello_world_ca53_RTOS${each_rtos}_${each_console}.elf ddr_release/hello_world_ca53_RTOS${each_rtos}_${each_console}-${buf_addr}.elf
+		fi
 	done
 done

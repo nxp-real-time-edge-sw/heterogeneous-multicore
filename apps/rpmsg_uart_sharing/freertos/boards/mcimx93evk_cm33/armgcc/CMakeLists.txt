@@ -114,6 +114,8 @@ include(middleware_multicore_rpmsg_lite_imx93_m33_freertos)
 
 include(middleware_freertos-kernel_heap_4)
 
+include(utilities_misc_utilities_MIMX8MM6)
+
 include(device_system)
 
 IF(NOT DEFINED TARGET_LINK_SYSTEM_LIBRARIES)

@@ -6,7 +6,7 @@
 
 valid_apps=("hello_world" "lwip_ping" "rpmsg_perf" "rpmsg_pingpong" "rpmsg_str_echo" "rpmsg_uart_sharing" "rt_latency" "soem_digital_io" "soem_servo" "virtio_net_backend" "virtio_perf")
 
-valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx93evk_ca55")
+valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx93evk_ca55" "mcimx95evk_ca55")
 valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33")
 
 valid_oss=("freertos" "zephyr")
@@ -204,9 +204,10 @@ for each_app in "${apps_list[@]}"; do
                                 echo "clean ${each_os} ${each_app} application on ${each_board} failed"
                                 exit 1
                             fi
-                            # delete binary image
+                            # delete binary and elf image
                             bin_file="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}/${each_app}*.bin"
-                            rm -f ${bin_file}
+                            elf_file="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}/${each_app}*.elf"
+                            rm -f ${bin_file} ${elf_file}
 
                             del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
                             del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}"
@@ -230,15 +231,17 @@ for each_app in "${apps_list[@]}"; do
                                     echo "build ${each_os} ${each_app} application on ${each_board} failed"
                                     exit 1
                                 fi
-                                # copy binary image
+                                # copy binary and elf image
                                 output_dir="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
                                 if [ ! -d "${output_dir}" ]; then
                                     mkdir -p "${output_dir}"
                                 fi
                                 if [[ "${cmd}" =~ "smp" ]]; then
                                     find . -name "${each_app}"_smp.bin -exec cp {} "${output_dir}" \;
+                                    find . -name "${each_app}"_smp.elf -exec cp {} "${output_dir}" \;
                                 else
                                     find . -name "${each_app}*".bin -exec cp {} "${output_dir}" \;
+                                    find . -name "${each_app}*".elf -exec cp {} "${output_dir}" \;
                                 fi
                             fi
                         done

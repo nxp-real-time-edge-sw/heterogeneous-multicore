@@ -8,6 +8,7 @@
 	chosen {
 		/delete-property/ zephyr,console;
 		/delete-property/ zephyr,shell-uart;
+		zephyr,ram-console = &ram_console;
 	};
 
 	ram_console: memory@RAM_CONSOLE_BASE {
@@ -21,6 +22,6 @@
 	status = "disabled";
 };
 
-&lpuart2 {
+&lpuart3 {
 	status = "disabled";
 };

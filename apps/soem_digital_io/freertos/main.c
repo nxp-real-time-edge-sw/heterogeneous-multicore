@@ -334,7 +334,7 @@ int main(void)
 	BOARD_InitMemory();
 	BOARD_RdcInit();
 	/* Enable GIC before register any interrupt handler*/
-	GIC_Enable(1);
+	GIC_Enable();
 	board_pins_setup();
 	board_clock_setup();
 	BOARD_InitDebugConsole();

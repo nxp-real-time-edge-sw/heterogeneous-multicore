@@ -148,7 +148,6 @@ SECTIONS
   } > m_text
 
   __etext = .;    /* define a global symbol at end of code */
-  __DATA_ROM = .; /* Symbol is used by startup for data initialization */
 
   .interrupts_ram :
   {
@@ -164,7 +163,7 @@ SECTIONS
   __VECTOR_RAM = DEFINED(__ram_vector_table__) ? __VECTOR_RAM__ : ORIGIN(m_interrupts);
   __RAM_VECTOR_TABLE_SIZE_BYTES = DEFINED(__ram_vector_table__) ? (__interrupts_ram_end__ - __interrupts_ram_start__) : 0x0;
 
-  .data : AT(__DATA_ROM)
+  .data :
   {
     . = ALIGN(4);
     __DATA_RAM = .;
@@ -174,27 +173,9 @@ SECTIONS
     KEEP(*(.jcr*))
     . = ALIGN(4);
     __data_end__ = .;        /* define a global symbol at data end */
-  } > m_data
+  } > m_data AT > m_text
 
-  __NDATA_ROM = __DATA_ROM + SIZEOF(.data); /* Symbol is used by startup for ncache data initialization */
-
-  .ncache.init : AT(__NDATA_ROM)
-  {
-    __noncachedata_start__ = .;   /* create a global symbol at ncache data start */
-    *(NonCacheable.init)
-    . = ALIGN(4);
-    __noncachedata_init_end__ = .;   /* create a global symbol at initialized ncache data end */
-  } > m_data2
-
-  . = __noncachedata_init_end__;
-  .ncache :
-  {
-    *(NonCacheable)
-    . = ALIGN(4);
-    __noncachedata_end__ = .;     /* define a global symbol at ncache data end */
-  } > m_data2
-
-  __DATA_END = __DATA_ROM + (__data_end__ - __data_start__);
+  __DATA_END = __etext + SIZEOF(.data) + SIZEOF(.ncache.init);
   text_end = ORIGIN(m_text) + LENGTH(m_text);
   ASSERT(__DATA_END <= text_end, "region m_text overflowed with text and data")
 
@@ -211,7 +192,7 @@ SECTIONS
     . = ALIGN(4);
     __bss_end__ = .;
     __END_BSS = .;
-  } > m_data
+  } > m_data AT > m_data
 
   .heap :
   {
@@ -229,6 +210,22 @@ SECTIONS
     . = ALIGN(8);
     . += STACK_SIZE;
   } > m_data
+
+  .ncache.init :
+  {
+    __noncachedata_start__ = .;   /* create a global symbol at ncache data start */
+    *(NonCacheable.init)
+    . = ALIGN(4);
+    __noncachedata_init_end__ = .;   /* create a global symbol at initialized ncache data end */
+  } > m_data2 AT > m_text
+
+  . = __noncachedata_init_end__;
+  .ncache :
+  {
+    *(NonCacheable)
+    . = ALIGN(4);
+    __noncachedata_end__ = .;     /* define a global symbol at ncache data end */
+  } > m_data2 AT > m_data2
 
   /* Initializes stack on the end of block */
   __StackTop   = ORIGIN(m_data) + LENGTH(m_data);

@@ -24,6 +24,7 @@
 #include "log/log.h"
 
 #include "rt_latency.h"
+#include "rt_latency_board.h"
 
 
 /*******************************************************************************
@@ -275,14 +276,7 @@ int main(void)
 {
 	BaseType_t xResult;
 
-	/* Init board cpu and hardware. */
-	BOARD_InitMemory();
-	BOARD_RdcInit();
-	/* Enable GIC before register any interrupt handler*/
-	GIC_Enable(1);
-	board_pins_setup();
-	board_clock_setup();
-	BOARD_InitDebugConsole();
+	rt_latency_board_init();
 
 	/* Test cases scheduler task */
 	xResult = xTaskCreate(main_task, "main_task", MAIN_STACK_SIZE,

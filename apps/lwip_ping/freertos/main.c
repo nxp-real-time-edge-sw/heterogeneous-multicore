@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2020,2022-2023 NXP
+ * Copyright 2016-2020,2022-2024 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -184,7 +184,7 @@ int main(void)
 	BOARD_InitMemory();
 	BOARD_RdcInit();
 	/* Enable GIC before register any interrupt handler*/
-	GIC_Enable(1);
+	GIC_Enable();
 	board_pins_setup();
 	board_clock_setup();
 	BOARD_InitDebugConsole();
@@ -196,7 +196,7 @@ int main(void)
 	 * The default value of ENET_PRIORITY is defined in lwip:ethernetif.h, but it can
 	 * be customized by defining a different value in lwipopts.h.
 	 */
-	os_irq_register(ENET_IRQ, enet_irq_handler, NULL, (ENET_PRIORITY >> portPRIORITY_SHIFT));
+	os_irq_register(ENET_IRQ, enet_irq_handler, NULL, ENET_PRIORITY);
 
 	/* Initialize lwIP from thread */
 	if (sys_thread_new("main", stack_init, NULL, INIT_THREAD_STACKSIZE, INIT_THREAD_PRIO) == NULL)

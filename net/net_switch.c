@@ -19,6 +19,16 @@
 #define STATS_PRINT_DELAY	1000	/* 1000ms */
 #define STATS_PRINT_PERIOD	10	/* print cycle is 10*1000ms */
 
+/* Compare two MAC address, return true for the same, otherwise return false */
+static bool cmp_mac_addr(uint8_t *mac1, uint8_t *mac2)
+{
+	int i;
+
+	for (i = 0; i < MAC_ADDR_LEN; i++)
+		if (*mac1++ != *mac2++)
+			return false;
+	return true;
+}
 
 static bool is_broadcast_pkt(uint8_t *mac_addr)
 {
@@ -32,19 +42,18 @@ static bool is_broadcast_pkt(uint8_t *mac_addr)
 	return true;
 }
 
+static inline bool is_multicast_pkt(uint8_t *mac_addr)
+{
+	return (*mac_addr == 0x01);
+}
+
 static struct switch_port *find_dst_port(struct switch_device *dev, struct switch_port *src_port, uint8_t *mac_addr)
 {
 	struct switch_port *port;
-	int i;
 
 	list_for_each_entry(port, &dev->local_port_list, port_node) {
-		if (port->power_on) {
-			for (i = 0; i < MAC_ADDR_LEN; i++)
-				if (*mac_addr++ != port->mac_addr[i])
-					break;
-			if (i == MAC_ADDR_LEN)
-				return port;
-		}
+		if (port->power_on && cmp_mac_addr(mac_addr, port->mac_addr))
+			return port;
 	}
 
 	/* If there is no matched local port, the packet from local port will be sent to remote port */
@@ -103,7 +112,7 @@ static void broadcast_pkt(struct switch_device *dev, struct switch_port *src_por
 					port_out_pkt(port, cloned_pkt);
 			}
 		}
-		if (cable_link_is_on(&dev->remote_port->cable)) {
+		if (dev->remote_port && cable_link_is_on(&dev->remote_port->cable)) {
 			port_out_pkt(dev->remote_port, pkt);
 			need_free = false;
 		}
@@ -129,12 +138,66 @@ static void broadcast_pkt(struct switch_device *dev, struct switch_port *src_por
 		data_pkt_free(pkt);
 }
 
+static void multicast_pkt(struct switch_device *dev, struct switch_port *src_port, struct data_pkt *pkt)
+{
+	struct switch_port *port;
+	struct data_pkt *cloned_pkt;
+	struct fdb_entry *fdb_addr;
+	bool need_free = true;
+
+	if (src_port->is_local) {
+		list_for_each_entry(port, &dev->local_port_list, port_node) {
+			if (port != src_port && cable_link_is_on(&port->cable) && port->fdb_enabled) {
+				list_for_each_entry(fdb_addr, &port->fdb_table, fdb_node) {
+					if (cmp_mac_addr(fdb_addr->mac_addr, pkt->data)) {
+						cloned_pkt = data_pkt_clone(pkt);
+						/* Add to out-port data_out list */
+						if (cloned_pkt)
+							port_out_pkt(port, cloned_pkt);
+						break;
+					}
+				}
+			}
+		}
+		if (dev->remote_port && cable_link_is_on(&dev->remote_port->cable)) {
+			port_out_pkt(dev->remote_port, pkt);
+			need_free = false;
+		}
+	} else {
+		list_for_each_entry(port, &dev->local_port_list, port_node) {
+			/* Bypass the port which link is off */
+			if (!cable_link_is_on(&port->cable))
+				continue;
+
+			list_for_each_entry(fdb_addr, &port->fdb_table, fdb_node) {
+				if (cmp_mac_addr(fdb_addr->mac_addr, pkt->data)) {
+					if (list_is_last(&dev->local_port_list, &port->port_node)) {
+						port_out_pkt(port, pkt);
+						need_free = false;
+					} else {
+						cloned_pkt = data_pkt_clone(pkt);
+						/* Add to out-port data_out list */
+						if (cloned_pkt)
+							port_out_pkt(port, cloned_pkt);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	if (need_free)
+		data_pkt_free(pkt);
+}
+
 static void switch_pkt(struct switch_port *port, struct data_pkt *data_entry)
 {
 	struct switch_port *out_port;
 
 	if (is_broadcast_pkt(data_entry->data)) {
 		broadcast_pkt(port->switch_dev, port, data_entry);
+	} else if (is_multicast_pkt(data_entry->data)) {
+		multicast_pkt(port->switch_dev, port, data_entry);
 	} else {
 		out_port = find_dst_port(port->switch_dev, port, data_entry->data);
 		if (out_port && cable_link_is_on(&out_port->cable))
@@ -236,6 +299,9 @@ void switch_add_port(void *port_dev, struct port_config *config)
 
 	list_init(&port->data_out);
 
+	port->fdb_enabled = false;
+	list_init(&port->fdb_table);
+
 	err = os_sem_init(&port->data_out_sem, 1);
 	os_assert(!err, "port data_out semaphore initialization failed");
 
@@ -278,6 +344,80 @@ void port_update_addr(void *port_dev, void *mac_addr)
 	port->power_on = false;
 	memcpy(port->mac_addr, mac_addr, sizeof(port->mac_addr));
 	port->power_on = true;
+}
+
+int vs_port_add_fdb_entry(void *port_dev, void *mac_addr)
+{
+	struct switch_port *port = port_dev;
+	struct switch_device *dev = port->switch_dev;
+	struct fdb_entry *fdb_addr, *tmp_fdb_addr, *new_fdb_addr;
+	uint8_t *addr = mac_addr;
+
+	os_assert(port->is_local, "FDB table only supported on local ports");
+
+	/* Check whether the address has already been added */
+	list_for_each_entry_safe(fdb_addr, tmp_fdb_addr, &port->fdb_table, fdb_node) {
+		if (cmp_mac_addr(mac_addr, fdb_addr->mac_addr)) {
+			os_printf("(%s) mac address %02x-%02x-%02x-%02x-%02x-%02x is already in fdb table of port %s \r\n",
+				__func__, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], port->name);
+			return -1;
+		}
+	}
+
+	/* Add new mac address to fdb table */
+	port->power_on = false;
+	new_fdb_addr = os_malloc(sizeof(struct fdb_entry));
+	os_assert(new_fdb_addr, "no memory for switch fdb entry");
+	memcpy(new_fdb_addr->mac_addr, mac_addr, MAC_ADDR_LEN);
+	list_add_tail(&port->fdb_table, &new_fdb_addr->fdb_node);
+	if (!port->fdb_enabled)
+		port->fdb_enabled = true;
+	port->power_on = true;
+
+	if (dev->remote_port)
+		dev->remote_port->setup_address_cb(OPS_ADDR_ADD, mac_addr, NULL);
+
+	return 0;
+}
+
+int vs_port_remove_fdb_entry(void *port_dev, void *mac_addr)
+{
+	struct switch_port *port = port_dev;
+	struct switch_device *dev = port->switch_dev;
+	struct fdb_entry *fdb_addr, *tmp_fdb_addr;
+	uint8_t *addr = mac_addr;
+	bool is_removed = false;
+
+	os_assert(port->is_local, "FDB table only supported on local ports");
+
+	if (!port->fdb_enabled)
+		goto not_found;
+
+	/* Check whether the address is in fdb table */
+	list_for_each_entry_safe(fdb_addr, tmp_fdb_addr, &port->fdb_table, fdb_node) {
+		if (cmp_mac_addr(mac_addr, fdb_addr->mac_addr)) {
+			port->power_on = false;
+			list_del(&fdb_addr->fdb_node);
+			/* Disable FDB if table is empty */
+			if (list_empty(&port->fdb_table))
+				port->fdb_enabled = false;
+			port->power_on = true;
+			is_removed = true;
+			break;
+		}
+	}
+	if (!is_removed)
+		goto not_found;
+
+	if (dev->remote_port)
+		dev->remote_port->setup_address_cb(OPS_ADDR_DEL, mac_addr, NULL);
+
+	return 0;
+
+not_found:
+	os_printf("(%s) mac address %02x-%02x-%02x-%02x-%02x-%02x is not in fdb table of port %s \r\n",
+				__func__, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], port->name);
+	return -1;
 }
 
 void port_on(void *port_dev, bool on)
