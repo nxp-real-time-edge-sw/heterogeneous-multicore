@@ -15,39 +15,39 @@ manifest:
   projects:
     - name: mcux-sdk
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
     - name: FreeRTOS-Kernel
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
     - name: CMSIS_5
       remote: nxpmcuxpresso
       path: mcux-sdk/CMSIS
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
     - name: lwip
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
       path: middleware/lwip
     - name: mcux-sdk-middleware-multicore
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
       path: middleware/multicore
     - name: rpmsg-lite
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
       path: middleware/multicore/rpmsg_lite
     - name: zephyr
       remote: nxpzephyr
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
       west-commands: scripts/west-commands.yml
     - name: hal_nxp
       remote: nxpzephyr
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
       path: modules/hal/nxp
       groups:
         - hal
     - name: soem
       remote: nxprealtimeedgesw
-      revision: Real-Time-Edge-v3.0-202412
+      revision: Real-Time-Edge-v3.1-202503
       path: middleware/soem
 
   self:
