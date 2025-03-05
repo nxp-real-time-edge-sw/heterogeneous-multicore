@@ -1,18 +1,18 @@
 NXP Software Content Register
 
 Release Name: Heterogeneous Multicore Library and Application
-Release Version: 0.5
+Release Version: 0.6
 
 --------------------------------------------
 Package:                     Heterogeneous_Multicore
-Version:                     0.5
+Version:                     0.6
 Outgoing License:            BSD-3-Clause
 License Files:               LICENSE.txt
 Type of Content:             source code, project files, linker files, binary library.
 Description and comments:    Library and applications to support inter-core communication and resource sharing between heterogeneous multicore.
                              For source code of binary library, please contact with NXP support team.
 Release Location:            https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore
-                             branch: main (tag: Real-Time-Edge-v3.0-202412)
+                             branch: main (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      NXP (BSD-3-Clause)
 --------------------------------------------
 Package:                     MCUXpresso_SDK
@@ -23,7 +23,7 @@ Type of Content:             source code
 Description and comments:    Full SDK including device system files,
                              middleware components, board peripheral drivers, etc.
 Release Location:            https://github.com/nxp-mcuxpresso/mcux-sdk
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      NXP (LA_OPT_NXP_Software_License)
 --------------------------------------------
 Package:                     FreeRTOS-Kernel
@@ -33,7 +33,7 @@ License File:                FreeRTOS-Kernel/License.md
 Type of Content:             source code
 Description and comments:    IoT operating system for microcontrollers with added ARM Cortex-A Core support
 Release Location:            https://github.com/nxp-mcuxpresso/FreeRTOS-Kernel
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      Amazon (MIT)
 --------------------------------------------
 Package:                     CMSIS_5
@@ -43,7 +43,7 @@ Type of Content:             source code
 Description and comments:    Vendor-independent hardware abstraction layer for microcontrollers that are based
                              on Arm Cortex processors.
 Release Location:            https://github.com/nxp-mcuxpresso/CMSIS_5
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      ARM (Apache-2.0) - https://github.com/ARM-software/CMSIS_5.git
 --------------------------------------------
 Package:                     lwIP TCP/IP Stack
@@ -52,7 +52,7 @@ License File:                middleware/lwip/COPYING
 Type of Content:             source code
 Description and comments:    A light-weight TCP/IP stack.
 Release Location:            https://github.com/nxp-mcuxpresso/lwip
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      Swedish Institute of Computer Science - http://savannah.nongnu.org/projects/lwip
 --------------------------------------------
 Package:                     Multicore SDK
@@ -61,7 +61,7 @@ License File:                COPYING-BSD-3
 Type of Content:             source code
 Description and comments:    NXP Multicore Software Development Kit.
 Release Location:            https://github.com/nxp-mcuxpresso/mcux-sdk-middleware-multicore
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      NXP (BSD-3-Clause)
 --------------------------------------------
 Package:                     RPMsg-Lite
@@ -70,7 +70,7 @@ License File:                COPYING-BSD-3
 Type of Content:             source code
 Description and comments:    Open Asymmetric Multi Processing (OpenAMP) framework project.
 Release Location:            https://github.com/nxp-mcuxpresso/rpmsg-lite
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      Mentor Graphics Corporation & community contributors.
 --------------------------------------------
 Package:                     Zephyr
@@ -79,7 +79,7 @@ License File:                zephyr/LICENSE
 Type of Content:             source code
 Description and comments:    Open source scalable real-time operating system
 Release Location:            https://github.com/nxp-zephyr/zephyr.git
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      https://github.com/zephyrproject-rtos/zephyr.git
 --------------------------------------------
 Package:                     hal_nxp
@@ -88,7 +88,7 @@ License File:                modules/hal/mcux/mcux-sdk/LA_OPT_NXP_Software_Licen
 Type of Content:             source code
 Description and comments:    SDK files for Zephyr
 Release Location:            https://github.com/nxp-zephyr/hal_nxp.git
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      https://github.com/zephyrproject-rtos/hal_nxp.git
 --------------------------------------------
 Package:                     SOEM
@@ -97,6 +97,6 @@ License File:                gpl-2.0.txt
 Type of Content:             Source code
 Description and comments:    Simple Open EtherCAT Master Library
 Release Location:            https://github.com/nxp-real-time-edge-sw/soem.git
-                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.0-202412)
+                             branch: feature/heterogeneous_multicore (tag: Real-Time-Edge-v3.1-202503)
 Origin:                      NXP (GPL-2.0)
                              SOEM (GPL-2.0) - https://github.com/OpenEtherCATsociety/soem
