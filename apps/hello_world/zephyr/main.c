@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -7,7 +7,9 @@
 #include <os/stdio.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
+#if __has_include("rtos_memory.h")
 #include "rtos_memory.h"
+#endif
 #include "app_board.h"
 
 #ifndef RTOSID
@@ -21,7 +23,7 @@ K_THREAD_STACK_DEFINE(tictac_stack, STACK_SIZE);
 
 static void print_ram_console_addr(void)
 {
-#if (RTOSID == 0)
+#if (RTOSID == 0 && RTOS_CNT > 1)
 	int i;
 
 	for (i = 1; i < RTOS_CNT; i++)

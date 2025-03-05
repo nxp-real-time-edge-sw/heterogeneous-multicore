@@ -73,6 +73,7 @@ SET(CMAKE_C_FLAGS_DDR_DEBUG " \
     -ffreestanding \
     -fno-builtin \
     -std=gnu99 \
+    -mstrict-align \
     ${RTOS_FLAG} \
     ${DEBUG_CONSOLE_CONFIG} \
 ")
@@ -105,6 +106,7 @@ SET(CMAKE_C_FLAGS_DDR_RELEASE " \
     -ffreestanding \
     -fno-builtin \
     -std=gnu99 \
+    -mstrict-align \
     ${RTOS_FLAG} \
     ${DEBUG_CONSOLE_CONFIG} \
 ")
@@ -136,6 +138,7 @@ SET(CMAKE_CXX_FLAGS_DDR_DEBUG " \
     -fno-builtin \
     -fno-rtti \
     -fno-exceptions \
+    -mstrict-align \
     ${RTOS_FLAG} \
     ${DEBUG_CONSOLE_CONFIG} \
 ")
@@ -167,6 +170,7 @@ SET(CMAKE_CXX_FLAGS_DDR_RELEASE " \
     -fno-builtin \
     -fno-rtti \
     -fno-exceptions \
+    -mstrict-align \
     ${RTOS_FLAG} \
     ${DEBUG_CONSOLE_CONFIG} \
 ")

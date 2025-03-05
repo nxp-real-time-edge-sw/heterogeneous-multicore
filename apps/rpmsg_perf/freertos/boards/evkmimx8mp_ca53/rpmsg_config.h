@@ -111,4 +111,10 @@
 #define RPMSG_BUF_SIZE (0x100000U)
 //@}
 
+//! @def RSC_TABLE_BASE
+//!
+//! Specify the resource table base address.
+#define RSC_TABLE_BASE (0xfe1f0000U)
+//@}
+
 #endif /* RPMSG_CONFIG_H_ */

@@ -100,28 +100,16 @@ static const struct ARM_MMU_region mmu_regions[] = {
 
 #if RTOSID == 0
 	MMU_REGION_FLAT_ENTRY("MU3",
-			      AON__MUI_A3__MUA_BASE, KB(4),
+			      AON__MUI_A3__MUA_BASE, KB(64),
 			      MT_DEVICE_nGnRE | MT_P_RW_U_RW | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("MU3_SRAM",
-			      (AON__MUI_A3__MUA_BASE + 0x1000), KB(4),
-			      MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS),
 #elif RTOSID == 1
 	MMU_REGION_FLAT_ENTRY("MU4",
-			      AON__MUI_A4__MUA_BASE, KB(4),
+			      AON__MUI_A4__MUA_BASE, KB(64),
 			      MT_DEVICE_nGnRE | MT_P_RW_U_RW | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("MU4_SRAM",
-			      (AON__MUI_A4__MUA_BASE + 0x1000), KB(4),
-			      MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS),
 #elif RTOSID == 2
 	MMU_REGION_FLAT_ENTRY("MU2",
-			      AON__MUI_A2__MUA_BASE, KB(4),
+			      AON__MUI_A2__MUA_BASE, KB(64),
 			      MT_DEVICE_nGnRE | MT_P_RW_U_RW | MT_NS),
-
-	MMU_REGION_FLAT_ENTRY("MU2_SRAM",
-			      (AON__MUI_A2__MUA_BASE + 0x1000), KB(4),
-			      MT_NORMAL_NC | MT_P_RW_U_RW | MT_NS),
 #endif
 
 #ifdef APP_MMU_ENTRIES

@@ -6,7 +6,7 @@
 
 valid_apps=("hello_world" "lwip_ping" "rpmsg_perf" "rpmsg_pingpong" "rpmsg_str_echo" "rpmsg_uart_sharing" "rt_latency" "soem_digital_io" "soem_servo" "virtio_net_backend" "virtio_perf")
 
-valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx93evk_ca55" "mcimx95evk_ca55")
+valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx91evk_ca55" "mcimx91qsb_ca55" "mcimx93evk_ca55" "mcimx95evk_ca55")
 valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33")
 
 valid_oss=("freertos" "zephyr")

@@ -167,16 +167,16 @@ static int os_counter_gpt_set_channel_alarm(os_counter_t *dev, uint8_t chan_id,
 	uint32_t current, next;
 	struct os_counter_alarm_cfg *alarm;
 
-	os_assert(!((alarm_cfg->flags & OS_COUNTER_ALARM_CFG_ABSOLUTE) &&
-			(alarm_cfg->flags & OS_COUNTER_ALARM_CFG_LOOP)),
-			"Don't use absolute ticks for loop alarm");
-
 	if (!alarm_cfg) {
 		log_err("Null pointer for channel ID (%d)\n", chan_id);
 
 		ret = -1;
 		goto exit;
 	}
+
+	os_assert(!((alarm_cfg->flags & OS_COUNTER_ALARM_CFG_ABSOLUTE) &&
+			(alarm_cfg->flags & OS_COUNTER_ALARM_CFG_LOOP)),
+			"Don't use absolute ticks for loop alarm");
 
 	if (chan_id != kGPT_OutputCompare_Channel1) {
 		/* TODO: support multiple channels */

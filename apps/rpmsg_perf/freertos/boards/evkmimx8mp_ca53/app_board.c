@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 NXP
+ * Copyright 2023-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,4 +14,5 @@ void board_init(void)
 	board_pins_setup();
 	board_clock_setup();
 	BOARD_InitDebugConsole();
+	copyResourceTable();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -57,5 +57,6 @@
 
 int servo_pdo_remap(struct servo_t *servo);
 int servo_pdo_activate_map(struct servo_t *servo);
+int servo_pdo_activate_map_2axis(struct servo_t *servo);
 int axis_start(struct axis_t *axis, uint8_t mode);
 #endif

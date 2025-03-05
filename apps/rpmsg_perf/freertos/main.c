@@ -124,6 +124,7 @@ static void rpmsg_send_task(void *param)
 	char sender_buffer[APP_BUFFER_PAYLOAD_SIZE];
 	TickType_t current_ticks = 0;
 	struct packet_header out = {0};
+	int result;
 	int i;
 
 	for (i = 0; i < sizeof(sender_buffer); i++) {
@@ -133,7 +134,8 @@ static void rpmsg_send_task(void *param)
 
 	for (;;) {
 		/* wait a signal to send packet */
-		xSemaphoreTake(send_packet_sig, portMAX_DELAY);
+		result = xSemaphoreTake(send_packet_sig, portMAX_DELAY);
+		os_assert(result == pdTRUE, "Failed to take semaphore send_packet_sig (ret: %d)", result);
 		os_printf("Sender Start:\r\n");
 		os_printf("Test case: Packet size: %u, Buffer copy: %s\r\n", args.packet_size, args.no_copy ? "NO" : "YES");
 		os_cpu_load_stats();
@@ -234,7 +236,7 @@ static void rpmsg_recv_task(void *param)
 			break;
 		case RPMSG_PERF_PREAMBLE_RECEIVER_START: {
 			uint32_t test_time = p_in->test_time; /* unit: second */
-			TickType_t test_time_ticks = pdMS_TO_TICKS(test_time * MS_PER_SECOND);
+			TickType_t test_time_ticks = pdMS_TO_TICKS((uint64_t)test_time * MS_PER_SECOND);
 			TickType_t current_ticks = 0;
 
 			memset((void *)&args, 0, sizeof(args));
@@ -245,7 +247,8 @@ static void rpmsg_recv_task(void *param)
 			args.no_copy = p_in->no_copy;
 			sender_poll_times = 0U;
 			delayed_packets_count = 0U;
-			xSemaphoreGive(send_packet_sig);
+			result = xSemaphoreGive(send_packet_sig);
+			os_assert(result == pdTRUE, "Failed to give semaphore send_packet_sig (ret: %d)", result);
 			break;
 		}
 		case RPMSG_PERF_PREAMBLE_RECEIVER_END_ACK: {

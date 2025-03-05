@@ -230,7 +230,7 @@ void destroy_test_case(void *context)
 
 void command_handler(void *ctx)
 {
-	uint8_t input;
+	int input;
 	uint32_t cmd_id;
 
 	log_raw_info("\r\nTest Case ID (1-6): \r\n");
@@ -251,12 +251,12 @@ void command_handler(void *ctx)
 		}
 		else
 		{
-			log_raw_info("%c", input);
+			log_raw_info("%c", (char)input);
 		}
 	} while ((input != '1') && (input != '2') && (input != '3') &&
 		 (input != '4') && (input != '5') && (input != '6'));
 
-	cmd_id = atoi(&input);
+	cmd_id = atoi((char *)&input);
 
 	if (cmd_id >= RT_LATENCY_TEST_CASE_MAX) {
 		log_err("Wrong test case id!\n");

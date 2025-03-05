@@ -161,7 +161,8 @@ retry:
 	err = os_sem_take(&ctx->semaphore, 0, COUNTER_IRQ_TIMEOUT_MS);
 	if (err < 0) {
 		/* waiting period timed out: probably late alarm scheduling and waiting for counter wrap. */
-		os_counter_cancel_channel_alarm(dev, 0);
+		err = os_counter_cancel_channel_alarm(dev, 0);
+		os_assert(!err, "Failed to cancel counter alarm!");
 		/* There is a small race window between cancel alarm and alarm callback
 		 * giving the semaphore. But the difference between the small timeout
 		 * and the time for timer (few minutes at 24Mhz) to wrap covers that.

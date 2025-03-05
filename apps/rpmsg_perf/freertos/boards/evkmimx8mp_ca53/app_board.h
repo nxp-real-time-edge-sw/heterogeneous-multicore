@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,6 +13,7 @@
 #include "clock_config.h"
 #include "fsl_clock.h"
 #include "rtos_memory.h"
+#include "rsc_table.h"
 
 #define CPU_CORE_NAME		"Cortex-A53"
 

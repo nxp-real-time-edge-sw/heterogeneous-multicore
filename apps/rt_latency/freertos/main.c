@@ -35,7 +35,7 @@
 
 /* Task priorities. */
 #define HIGHEST_TASK_PRIORITY (configMAX_PRIORITIES - 1)
-#define LOWEST_TASK_PRIORITY  (0)
+#define LOWEST_TASK_PRIORITY  (1)
 
 #define STACK_SIZE (configMINIMAL_STACK_SIZE + 100)
 #define MAIN_STACK_SIZE	(STACK_SIZE + 1024)
@@ -185,7 +185,7 @@ int start_test_case(void *context, int test_case_id)
 
 	/* Print task */
 	xResult = xTaskCreate(log_task, "log_task", STACK_SIZE,
-				&ctx->rt_ctx, LOWEST_TASK_PRIORITY + 1, &ctx->tc_taskHandles[hnd_idx++]);
+				&ctx->rt_ctx, LOWEST_TASK_PRIORITY + 2, &ctx->tc_taskHandles[hnd_idx++]);
 	if (xResult != pdPASS) {
 		log_err("task creation failed!\n");
 		goto err_task;
@@ -280,7 +280,7 @@ int main(void)
 
 	/* Test cases scheduler task */
 	xResult = xTaskCreate(main_task, "main_task", MAIN_STACK_SIZE,
-			&main_ctx, LOWEST_TASK_PRIORITY + 1, NULL);
+			&main_ctx, LOWEST_TASK_PRIORITY, NULL);
 	assert(xResult == pdPASS);
 
 	/* Start scheduler */

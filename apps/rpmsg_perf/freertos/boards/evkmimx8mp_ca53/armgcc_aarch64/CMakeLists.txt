@@ -59,6 +59,7 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
     "${ProjDirPath}/../app_board.c"
     "${ProjDirPath}/../pin_mux.c"
     "${ProjDirPath}/../clock_config.c"
+    "${ProjDirPath}/../rsc_table.c"
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE

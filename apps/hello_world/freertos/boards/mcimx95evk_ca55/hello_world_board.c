@@ -25,8 +25,8 @@ void hello_world_board_init(void)
 	BOARD_InitMemory();
 	/* Enable GIC before register any interrupt handler*/
 	GIC_Enable();
-	SM_Platform_Init();
 	os_irq_register(irq, SM_platform_MU_IRQHandler, NULL, portLOWEST_USABLE_INTERRUPT_PRIORITY - 1);
+	SM_Platform_Init();
 	board_pins_setup();
 	board_clock_setup();
 #ifdef CONFIG_RAM_CONSOLE

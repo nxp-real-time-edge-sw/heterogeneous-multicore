@@ -8,6 +8,7 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
+#include <os/assert.h>
 
 #include "srtm_dispatcher.h"
 #include "srtm_peercore.h"
@@ -253,6 +254,7 @@ static void SRTM_DispatcherTask(void *pvParameters)
 static void SRTM_MonitorTask(void *pvParameters)
 {
     app_srtm_state_t state = APP_SRTM_StateShutdown;
+    int ret;
 
     /* Initialize services and add to dispatcher */
     APP_SRTM_InitServices();
@@ -263,7 +265,8 @@ static void SRTM_MonitorTask(void *pvParameters)
     /* Monitor peer core state change */
     while (true)
     {
-        xSemaphoreTake(monSig, portMAX_DELAY);
+        ret = xSemaphoreTake(monSig, portMAX_DELAY);
+        os_assert(ret == pdTRUE, "Failed to take semaphore monSig (ret: %d)", ret);
 
         if (state == srtmState)
         {
@@ -331,6 +334,8 @@ static void SRTM_MonitorTask(void *pvParameters)
 
 void APP_SRTM_Init(void)
 {
+    BaseType_t xResult;
+
     monSig = xSemaphoreCreateBinary();
     assert(monSig);
 
@@ -341,8 +346,10 @@ void APP_SRTM_Init(void)
     /* Create SRTM dispatcher */
     disp = SRTM_Dispatcher_Create();
 
-    xTaskCreate(SRTM_MonitorTask, "SRTM monitor", 256U, NULL, APP_SRTM_MONITOR_TASK_PRIO, NULL);
-    xTaskCreate(SRTM_DispatcherTask, "SRTM dispatcher", 512U, NULL, APP_SRTM_DISPATCHER_TASK_PRIO, NULL);
+    xResult = xTaskCreate(SRTM_MonitorTask, "SRTM monitor", 256U, NULL, APP_SRTM_MONITOR_TASK_PRIO, NULL);
+    os_assert(xResult == pdPASS, "SRTM_MonitorTask creation failed");
+    xResult = xTaskCreate(SRTM_DispatcherTask, "SRTM dispatcher", 512U, NULL, APP_SRTM_DISPATCHER_TASK_PRIO, NULL);
+    os_assert(xResult == pdPASS, "SRTM_DispatcherTask creation failed");
 }
 
 void APP_SRTM_StartCommunication(void)

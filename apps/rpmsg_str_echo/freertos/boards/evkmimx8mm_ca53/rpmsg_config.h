@@ -2,7 +2,7 @@
  * Copyright (c) 2014, Mentor Graphics Corporation
  * Copyright (c) 2015 Xilinx, Inc.
  * Copyright (c) 2016 Freescale Semiconductor, Inc.
- * Copyright 2016-2023 NXP
+ * Copyright 2016-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -113,6 +113,12 @@
 //!
 //! Specify the sharing memory size used for RPMSG buffer.
 #define RPMSG_BUF_SIZE (0x100000U)
+//@}
+
+//! @def RSC_TABLE_BASE
+//!
+//! Specify the resource table base address.
+#define RSC_TABLE_BASE (0xb86f0000U + 0x1000 * RTOSID)
 //@}
 
 #endif /* RPMSG_CONFIG_H_ */
