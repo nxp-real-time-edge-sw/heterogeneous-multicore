@@ -142,7 +142,7 @@ pip3 install west
 Use the following command to clone all the source code:
 
 ```bash
-export revision=Real-Time-Edge-v3.0-202412
+export revision=Real-Time-Edge-v3.1-202503
 west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
 cd workspace
 west update
@@ -200,7 +200,7 @@ The following is help information for "build_apps.sh" tool:
 ./build_apps.sh [clean] [os] [board-list] [app-list] [core]    - build or clean specified applications
       - os: specify freertos or zephyr or both if no specified.
       - core: a-core or m-core
-      - board-list: specify one or some or all boards if no specified: evkmimx8mm_ca53 evkmimx8mp_ca53 mcimx93evk_ca55 evkmimx8mm_cm4 evkmimx8mp_cm7 mcimx93evk_cm33
+      - board-list: specify one or some or all boards if no specified: evkmimx8mm_ca53 evkmimx8mp_ca53 mcimx91evk_ca55 mcimx91qsb_ca55 mcimx93evk_ca55 mcimx95evk_ca55 evkmimx8mm_cm4 evkmimx8mp_cm7 mcimx93evk_cm33
       - app-list: specify one or some or all applications if no specified: hello_world lwip_ping rpmsg_perf rpmsg_pingpong rpmsg_str_echo rpmsg_uart_sharing rt_latency soem_digital_io soem_servo virtio_net_backend virtio_perf
 ```
 For example:
