@@ -8,6 +8,7 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
+#include <os/assert.h>
 #include "fsl_mu.h"
 #include "fsl_iomuxc.h"
 #include "srtm_dispatcher.h"
@@ -207,6 +208,8 @@ static void APP_SRTM_InitServices(void)
 
 static void SRTM_MonitorTask(void *pvParameters)
 {
+    int ret;
+
     /* Initialize services and add to dispatcher */
     APP_SRTM_InitServices();
 
@@ -216,7 +219,9 @@ static void SRTM_MonitorTask(void *pvParameters)
     xSemaphoreGive(monSig);
     while (true)
     {
-        xSemaphoreTake(monSig, portMAX_DELAY);
+        ret = xSemaphoreTake(monSig, portMAX_DELAY);
+        os_assert(ret == pdTRUE, "Failed to take semaphore monSig (ret: %d)", ret);
+
         if (srtmState == APP_SRTM_StateRun)
         {
             SRTM_Dispatcher_Stop(disp);
