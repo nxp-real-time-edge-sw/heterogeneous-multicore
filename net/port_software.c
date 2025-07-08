@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -113,7 +113,8 @@ void *soft_vport_init(void *switch_dev, struct soft_vport_cfg *cfg)
 
 	memcpy(config.mac_addr, cfg->mac_addr, MAC_ADDR_LEN);
 	config.setup_address_cb = vs_port_setup_macaddr;
-	strlcpy(config.name, cfg->name, sizeof(config.name));
+	strncpy(config.name, cfg->name, sizeof(config.name) - 1);
+	config.name[sizeof(config.name) - 1] = '\0';
 	switch_add_port(port_dev, &config);
 
 	return (void *)sw_vport_dev;

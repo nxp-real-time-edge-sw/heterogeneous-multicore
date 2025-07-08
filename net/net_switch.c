@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 NXP
+ * Copyright 2022-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -287,7 +287,8 @@ void switch_add_port(void *port_dev, struct port_config *config)
 	struct switch_device *dev = port->switch_dev;
 	int err;
 
-	strlcpy(port->name, config->name, sizeof(port->name));
+	strncpy(port->name, config->name, sizeof(port->name) - 1);
+	port->name[sizeof(port->name) - 1] = '\0';
 	memcpy(port->mac_addr, config->mac_addr, sizeof(port->mac_addr));
 	if (config->is_local && dev->remote_port)
 		dev->remote_port->setup_address_cb(OPS_ADDR_ADD, config->mac_addr, NULL);

@@ -23,6 +23,7 @@ void hello_world_board_init(void)
 	BOARD_InitDebugConsole();
 }
 
-void print_ram_console_addr(void)
+uint64_t get_core_mpid(void)
 {
+	return (__get_MPIDR_EL1() & MPIDR_AFFINITY_MASK);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 NXP
+ * Copyright 2023-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -28,12 +28,7 @@ void hello_world_board_init(void)
 #endif
 }
 
-void print_ram_console_addr(void)
+uint64_t get_core_mpid(void)
 {
-#if (RTOSID == 0)
-		int i;
-
-		for (i = 1; i < RTOS_CNT; i++)
-			PRINTF("RTOS%d: RAM console@0x%x\r\n", i, RAM_CONSOLE_ADDR + RTOS_MEM_LEN * i);
-#endif
+	return (__get_MPIDR_EL1() & MPIDR_AFFINITY_MASK);
 }

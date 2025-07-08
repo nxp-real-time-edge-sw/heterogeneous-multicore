@@ -1,11 +1,13 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef _NET_DEBUG_H_
 #define _NET_DEBUG_H_
+
+#include <stdint.h>
 
 typedef enum {
     FMT_1BYTE, /* Format: 0x0000: BYTE0 BYTE1 BYTE2 ...*/
@@ -14,7 +16,7 @@ typedef enum {
 
 #ifdef DEBUG
 
-static inline void dbg_hexdump(char *buf, int len, dump_fmt_t format)
+static inline void dbg_hexdump(uint8_t *buf, int len, dump_fmt_t format)
 {
 	int i;
 
@@ -36,7 +38,7 @@ static inline void dbg_hexdump(char *buf, int len, dump_fmt_t format)
 
 #else /* DEBUG */
 
-static inline void dbg_hexdump(char *buf, int len, dump_fmt_t format)
+static inline void dbg_hexdump(uint8_t *buf, int len, dump_fmt_t format)
 {
     return;
 }

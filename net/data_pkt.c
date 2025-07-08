@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -12,13 +12,13 @@
 #include <os/stdio.h>
 #include <os/string.h>
 
-struct data_pkt *data_pkt_build(void *addr, uint32_t buf_len, uint32_t flags)
+struct data_pkt *data_pkt_build(uint8_t *addr, uint32_t buf_len, uint32_t flags)
 {
 	struct data_pkt *pkt;
 
 	os_assert(buf_len > (DATA_PKT_HEAD_ROOM + DATA_PKT_TAIL_ROOM), "build data pkt failed");
 
-	pkt = addr;
+	pkt = (struct data_pkt *)addr;
 	pkt->data = addr + DATA_PKT_HEAD_ROOM;
 	pkt->data_len = 0;
 	pkt->tail = addr + buf_len - DATA_PKT_TAIL_ROOM;

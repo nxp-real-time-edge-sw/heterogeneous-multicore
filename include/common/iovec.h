@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,7 @@
 #define _IOVEC_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include "common/util.h"
 
 struct iovec {
@@ -32,7 +33,7 @@ static inline int memcpy_toiovec(struct iovec *iov, uint8_t *data, int len)
 			int copy = min_t(uint32_t, iov->len, len);
 			memcpy(iov->addr, data, copy);
 			data += copy;
-			iov->addr += copy;
+			iov->addr = (uint8_t *)iov->addr + copy;
 			len -= copy;
 			iov->len -= copy;
 		}
@@ -49,7 +50,7 @@ static inline int memcpy_fromiovec(uint8_t *data, struct iovec *iov, int len)
 			int copy = min_t(uint32_t, iov->len, len);
 			memcpy(data, iov->addr, copy);
 			data += copy;
-			iov->addr += copy;
+			iov->addr = (uint8_t *)iov->addr + copy;
 			len -= copy;
 			iov->len -= copy;
 		}

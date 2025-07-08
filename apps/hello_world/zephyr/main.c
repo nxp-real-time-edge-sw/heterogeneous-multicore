@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdio.h>
 #include <os/stdio.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
@@ -16,73 +17,63 @@
 #define RTOSID		(0)
 #endif
 
+#define NUM_THREADS	CONFIG_MP_MAX_NUM_CPUS
 #define STACK_SIZE	4096
 
-K_THREAD_STACK_DEFINE(hello_stack, STACK_SIZE);
-K_THREAD_STACK_DEFINE(tictac_stack, STACK_SIZE);
+K_SEM_DEFINE(hello_sem, 0, NUM_THREADS);
+K_THREAD_STACK_ARRAY_DEFINE(hello_stack, NUM_THREADS, STACK_SIZE);
 
-static void print_ram_console_addr(void)
+static struct k_thread hello_thread[NUM_THREADS];
+
+static uint64_t get_core_mpid(void)
 {
-#if (RTOSID == 0 && RTOS_CNT > 1)
-	int i;
-
-	for (i = 1; i < RTOS_CNT; i++)
-		os_printf("RTOS%d: RAM console@0x%x\r\n", i,
-			  RAM_CONSOLE_ADDR + RTOS_INST_STRIDE * i);
+#if defined(MPIDR_TO_CORE) && defined(GET_MPIDR)
+	return MPIDR_TO_CORE(GET_MPIDR());
+#else
+	return 0;
 #endif
 }
 
 static void hello_func(void *p1, void *p2, void *p3)
 {
-	os_printf("%s: RTOS%d: ", CPU_CORE_NAME, RTOSID);
-	os_printf("Hello World! Real-time Edge on %s\n", CONFIG_BOARD);
-	print_ram_console_addr();
+	const char *name = k_thread_name_get(k_current_get());
 
 	do {
-		k_msleep(500);
-		k_thread_suspend(k_current_get());
-
-	} while(1);
-}
-
-static void tictac_func(void *p1, void *p2, void *p3)
-{
-	unsigned long long count = 0;
-
-	do {
-		k_msleep(1000);
-
-		if (++count % 2)
-			os_printf("tic ");
-		else
-			os_printf("tac ");
-
-		if (!(count % 20))
-			os_printf("\n");
+		k_sem_take(&hello_sem, K_FOREVER);
+		os_printf("%s: hello from core (MPID: 0x%llx)\r\n", name, get_core_mpid());
 	} while(1);
 }
 
 int main(void)
 {
-	struct k_thread hello_thread;
-	struct k_thread tictac_thread;
+	int i;
 
-	/* tic tac thread */
-	k_thread_create(&tictac_thread, tictac_stack, STACK_SIZE,
-			tictac_func, NULL, NULL, NULL,
-			K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_FOREVER);
+	os_printf("%s: RTOS%d: ", CPU_CORE_NAME, RTOSID);
+	os_printf("Hello World! Real-time Edge on %s\n", CONFIG_BOARD);
 
-	/* Hello thread */
-	k_thread_create(&hello_thread, hello_stack, STACK_SIZE,
-			hello_func, NULL, NULL, NULL,
-			K_HIGHEST_THREAD_PRIO, 0, K_FOREVER);
+	for (i = 0; i < NUM_THREADS; i++) {
+		/* Create hello threads */
+		k_thread_create(&hello_thread[i], hello_stack[i], STACK_SIZE,
+				hello_func, INT_TO_POINTER(i), NULL, NULL,
+				K_HIGHEST_THREAD_PRIO, 0, K_FOREVER);
 
-	/* Start threads */
-	k_thread_start(&tictac_thread);
-	k_thread_start(&hello_thread);
+		char name[16];
+		snprintf(name, sizeof(name), "hello_thread_%d", i);
+		k_thread_name_set(&hello_thread[i], name);
+
+#ifdef CONFIG_SCHED_CPU_MASK
+		k_thread_cpu_pin(&hello_thread[i], i);
+#endif
+		/* Start threads */
+		k_thread_start(&hello_thread[i]);
+	}
 
 	do {
-		k_msleep(100);
+		/* Wakeup all hello threads */
+		for (i = 0; i < NUM_THREADS; i++) {
+			k_sem_give(&hello_sem);
+		}
+		k_sleep(K_SECONDS(1));
 
 	} while(1);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -458,7 +458,8 @@ int enet_port_init(void *switch_dev)
 	config.print_priv_stats = print_priv_stats;
 	memset(config.mac_addr, 0, 6);
 	config.setup_address_cb = enet_setup_macaddr;
-	strlcpy(config.name, "ENET_Switch_Port", sizeof(config.name));
+	strncpy(config.name, "ENET_Switch_Port", sizeof(config.name) - 1);
+	config.name[sizeof(config.name) - 1] = '\0';
 	switch_add_port(switch_port, &config);
 
 	create_enet_thread(enet_dev);

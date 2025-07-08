@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2025 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -43,11 +43,11 @@
 struct data_pkt {
 	struct list_head pkt_entry;
 
-	void *data;
+	uint8_t *data;
 	uint32_t data_len;
 
-	void *tail;
-	void *end;
+	uint8_t *tail;
+	uint8_t *end;
 
 	uint32_t flags;
 
@@ -56,7 +56,7 @@ struct data_pkt {
 };
 
 struct data_pkt *data_pkt_alloc(uint32_t data_room_size, uint32_t flags);
-struct data_pkt *data_pkt_build(void *addr, uint32_t buf_len, uint32_t flags);
+struct data_pkt *data_pkt_build(uint8_t *addr, uint32_t buf_len, uint32_t flags);
 struct data_pkt *data_pkt_clone(struct data_pkt *pkt);
 void data_pkt_free(struct data_pkt *pkt);
 void data_pkt_set_len(struct data_pkt *pkt, uint32_t data_len);

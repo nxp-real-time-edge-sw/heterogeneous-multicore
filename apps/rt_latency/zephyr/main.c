@@ -1,9 +1,10 @@
 /*
- * Copyright 2022-2024 NXP.
+ * Copyright 2022-2025 NXP.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <stdint.h>
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 #include <zephyr/console/console.h>
@@ -15,6 +16,8 @@
 #include "rt_latency.h"
 
 #define STACK_SIZE 4096
+#define TEST_DURATION_FOREVER 0
+
 
 K_THREAD_STACK_DEFINE(counter_stack, STACK_SIZE);
 
@@ -228,10 +231,100 @@ void destroy_test_case(void *context)
 	ctx->started = false;
 }
 
-void command_handler(void *ctx)
+/* Get test duration in seconds from console input */
+static int get_test_duration_from_console(void)
+{
+	char input_buffer[32] = {0};
+	int test_duration_sec = 0;
+	int i = 0;
+	int ch;
+
+	log_raw_info("\r\nEnter test duration ('0' for infinite loop):\r\n");
+	log_raw_info("  - number for seconds (e.g., '10')\r\n");
+	log_raw_info("  - number followed by 'h' for hours (e.g., '2h')\r\n");
+	log_raw_info("  - number followed by 'd' for days (e.g., '1d')\r\n");
+	log_raw_info("> ");
+
+	/* Read characters until Enter key is pressed or buffer is full */
+	while (i < sizeof(input_buffer) - 1) {
+		ch = console_getchar();
+
+		if (ch < 0) {
+			/* No input available, retry */
+			continue;
+		}
+
+		/* Enter key pressed (CR or LF) */
+		if (ch == '\r' || ch == '\n') {
+			log_raw_info("\r\n");
+			break;
+		}
+
+		/* Handle backspace */
+		if (ch == '\b' || ch == 127) {
+			if (i > 0) {
+				i--;
+				input_buffer[i] = 0;
+				log_raw_info("\b \b"); /* Erase character from terminal */
+			}
+			continue;
+		}
+
+		/* Accept digits and h/d unit specifiers */
+		if ((ch >= '0' && ch <= '9') || (i > 0 && (ch == 'h' || ch == 'd'))) {
+			input_buffer[i++] = (char)ch;
+			log_raw_info("%c", (char)ch); /* Echo character */
+		}
+	}
+
+	input_buffer[i] = '\0';
+
+	/* Convert string to appropriate duration in seconds */
+	if (i > 0) {
+		char unit = input_buffer[i-1];
+
+		if (unit == 'h' || unit == 'd') {
+			/* Replace unit char with null terminator for conversion */
+			input_buffer[i-1] = '\0';
+			int value = atoi(input_buffer);
+
+			if (unit == 'h') {
+				test_duration_sec = value * 3600; /* Convert hours to seconds */
+				log_raw_info("Test duration: %d hours (%d seconds)\r\n", value, test_duration_sec);
+			} else { /* unit == 'd' */
+				test_duration_sec = value * 86400; /* Convert days to seconds */
+				log_raw_info("Test duration: %d days (%d seconds)\r\n", value, test_duration_sec);
+			}
+		} else {
+			/* No unit specified, interpret as seconds */
+			test_duration_sec = atoi(input_buffer);
+			if (test_duration_sec > 0) {
+				log_raw_info("Test duration: %d seconds\r\n", test_duration_sec);
+			}
+		}
+	}
+
+	return test_duration_sec;
+}
+
+/* Run @test_case_id for @duration_sec seconds */
+static void run_test_case(void *context, int test_case_id, uint32_t duration_sec)
+{
+	struct main_ctx *ctx = context;
+	k_timeout_t timeout;
+
+	timeout = (duration_sec == TEST_DURATION_FOREVER) ? K_FOREVER : K_SECONDS((uint64_t)duration_sec);
+	start_test_case(ctx, test_case_id);
+	k_sleep(timeout);
+	destroy_test_case(ctx);
+	log_info("Test case %d completed\n", test_case_id);
+}
+
+static int command_handler(void *ctx)
 {
 	int input;
 	uint32_t cmd_id;
+	int test_duration_sec;
 
 	log_raw_info("\r\nTest Case ID (1-6): \r\n");
 	log_raw_info("\t1: no extra load\r\n");
@@ -243,7 +336,7 @@ void command_handler(void *ctx)
 
 	do
 	{
-		log_raw_info("\r\nPlease input the test case ID (1-6): ");
+		log_raw_info("\r\nPlease input the test case ID (1-6), 'q' for quit: ");
 		input = console_getchar();
 		if (input < 0)
 		{
@@ -252,6 +345,8 @@ void command_handler(void *ctx)
 		else
 		{
 			log_raw_info("%c", (char)input);
+			if (input == 'q' || input == 'Q')
+				return -1;
 		}
 	} while ((input != '1') && (input != '2') && (input != '3') &&
 		 (input != '4') && (input != '5') && (input != '6'));
@@ -260,12 +355,21 @@ void command_handler(void *ctx)
 
 	if (cmd_id >= RT_LATENCY_TEST_CASE_MAX) {
 		log_err("Wrong test case id!\n");
-		return;
+		return -2;
 	}
 
-	start_test_case(ctx, cmd_id);
-}
+	/* Get test duration from user */
+	test_duration_sec = get_test_duration_from_console();
+	/* Given default duration */
+	if (test_duration_sec <= 0) {
+		test_duration_sec = TEST_DURATION_FOREVER;
+		log_raw_info("Test duration: infinite loop\r\n");
+	}
 
+	run_test_case(ctx, cmd_id, (uint32_t)test_duration_sec);
+
+	return 0;
+}
 
 void main(void)
 {
@@ -283,10 +387,11 @@ void main(void)
 	ctx->started = false;
 
 	do {
-		if (!ctx->started)
-			command_handler(ctx);
-
-		k_msleep(1000);
-
+		if ((!ctx->started) && (command_handler(ctx) == -1)) {
+			break;
+		}
 	} while(1);
+
+	log_raw_info("\r\n");
+	log_info("Quit!\n");
 }

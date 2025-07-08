@@ -8,6 +8,6 @@
 #define _HELLO_WORLD_BOARD_H_
 
 void hello_world_board_init(void);
-void print_ram_console_addr(void);
+uint64_t get_core_mpid(void);
 
 #endif

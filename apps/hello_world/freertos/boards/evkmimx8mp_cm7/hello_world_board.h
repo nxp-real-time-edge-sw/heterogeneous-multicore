@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023, 2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -16,6 +16,5 @@
 #define RTOS_CNT	(1)
 
 void hello_world_board_init(void);
-void print_ram_console_addr(void);
 
 #endif

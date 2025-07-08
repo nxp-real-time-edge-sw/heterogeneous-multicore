@@ -114,6 +114,8 @@ Multiple applications are in "apps" directory:
 
 ## Download
 
+Install cross compiler toolchain:
+
 A cross compiler is required to build Cortex-A and Cortex-M applications, this project is compatible with the ARM GCC toolchain that you may download and install:
 
 ```bash
@@ -123,6 +125,15 @@ tar xf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
 wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-elf.tar.xz
 tar xf arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-elf.tar.xz
 ```
+
+Install cmake (minimal required version is v3.12.0):
+
+```bash
+sudo apt install cmake
+```
+
+Install west:
+
 This project uses west to manage all related repos, west.yml provides the description and revision for other projects used by Heterogeneous Multicore. Install the following tools firstly in order to download and built the applications:
 
 ```bash
@@ -142,7 +153,7 @@ pip3 install west
 Use the following command to clone all the source code:
 
 ```bash
-export revision=Real-Time-Edge-v3.1-202503
+export revision=Real-Time-Edge-v3.2-202507
 west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
 cd workspace
 west update

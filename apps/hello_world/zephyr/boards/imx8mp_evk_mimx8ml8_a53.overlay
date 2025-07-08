@@ -1,15 +1,15 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include "evkmimx8mp_ca53/rtos_memory.h"
 
-/delete-node/ &sram0;
+/delete-node/ &dram;
 
 / {
-	sram0: memory@SRAM_BASE {
+	dram: memory@SRAM_BASE {
 		reg = <DT_ADDR(SRAM_BASE) DT_SIZE_M(1)>;
 	};
 };

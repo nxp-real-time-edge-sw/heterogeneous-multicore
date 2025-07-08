@@ -1,0 +1,59 @@
+/*
+ * Copyright 2025 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "mcimx93evk_ca55/rtos_memory.h"
+
+/delete-node/ &dram;
+
+/ {
+	chosen {
+		/*
+		 * shared memory reserved for the inter-processor communication
+		 */
+		zephyr,ipc_shm = &shram;
+		zephyr,ipc = &gen_sw_ipm_mbox;
+		zephyr,ipc_rsc_table = &rsc_table;
+	};
+
+	dram: memory@SRAM_BASE {
+		reg = <DT_ADDR(SRAM_BASE) DT_SIZE_M(1)>;
+	};
+
+	rsc_table: memory@fe1f0000 {
+		compatible = "mmio-sram";
+		reg = <0xfe1f0000 0x1000>;
+	};
+
+	rpmsg: memory@fe100000 {
+		compatible = "mmio-sram";
+		reg = <0xfe100000 0x10000>;
+	};
+
+	shram: memory@fe200000 {
+		compatible = "mmio-sram";
+		reg = <0xfe200000 0x100000>;
+	};
+
+	soc {
+		gen_sw_mbox: gen-sw-mailbox@fe000000 {
+			compatible = "nxp,generic-software-mbox";
+			reg = <0xfe000000 0x1000>;
+			#mbox-cells = <1>;
+			/* 169 (201 - 32) */
+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			remote-interrupt = <200>;
+			interrupt-parent = <&gic>;
+			status = "okay";
+		};
+
+		gen_sw_ipm_mbox: ipm-mbox {
+			compatible = "zephyr,mbox-ipm";
+			mboxes = <&gen_sw_mbox 0>, <&gen_sw_mbox 0>;
+			mbox-names = "tx", "rx";
+			status = "okay";
+		};
+	};
+};

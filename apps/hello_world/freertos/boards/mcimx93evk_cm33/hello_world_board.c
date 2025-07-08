@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 NXP
+ * Copyright 2023-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -19,8 +19,4 @@ void hello_world_board_init(void)
     BOARD_InitDebugConsole();
     BOARD_ConfigMPU();
     copyResourceTable();
-}
-
-void print_ram_console_addr(void)
-{
 }

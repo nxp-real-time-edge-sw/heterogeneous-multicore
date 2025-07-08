@@ -15,6 +15,10 @@ console_matrix=(rtos0_console_list rtos1_console_list)
 rtos0_console_list=("RAM_CONSOLE" "UART2")
 rtos1_console_list=("RAM_CONSOLE" "UART1")
 
+smp_matrix=(rtos0_smp_list rtos1_smp_list)
+rtos0_smp_list=("nonsmp" "smp")
+rtos1_smp_list=("nonsmp")
+
 if [ "$#" -eq 1 ]; then
 	case "$1" in
 		RTOS0)
@@ -42,23 +46,38 @@ do
 	TMPC=(${!TMPB})
 	for each_console in ${TMPC[@]}
 	do
-		if [ -d "build_RTOS${each_rtos}_${each_console}" ];then rm -rf ./build_RTOS${each_rtos}_${each_console}; fi
-		cmake -B build_RTOS${each_rtos}_${each_console} -GNinja -DZEPHYR_MODULES="$CMSIS_PATH;$HAL_NXP_PATH" -DRTOS_ID=${each_rtos} -DCONSOLE=${each_console} -DBOARD=imx93_evk/mimx9352/a55  ../../../
-		ninja -C build_RTOS${each_rtos}_${each_console}
-		if [ $? -ne 0 ]; then
-			exit 1
-		fi
-		# append RAM Console buffer address to image name
-		if [ $each_console = "RAM_CONSOLE" ]; then
-			# parse RAM Console address from dts
-			buf_addr=$(sed -n '/ram_console:/p' build_RTOS${each_rtos}_${each_console}/zephyr/zephyr.dts)
-			buf_addr=${buf_addr##*@}
-			buf_addr=0x${buf_addr%% *}
-			console_name="RAM_CONSOLE-$buf_addr"
-		else
-			console_name=${each_console}
-		fi
-		mv build_RTOS${each_rtos}_${each_console}/zephyr/hello_world.bin build_RTOS${each_rtos}_${each_console}/zephyr/hello_world_ca55_RTOS${each_rtos}_${console_name}.bin
-		mv build_RTOS${each_rtos}_${each_console}/zephyr/hello_world.elf build_RTOS${each_rtos}_${each_console}/zephyr/hello_world_ca55_RTOS${each_rtos}_${console_name}.elf
+		TMPD=${smp_matrix[${each_rtos}]}
+		TMPE=$TMPD[@]
+		TMPF=(${!TMPE})
+		for each_smp in ${TMPF[@]}
+		do
+			if [ ${each_smp} = "smp" ]; then
+				SMP="SMP_"
+				BUILD_BOARD=imx93_evk/mimx9352/a55/smp
+			else
+				SMP=""
+				BUILD_BOARD=imx93_evk/mimx9352/a55
+			fi
+
+			BUILD_DIR="build_RTOS${each_rtos}_${SMP}${each_console}"
+			if [ -d "${BUILD_DIR}" ];then rm -rf ./${BUILD_DIR}; fi
+			cmake -B ${BUILD_DIR} -GNinja -DZEPHYR_MODULES="$CMSIS_PATH;$HAL_NXP_PATH" -DRTOS_ID=${each_rtos} -DCONSOLE=${each_console} -DBOARD=${BUILD_BOARD} ../../../
+			ninja -C ${BUILD_DIR}
+			if [ $? -ne 0 ]; then
+				exit 1
+			fi
+			# append RAM Console buffer address to image name
+			if [ $each_console = "RAM_CONSOLE" ]; then
+				# parse RAM Console address from dts
+				buf_addr=$(sed -n '/ram_console:/p' ${BUILD_DIR}/zephyr/zephyr.dts)
+				buf_addr=${buf_addr##*@}
+				buf_addr=0x${buf_addr%% *}
+				console_name="RAM_CONSOLE-$buf_addr"
+			else
+				console_name=${each_console}
+			fi
+			mv ${BUILD_DIR}/zephyr/hello_world.bin ${BUILD_DIR}/zephyr/hello_world_ca55_RTOS${each_rtos}_${SMP}${console_name}.bin
+			mv ${BUILD_DIR}/zephyr/hello_world.elf ${BUILD_DIR}/zephyr/hello_world_ca55_RTOS${each_rtos}_${SMP}${console_name}.elf
+		done
 	done
 done

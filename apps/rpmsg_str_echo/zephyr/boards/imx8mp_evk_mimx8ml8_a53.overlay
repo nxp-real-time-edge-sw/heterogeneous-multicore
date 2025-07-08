@@ -1,0 +1,75 @@
+/*
+ * Copyright 2025 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "evkmimx8mp_ca53/rtos_memory.h"
+
+#if (RTOSID == 0)
+#define RPMSG_BASE		fe100000
+#define RSC_TABLE_BASE		fe1f0000
+#define SHRAM_BASE		fe200000
+
+#define GEN_SW_MBOX_BASE	fe000000
+#define GMOX_IRQ		151
+#define GMOX_RMT_IRQ		182
+#elif (RTOSID == 1)
+#define RPMSG_BASE		fe110000
+#define RSC_TABLE_BASE		fe1f1000
+#define SHRAM_BASE		fe300000
+
+#define GEN_SW_MBOX_BASE	fe001000
+#define GMOX_IRQ		153
+#define GMOX_RMT_IRQ		184
+#endif
+/delete-node/ &dram;
+
+/ {
+	chosen {
+		/*
+		 * shared memory reserved for the inter-processor communication
+		 */
+		zephyr,ipc_shm = &shram;
+		zephyr,ipc = &gen_sw_ipm_mbox;
+		zephyr,ipc_rsc_table = &rsc_table;
+	};
+
+	dram: memory@SRAM_BASE {
+		reg = <DT_ADDR(SRAM_BASE) DT_SIZE_M(1)>;
+	};
+
+	rpmsg: memory@RPMSG_BASE {
+		compatible = "mmio-sram";
+		reg = <DT_ADDR(RPMSG_BASE) 0x10000>;
+	};
+
+	rsc_table: memory@RSC_TABLE_BASE {
+		compatible = "mmio-sram";
+		reg = <DT_ADDR(RSC_TABLE_BASE) 0x1000>;
+	};
+
+	shram: memory@SHRAM_BASE {
+		compatible = "mmio-sram";
+		reg = <DT_ADDR(SHRAM_BASE) 0x100000>;
+	};
+
+	soc {
+		gen_sw_mbox: gen-sw-mailbox@GEN_SW_MBOX_BASE {
+			compatible = "nxp,generic-software-mbox";
+			reg = <DT_ADDR(GEN_SW_MBOX_BASE) 0x1000>;
+			#mbox-cells = <1>;
+			interrupts = <GIC_SPI GMOX_IRQ IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			remote-interrupt = <GMOX_RMT_IRQ>;
+			interrupt-parent = <&gic>;
+			status = "okay";
+		};
+
+		gen_sw_ipm_mbox: ipm-mbox {
+			compatible = "zephyr,mbox-ipm";
+			mboxes = <&gen_sw_mbox 0>, <&gen_sw_mbox 0>;
+			mbox-names = "tx", "rx";
+			status = "okay";
+		};
+	};
+};
