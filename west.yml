@@ -11,44 +11,56 @@ manifest:
       url-base: https://github.com/nxp-mcuxpresso
     - name: nxpzephyr
       url-base: https://github.com/nxp-zephyr
+    - name: zephyr
+      url-base: https://github.com/zephyrproject-rtos
 
   projects:
     - name: mcux-sdk
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
     - name: FreeRTOS-Kernel
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
     - name: CMSIS_5
       remote: nxpmcuxpresso
       path: mcux-sdk/CMSIS
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
     - name: lwip
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
       path: middleware/lwip
     - name: mcux-sdk-middleware-multicore
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
       path: middleware/multicore
     - name: rpmsg-lite
       remote: nxpmcuxpresso
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
       path: middleware/multicore/rpmsg_lite
     - name: zephyr
       remote: nxpzephyr
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
       west-commands: scripts/west-commands.yml
     - name: hal_nxp
       remote: nxpzephyr
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
       path: modules/hal/nxp
       groups:
         - hal
     - name: soem
       remote: nxprealtimeedgesw
-      revision: Real-Time-Edge-v3.1-202503
+      revision: Real-Time-Edge-v3.2-202507
       path: middleware/soem
+    - name: open-amp
+      remote: zephyr
+      revision: 52bb1783521c62c019451cee9b05b8eda9d7425f
+      path: modules/lib/open-amp
+    - name: libmetal
+      remote: zephyr
+      revision: 3e8781aae9d7285203118c05bc01d4eb0ca565a7
+      path: modules/hal/libmetal
+      groups:
+        - hal
 
   self:
     path: heterogeneous-multicore
