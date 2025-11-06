@@ -518,7 +518,7 @@ static int virtio_net_port_init(struct net_dev *ndev)
 	return 0;
 }
 
-static void print_priv_stats(void)
+static void print_priv_stats(struct switch_port *port)
 {
 	os_printf("[Virtio_Net_Backend]:\r\t\t\tRX packets\t%llu\tTX packets\t%llu\r\n",
 			priv_stats.rx_pkts,

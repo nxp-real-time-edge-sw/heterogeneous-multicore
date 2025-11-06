@@ -105,17 +105,17 @@ static inline bool list_empty(struct list_head *list)
 
 /* Get struct pointer for which the next list node is in */
 #define list_next_entry(pos, member)					\
-	list_entry((pos)->member.next, typeof(*(pos)), member)
+	list_entry((pos)->member.next, __typeof__(*(pos)), member)
 
 /* Iterate a list, not safe for removing entry during iteration */
 #define list_for_each_entry(pos, head, member)				\
-	for (pos = list_first_entry(head, typeof(*pos), member);	\
+	for (pos = list_first_entry(head, __typeof__(*pos), member);	\
 		&pos->member != head;					\
 		pos = list_next_entry(pos, member))
 
 /* Iterate a list, safe for removing entry during iteration */
 #define list_for_each_entry_safe(pos, tmp, head, member)		\
-	for (pos = list_first_entry(head, typeof(*pos), member),	\
+	for (pos = list_first_entry(head, __typeof__(*pos), member),	\
 		tmp = list_next_entry(pos, member);			\
 		&pos->member != head;					\
 		pos = tmp, tmp = list_next_entry(pos, member))

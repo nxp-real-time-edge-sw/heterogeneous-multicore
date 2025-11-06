@@ -1,6 +1,5 @@
 /*
- * Copyright 2021-2022 NXP
- * All rights reserved.
+ * Copyright 2021-2023 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,6 +12,13 @@
 #ifndef unlikely
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #endif
+
+#ifndef unlikely
+#define unlikely(x)     __builtin_expect(x, 0)
+#endif /* !unlikely */
+#ifndef likely
+#define likely(x)       __builtin_expect(x, 1)
+#endif /* !likely */
 
 #define os_assert(cond, msg, ...)       \
 do { \

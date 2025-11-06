@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2024-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -24,21 +24,21 @@ struct soft_vport_dev {
 
 	/* Callback function to switch out frames from switch to virtual port */
 	int (*port_out_cb)(struct soft_vport_dev *port, void *data_paket);
-    /* Callback function to print private stats */
-    void (*print_priv_stats)(struct soft_vport_dev *port);
+	/* Callback function to print private stats */
+	void (*print_priv_stats)(struct soft_vport_dev *port);
 };
 
 struct soft_vport_cfg {
-    char name[MAX_NAME_LEN];
-    uint8_t mac_addr[MAC_ADDR_LEN];
-    bool *link_up;
-    uint8_t in_threshhold; /* the threshhold of count of switched in frames to kick switch to work */
-    uint32_t flags;
+	char name[MAX_NAME_LEN];
+	uint8_t mac_addr[MAC_ADDR_LEN];
+	bool *link_up;
+	uint8_t in_threshhold; /* the threshhold of count of switched in frames to kick switch to work */
+	uint32_t flags;
 
 	/* Callback function to switch out frames from switch to virtual port */
 	int (*port_out_cb)(struct soft_vport_dev *port, void *data_paket);
-    /* Callback function to print private stats */
-    void (*print_priv_stats)(struct soft_vport_dev *port);
+	/* Callback function to print private stats */
+	void (*print_priv_stats)(struct soft_vport_dev *port);
 };
 
 void *soft_vport_init(void *switch_dev, struct soft_vport_cfg *cfg);

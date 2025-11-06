@@ -412,7 +412,7 @@ static int enet_setup_macaddr(uint8_t addr_ops, uint8_t *new_addr, uint8_t *old_
 	return 0;
 }
 
-static void print_priv_stats(void)
+static void print_priv_stats(struct switch_port *port)
 {
 	os_printf("[ENET_Driver]:\r\t\t\tRX packets\t%llu\tTX packets\t%llu\tTX Err packets\t%llu\r\n",
 			priv_stats.rx_pkts,

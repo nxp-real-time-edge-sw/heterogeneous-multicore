@@ -529,7 +529,7 @@ void switch_print_stats(void *switch_dev)
 			os_printf("\r\t\t\tpackets in out queue\t%d\r\n",
 				dev->remote_port->data_out.count);
 			if (dev->remote_port->print_priv_stats)
-				dev->remote_port->print_priv_stats();
+				dev->remote_port->print_priv_stats(dev->remote_port);
 		}
 		list_for_each_entry_safe(port, tmp, &dev->local_port_list, port_node) {
 			os_printf("[%s]:\r\t\t\tswitch in packets\t%llu\tswitch dropped\t%llu\tswitch out packets\t%llu\r\n",
@@ -538,7 +538,7 @@ void switch_print_stats(void *switch_dev)
 			os_printf("\r\t\t\tpackets in out queue\t%d\r\n",
 				port->data_out.count);
 			if (port->print_priv_stats)
-				port->print_priv_stats();
+				port->print_priv_stats(port);
 		}
 
 		os_printf("\r\n");

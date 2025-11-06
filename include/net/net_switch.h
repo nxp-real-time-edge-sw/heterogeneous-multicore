@@ -1,6 +1,5 @@
 /*
  * Copyright 2022-2023 NXP
- * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -78,7 +77,7 @@ struct switch_port {
 	int (*port_out_cb)(struct switch_port *port, void *data_paket);
 
 	/* Optional print function for port's private statitistics */
-	void (*print_priv_stats)(void);
+	void (*print_priv_stats)(struct switch_port *port);
 
 	/* The fields only used by local port */
 	struct list_head port_node;
@@ -107,7 +106,7 @@ struct port_config {
 	int (*port_out_cb)(struct switch_port *port, void *data_paket);
 
 	/* Optional print function for port's private statitistics */
-	void (*print_priv_stats)(void);
+	void (*print_priv_stats)(struct switch_port *port);
 
 	/* The fields only used by remote port */
 	/* Callback function to update addresses */

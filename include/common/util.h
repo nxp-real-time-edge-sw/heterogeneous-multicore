@@ -18,10 +18,10 @@
 	   (void) (&t_a == &t_b);		\
 	   t_a > t_b ? t_a : t_b; })
 #ifndef min
-#define min(a, b)	min_t(typeof(a), a, b)
+#define min(a, b)	min_t(__typeof__(a), a, b)
 #endif
 #ifndef max
-#define max(a, b)	max_t(typeof(a), a, b)
+#define max(a, b)	max_t(__typeof__(a), a, b)
 #endif
 
 #endif

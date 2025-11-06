@@ -1,0 +1,3 @@
+config MCUX_PRJSEG_module.hmc.virtual_sw_lib
+    bool "DSA library"
+    default y if MCUX_PRJSEG_config.board.dsa_switch || MCUX_PRJSEG_config.board.dsa_enetc
