@@ -10,6 +10,7 @@
 #include <net/vport_software.h>
 #include <net/net_types.h>
 #include <os/stdlib.h>
+#include <os/string.h>
 
 #include "genavb/error.h"
 #include "genavb/qos.h"

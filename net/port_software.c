@@ -9,6 +9,7 @@
 #include <net/net_switch.h>
 #include <net/net_types.h>
 #include <os/stdlib.h>
+#include <os/string.h>
 
 #include "vport_software.h"
 #include "lib_virtual_switch.h"
