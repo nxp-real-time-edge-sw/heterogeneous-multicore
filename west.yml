@@ -19,7 +19,7 @@ manifest:
 
   projects:
     - name: mcuxsdk-manifests
-      revision: feature/heterogeneous_multicore
+      revision: 664eba64531a0115122747ce615b92c2798352a8
       import:
         path-prefix: mcuxsdk
         # remove name-allowlist in order to download full SDK
@@ -44,7 +44,7 @@ manifest:
 
     - name: zephyr
       remote: nxp_zephyr
-      revision: feature/heterogeneous_multicore
+      revision: efe550bc592742561c171381b5c3a1c9b2e2630b
       import:
         path-prefix: zsdk
         name-allowlist:
@@ -59,7 +59,7 @@ manifest:
     #
     - name: hal_nxp
       remote: nxp_zephyr
-      revision: feature/heterogeneous_multicore
+      revision: df59b170b903256d08c57054a6d43b0592d4d692
       path: zsdk/modules/hal/nxp
 
     # Some Kconfig used by Zephyr is definded in the follow crypto repos
