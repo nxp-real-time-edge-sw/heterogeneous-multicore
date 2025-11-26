@@ -7,7 +7,7 @@ set(LIBRARY_OUTPUT_PATH "${APPLICATION_BINARY_DIR}/virtual_switch_build")
 
 set(LIBRARY_NAME virtual-switch)
 
-set(HMC_SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../")
+set(HMC_SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../")
 set(LIBRARY_SRC_PATH "${HMC_SRC_PATH}/net")
 set(PTP_STACK_SRC_PATH "${HMC_SRC_PATH}/net/ptp_stack")
 set(GenAVBPath "${SdkRootDirPath}/middleware/gen_avb")
