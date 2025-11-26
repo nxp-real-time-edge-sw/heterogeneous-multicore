@@ -7,8 +7,12 @@ function detect_soc ()
         echo 'imx8mm'
     elif grep -q 'i.MX8MP' /sys/devices/soc0/soc_id; then
         echo 'imx8mp'
+    elif grep -q 'i.MX91' /sys/devices/soc0/soc_id; then
+        echo 'imx91'
     elif grep -q 'i.MX93' /sys/devices/soc0/soc_id; then
         echo 'imx93'
+    elif grep -q 'i.MX943' /sys/devices/soc0/soc_id; then
+        echo 'imx943'
     elif grep -q 'i.MX95' /sys/devices/soc0/soc_id; then
         echo 'imx95'
     else
@@ -78,7 +82,7 @@ function set_ddrc_configuration()
 {
     local value=0, timing_orig=0, mstr=0, pwrctl=0, rfshctl=0, rfshtmg=0, new_timing=0
 
-    if [ "$SOC" = "imx93" ]; then
+    if [ "$SOC" = "imx91" ] || [ "$SOC" = "imx93" ]; then
         if [ -e /sys/devices/platform/imx93-lpm/auto_clk_gating ]; then
             echo "Disable auto clock gating"
             echo 0 > /sys/devices/platform/imx93-lpm/auto_clk_gating
@@ -119,10 +123,12 @@ function set_ddrc_configuration()
 function disable_cpu_idle_all()
 {
     echo "Disable CPU idle for all cores"
-    if [ "$SOC" = "imx93" ]; then
+    if [ "$SOC" = "imx91" ]; then
+        disable_cpu_idle 0
+    elif [ "$SOC" = "imx93" ]; then
         disable_cpu_idle 0
         disable_cpu_idle 1
-    elif [ "$SOC" = "imx8mm" ] || [ "$SOC" = "imx8mp" ]; then
+    elif [ "$SOC" = "imx8mm" ] || [ "$SOC" = "imx8mp" ] || [ "$SOC" = "imx943" ]; then
         disable_cpu_idle 0
         disable_cpu_idle 1
         disable_cpu_idle 2
@@ -139,7 +145,7 @@ function disable_cpu_idle_all()
 
 function disable_rtc_device()
 {
-    if [ "$SOC" = "imx93" ]; then
+    if [ "$SOC" = "imx91" ] || [ "$SOC" = "imx93" ]; then
         # Unbind the BBNSM RTC device
         BBNSM_RTC_DEV="44440000.bbnsm:rtc"
         if [ -L /sys/bus/platform/drivers/bbnsm_rtc/${BBNSM_RTC_DEV} ]; then
@@ -153,12 +159,12 @@ function disable_rtc_device()
             echo "Unbind RTC device"
             echo "${RTC_DEV}" > /sys/bus/platform/drivers/snvs_rtc/unbind
         fi
-    elif [ "$SOC" = "imx95" ]; then
+    elif [ "$SOC" = "imx95" ] || [ "$SOC" = "imx943" ]; then
         # Unbind the SCMI RTC device
-        SCMI_DEV="scmi_dev.11"
-        if [ -L /sys/bus/scmi_protocol/drivers/scmi-imx-bbm/${SCMI_DEV} ]; then
+        SCMI_DEV="scmi_dev.10"
+        if [ -L /sys/bus/scmi_protocol/drivers/scmi-imx-bbm-rtc/${SCMI_DEV} ]; then
             echo "Unbind RTC device"
-            echo "${SCMI_DEV}" > /sys/bus/scmi_protocol/drivers/scmi-imx-bbm/unbind
+            echo "${SCMI_DEV}" > /sys/bus/scmi_protocol/drivers/scmi-imx-bbm-rtc/unbind
         fi
     fi
 }

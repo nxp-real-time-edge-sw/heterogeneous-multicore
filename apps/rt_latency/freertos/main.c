@@ -305,7 +305,7 @@ static void run_test_case(void *context, int test_case_id, uint32_t duration_sec
 	struct main_ctx *ctx = context;
 	TickType_t timeout;
 
-	timeout = (duration_sec == TEST_DURATION_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(duration_sec * 1000);
+	timeout = (duration_sec == TEST_DURATION_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(duration_sec * 1000ULL);
 	start_test_case(ctx, test_case_id);
 	vTaskDelay(timeout);
 	destroy_test_case(ctx);

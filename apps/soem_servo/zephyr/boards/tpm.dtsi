@@ -1,0 +1,11 @@
+#define IRQ_HIGHEST_PRIORITY	0
+
+/ {
+	aliases {
+		counter0 = &tpm2;
+	};
+};
+
+&tpm2 {
+	status = "okay";
+};

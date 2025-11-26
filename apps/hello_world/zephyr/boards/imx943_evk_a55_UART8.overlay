@@ -1,0 +1,23 @@
+/*
+ * Copyright 2025 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,console = &lpuart8;
+		zephyr,shell-uart = &lpuart8;
+	};
+};
+
+&lpuart1 {
+	status = "disabled";
+};
+
+&lpuart8 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&lpuart8_default>;
+	pinctrl-names = "default";
+};

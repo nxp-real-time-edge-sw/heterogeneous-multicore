@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "mcimx93evk_ca55/rtos_memory.h"
+#include "mcimx93evk/ca55/rtos_memory.h"
 
 /delete-node/ &dram;
 

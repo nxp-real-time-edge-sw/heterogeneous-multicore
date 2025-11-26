@@ -10,6 +10,10 @@
 #include "cmsis_compiler.h"
 #include "os/stdio.h"
 
+#ifndef unlikely
+#define unlikely(x) __builtin_expect(!!(x), 0)
+#endif
+
 #define os_assert(cond, msg, ...)       \
 do { \
     if (unlikely(!(cond))) { \

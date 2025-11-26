@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "mcimx95evk_ca55/rtos_memory.h"
+#include "imx95lpd5evk19/ca55/rtos_memory.h"
 
 #if (RTOSID == 0)
 #define MU		mu3

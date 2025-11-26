@@ -25,6 +25,8 @@ K_THREAD_STACK_ARRAY_DEFINE(hello_stack, NUM_THREADS, STACK_SIZE);
 
 static struct k_thread hello_thread[NUM_THREADS];
 
+uint64_t times[NUM_THREADS] = {0};
+
 static uint64_t get_core_mpid(void)
 {
 #if defined(MPIDR_TO_CORE) && defined(GET_MPIDR)
@@ -34,13 +36,44 @@ static uint64_t get_core_mpid(void)
 #endif
 }
 
+#ifdef CONFIG_CPU_CORTEX_A55
+static uint64_t mpid_list[] = {0x0, 0x100, 0x200, 0x300, 0x400, 0x500};
+#elif defined(CONFIG_CPU_CORTEX_A53)
+static uint64_t mpid_list[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5};
+#else
+#error "CPU Core is not supported"
+#endif
+
+#ifdef CONFIG_CPU_CORTEX_A55
+static char cpu_name[] = "Cortex-A55";
+#elif defined(CONFIG_CPU_CORTEX_A53)
+static char cpu_name[] = "Cortex-A53";
+#else
+static char cpu_name[] = "Unknown";
+#endif
+
+static int get_core_id(uint64_t mpid)
+{
+	int i;
+
+	for(i = 0; i < sizeof(mpid_list) / sizeof(mpid_list[0]); i++) {
+		if (mpid_list[i] == mpid)
+			return i;
+	}
+
+	return -1;
+}
+
 static void hello_func(void *p1, void *p2, void *p3)
 {
 	const char *name = k_thread_name_get(k_current_get());
+	long my_id = (long)p1;
+	uint64_t mpid = get_core_mpid();
+	int id = get_core_id(mpid);
 
 	do {
 		k_sem_take(&hello_sem, K_FOREVER);
-		os_printf("%s: hello from core (MPID: 0x%llx)\r\n", name, get_core_mpid());
+		os_printf("%s: hello %ld times from %s core%d (MPID: 0x%llx)\r\n", name, times[my_id]++, cpu_name, id, mpid);
 	} while(1);
 }
 
@@ -58,7 +91,7 @@ int main(void)
 				K_HIGHEST_THREAD_PRIO, 0, K_FOREVER);
 
 		char name[16];
-		snprintf(name, sizeof(name), "hello_thread_%d", i);
+		snprintf(name, sizeof(name), "Zephyr_thread_%d", i);
 		k_thread_name_set(&hello_thread[i], name);
 
 #ifdef CONFIG_SCHED_CPU_MASK

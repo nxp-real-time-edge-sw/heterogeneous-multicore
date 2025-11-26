@@ -13,11 +13,14 @@
 #include <metal/io.h>
 #include <resource_table.h>
 #include <os/stdio.h>
-#include <os/mmu.h>
 #include "common/iovec.h"
 #include "app_board.h"
 #include "app_rpmsg.h"
 #include "log/log.h"
+
+#ifdef CONFIG_MMU
+#include <os/mmu.h>
+#endif
 
 #define SHM_NODE			DT_CHOSEN(zephyr_ipc_shm)
 #define SHM_START_ADDR			DT_REG_ADDR(SHM_NODE)
@@ -51,7 +54,7 @@ static struct metal_io_region *shm_io = &shm_io_data;
 static metal_phys_addr_t rsc_tab_physmap;
 static struct metal_io_region rsc_io_data;
 static struct metal_io_region *rsc_io = &rsc_io_data;
-static struct fw_resource_table *rsc_table;
+static void *rsc_table;
 
 static struct rpmsg_virtio_device rvdev;
 static struct rpmsg_device *rpdev;
@@ -299,6 +302,7 @@ static void rpmsg_ept_priv_setup(void)
 	}
 }
 
+#ifdef CONFIG_MMU
 static void rpmsg_mmu_map_setup(void)
 {
 	void *rsc_table_va;
@@ -331,13 +335,16 @@ static void rpmsg_mmu_map_setup(void)
 		log_err("RSC_TABLE os_mmu_map() failed\n");
 	}
 }
+#endif
 
 int main(void)
 {
 	os_printf("\r\n%s: RTOS%d: ", CPU_CORE_NAME, RTOSID);
 	os_printf("Multiple Endpoints RPMsg String Echo Zephyr Demo\r\n");
 
+#ifdef CONFIG_MMU
 	rpmsg_mmu_map_setup();
+#endif
 	rpmsg_ept_priv_setup();
 
 	k_thread_create(&thread_rpmsg_init_data, thread_rpmsg_init_stack, RPMSG_INIT_TASK_STACK_SIZE,

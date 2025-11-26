@@ -371,7 +371,7 @@ static int command_handler(void *ctx)
 	return 0;
 }
 
-void main(void)
+int main(void)
 {
 	struct main_ctx *ctx = &main_ctx;
 
@@ -394,4 +394,6 @@ void main(void)
 
 	log_raw_info("\r\n");
 	log_info("Quit!\n");
+
+	return 0;
 }

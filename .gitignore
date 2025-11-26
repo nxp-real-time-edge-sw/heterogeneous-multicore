@@ -103,6 +103,8 @@ build_RTOS*
 release
 *_release
 *RTOS*.ld
+ddr_release*
+ddr_debug*
 
 #tools binaries
 tools/ram_console/ram_console_dump

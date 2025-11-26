@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "evkmimx8mp_ca53/rtos_memory.h"
+#include "evkmimx8mp/ca53/rtos_memory.h"
 
 #if (RTOSID == 0)
 #define RPMSG_BASE		fe100000

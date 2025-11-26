@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13.1)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(rt_latency_ca53)
+project(rt_latency)
 
 if(CONFIG_BOARD_MIMX8MM_EVK_A53)
     set(BoardName "evkmimx8mm")
@@ -25,10 +25,6 @@ set(BoardPath "${ProjDirPath}/boards/${BoardName}")
 set(CONFIG_USE_middleware_zephyr-kernel true)
 set(CONFIG_USE_middleware_multicore_rpmsg_lite_zephyr true)
 ADD_DEFINITIONS(-DAARCH64=1)
-
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	ADD_DEFINITIONS(-DCONFIG_CPU_LOAD_STATS=1)
-endif()
 
 zephyr_include_directories(
   ${AppPath}/common

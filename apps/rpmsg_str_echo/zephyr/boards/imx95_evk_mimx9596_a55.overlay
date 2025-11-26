@@ -1,0 +1,110 @@
+/*
+ * Copyright 2025 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "imx95lpd5evk19/ca55/rtos_memory.h"
+
+#if (RTOSID == 0)
+#define RPMSG_BASE		c0100000
+#define RSC_TABLE_BASE		c01f0000
+#define SHRAM_BASE		c0200000
+
+#define GEN_SW_MBOX_BASE	c0000000
+#define GMOX_IRQ		94
+#define GMOX_RMT_IRQ		102
+#elif (RTOSID == 1)
+#define RPMSG_BASE		c0110000
+#define RSC_TABLE_BASE		c01f1000
+#define SHRAM_BASE		c0300000
+
+#define GEN_SW_MBOX_BASE	c0001000
+#define GMOX_IRQ		292
+#define GMOX_RMT_IRQ		323
+#endif
+
+#if (RTOSID == 0)
+#define MU		mu3
+#define MU_SRAM		445d1000
+#elif (RTOSID == 1)
+#define MU		mu4
+#define MU_SRAM		445f1000
+#endif
+
+/delete-node/ &dram;
+/delete-node/ &scmi_shmem0;
+
+/ {
+	chosen {
+		/*
+		 * shared memory reserved for the inter-processor communication
+		 */
+		zephyr,ipc_shm = &shram;
+		zephyr,ipc = &gen_sw_ipm_mbox;
+		zephyr,ipc_rsc_table = &rsc_table;
+	};
+
+	dram: memory@SRAM_BASE {
+		reg = <DT_ADDR(SRAM_BASE) DT_SIZE_M(1)>;
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		scmi_shmem0: memory@MU_SRAM {
+			compatible = "arm,scmi-shmem";
+			reg = <DT_ADDR(MU_SRAM) 0x80>;
+		};
+	};
+
+	firmware {
+		scmi {
+			mboxes = <&MU 0>;
+			shmem = <&scmi_shmem0>;
+		};
+	};
+
+	rpmsg: memory@RPMSG_BASE {
+		compatible = "mmio-sram";
+		reg = <DT_ADDR(RPMSG_BASE) 0x10000>;
+	};
+
+	rsc_table: memory@RSC_TABLE_BASE {
+		compatible = "mmio-sram";
+		reg = <DT_ADDR(RSC_TABLE_BASE) 0x1000>;
+	};
+
+	shram: memory@SHRAM_BASE {
+		compatible = "mmio-sram";
+		reg = <DT_ADDR(SHRAM_BASE) 0x100000>;
+	};
+
+	soc {
+		gen_sw_mbox: gen-sw-mailbox@GEN_SW_MBOX_BASE {
+			compatible = "nxp,generic-software-mbox";
+			reg = <DT_ADDR(GEN_SW_MBOX_BASE) 0x1000>;
+			#mbox-cells = <1>;
+			interrupts = <GIC_SPI GMOX_IRQ IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			remote-interrupt = <GMOX_RMT_IRQ>;
+			interrupt-parent = <&gic>;
+			status = "okay";
+		};
+
+		gen_sw_ipm_mbox: ipm-mbox {
+			compatible = "zephyr,mbox-ipm";
+			mboxes = <&gen_sw_mbox 0>, <&gen_sw_mbox 0>;
+			mbox-names = "tx", "rx";
+			status = "okay";
+		};
+	};
+};
+
+&mu2 {
+	status = "disabled";
+};
+
+&MU {
+	status = "okay";
+};

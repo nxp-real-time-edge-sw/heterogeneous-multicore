@@ -1,0 +1,27 @@
+/*
+ * Copyright 2025 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/ {
+	chosen {
+		/delete-property/ zephyr,console;
+		/delete-property/ zephyr,shell-uart;
+		zephyr,ram-console = &ram_console;
+	};
+
+	ram_console: memory@RAM_CONSOLE_BASE {
+		compatible = "zephyr,memory-region";
+		reg = <DT_ADDR(RAM_CONSOLE_BASE) DT_SIZE_K(4)>;
+		zephyr,memory-region = "RAM_CONSOLE";
+	};
+};
+
+&lpuart1 {
+	status = "disabled";
+};
+
+&lpuart3 {
+	status = "disabled";
+};

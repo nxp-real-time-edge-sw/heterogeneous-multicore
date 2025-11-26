@@ -112,94 +112,209 @@ Multiple applications are in "apps" directory:
 
 # Getting Started
 
-## Download
+## Download and Install Prerequisites
 
-Install cross compiler toolchain:
+### Update OS
+
+Suggest to use Ubuntu 22.04 LTS and later version as the recommended development environment.
+
+```bash
+sudo apt update
+sudo apt upgrade
+```
+
+### Install dependencies
+
+The current minimum required version for the main dependencies are:
+CMake: v3.20.5
+Python: V3.10
+
+Use apt to install the required dependencies:
+
+```bash
+sudo apt install --no-install-recommends git cmake ninja-build gperf \
+  ccache dfu-util device-tree-compiler wget python3-dev python3-venv python3-tk \
+  xz-utils file make gcc gcc-multilib g++-multilib libsdl2-dev libmagic1
+```
+
+Create a new virtual environment:
+
+```bash
+# create workspace directory
+mkdir workspace
+# create a virtual environment in the workspace directory
+python3 -m venv workspace/.venv
+# active the virtual environment
+source workspace/.venv/bin/activate
+# install west
+pip3 install west
+```
+**Note**: Execute "source workspace/.venv/bin/activate" to return to this virtual environment.
+
+### Geting sourcecode
+
+1. Initialize development workspace with heterogeneous_multicore manifest repo:
+
+```bash
+export revision=master
+west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
+```
+
+**NOTE**: Use ${revision} with "master" will use the latest development branch, or could replace with any Real-Time Edge release you wish to use, such as Real_Time_Edge_v3.3_202512
+
+2. Enable west extensions commands:
+
+```bash
+west config commands.allow_extensions true
+```
+
+3. Update workspace:
+
+```bash
+cd workspace
+west update
+```
+
+4. Install the required Python packages:
+
+```bash
+pip install -r mcuxsdk/mcuxsdk/scripts/requirements.txt
+pip install -r zsdk/zephyr/scripts/requirements.txt
+```
+
+### Install Cross Compiler Toolchain
+
+1. Install cross-compile gcc toolchain for building FreeRTOS applications
 
 A cross compiler is required to build Cortex-A and Cortex-M applications, this project is compatible with the ARM GCC toolchain that you may download and install:
 
 ```bash
 mkdir ~/toolchains/; cd ~/toolchains/
-wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
-tar xf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
-wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-elf.tar.xz
-tar xf arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-elf.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
+tar xf arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
+wget https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf.tar.xz
+tar xf arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf.tar.xz
 ```
 
-Install cmake (minimal required version is v3.12.0):
+2. Install Zephyr SDK for building Zephyr applications (***optional***)
 
-```bash
-sudo apt install cmake
-```
+Zephyr application building could use Zephyr SDK, which provides a cross-compile toolchain for multiple architectures:
 
-Install west:
+Refer to Zephyr document to [Install the Zephyr SDK](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-the-zephyr-sdk)
 
-This project uses west to manage all related repos, west.yml provides the description and revision for other projects used by Heterogeneous Multicore. Install the following tools firstly in order to download and built the applications:
+***Or*** could use the ARM GNU cross compile GCC toolchain for building Zephyr applications, which could use the same toolchain with FreeRTOS building, for this case, no need to install Zephyr SDK.
 
-```bash
-# Update environment
-sudo apt update
+## Building Application
 
-# git
-sudo apt install git
+Both FreeRTOS application and Zephyr application use west extension commands for building.
 
-# python3
-sudo apt install python3-pip
+### Building FreeRTOS Application
 
-# west
-pip3 install west
-```
+Use ***west sdk_build*** extension command for building FreeRTOS applications, and each application in heterogeneous_multicore project also provides a building script for convenience.
 
-Use the following command to clone all the source code:
+- Building application on Cortex-M Core
 
-```bash
-export revision=Real-Time-Edge-v3.2-202507
-west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
-cd workspace
-west update
-```
-Replace ${revision} with any Real-Time Edge release you wish to use, it can also be "main" if you want to use the latest release.
+  - Use *west sdk_build* extension command
 
-## Compile
+    For example, building hello_world application running on evkmimx8mm Cortex-M Core:
+    ```bash
+    export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+    west sdk_build -p always apps/hello_world/freertos/ -b evkmimx8mm --config release -Dcore_id=cm4
+    ```
 
-### FreeRTOS
-Building application on Cortex-M Core, for example, building network sharing backend firmware running on Cortex-M Core:
+    The application binary image "hello_world_cm4.bin" will be in "build" directory.
 
-```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
-cd ~/workspace/heterogenous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm_cm4/armgcc
-./build_release.sh
-```
+  - Use building script
 
-The backend firmware image "virtio_net_backend_cm4.bin" is in "release" directory.
+    For example, building network sharing backend firmware running on evkmimx8mm Cortex-M Core:
 
-Building application on Cortex-A Core, for example, building network sharing backend firmware running on Cortex-A Core:
+    ```bash
+    export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+    cd ~/workspace/heterogenous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm/cm4/armgcc
+    ./build_release.sh
+    ```
 
-```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf
-cd ~/workspace/heterogeneous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm_ca53/armgcc_aarch64
-./build_ddr_release.sh
-```
-The backend firmware image "virtio_net_backend_ca53.bin" is in directory "ddr_release"
+    The backend firmware image "virtio_net_backend_cm4.bin" will be in "release" directory.
 
-### Zephyr
-Building application on Cortex-A Core, for example, building Zephyr hello_world running on Cortex-A Core:
+- Building application on Cortex-A Core
 
-```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf
-export Zephyr_DIR=~/workspace/zephyr
-cd ~/workspace/heterogeneous-multicore/apps/hello_world/zephyr/boards/evkmimx8mm_ca53/armgcc_aarch64
-./build_release.sh
-```
-Then the following binary Zephyr images are built out:
-```bash
-./build_RTOS0_UART4/zephyr/hello_world_ca53_RTOS0_UART4.bin
-./build_RTOS0_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS0_RAM_CONSOLE-0x93d00000.bin
-./build_RTOS1_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS1_RAM_CONSOLE-0x94d00000.bin
-./build_RTOS2_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS2_RAM_CONSOLE-0x95d00000.bin
-./build_RTOS3_UART2/zephyr/hello_world_ca53_RTOS3_UART2.bin
-./build_RTOS3_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS3_RAM_CONSOLE-0x96d00000.bin
-```
+  - Use *west sdk_build* extension command
+
+    For example, building hello_world application running on evkmimx8mm Cortex-A Core:
+    ```bash
+    export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+    west sdk_build -p always apps/hello_world/freertos/ -b evkmimx8mm --config ddr_release -Dcore_id=ca53
+    ```
+
+    The application binary image "hello_world_ca53.bin" will be in "build" directory.
+
+  - Use building script
+
+    For example, building network sharing backend firmware running on Cortex-A Core:
+
+    ```bash
+    export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf
+    cd ~/workspace/heterogeneous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm/ca53/armgcc_aarch64
+    ./build_ddr_release.sh
+    ```
+
+    The backend firmware image "virtio_net_backend_ca53.bin" is in directory "ddr_release"
+
+### Building Zephyr Application
+
+#### Setup enviroment variables for cross compile toolchain (no need if using Zephyr SDK)
+If use cross compile toolchain to build Zephyr, need to set the following environment variables:
+
+- For building Cortex-A Core Zephyr application:
+
+    ```bash
+    export ZEPHYR_TOOLCHAIN_VARIANT="cross-compile"
+    export CROSS_COMPILE=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+    export CROSS_COMPILE_TOOLCHAIN_PATH=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf
+    ```
+
+- For building Cortex-M Core Zephyr application:
+
+    ```bash
+    export ZEPHYR_TOOLCHAIN_VARIANT="cross-compile"
+    export CROSS_COMPILE=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+    export CROSS_COMPILE_TOOLCHAIN_PATH=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/
+    ```
+
+#### Building Zephyr Application Examples
+
+Use ***west build*** extension command for building Zephyr applications, and each application in heterogeneous_multicore project also provides a building script for convenience.
+
+- Building applications provided by Zephyr kernel
+
+  ```bash
+  cd workspace/zsdk/zephyr/
+  west build -p always -b imx93_evk/mimx9352/a55 samples/hello_world/
+  ```
+
+- Building application in heterogeneous_multicore project by using west build command
+
+  ```bash
+  west build -p always -b imx93_evk/mimx9352/a55 apps/hello_world/zephyr/ -DCONSOLE=UART2 -DRTOS_ID=0
+  ```
+  Note: This completes the west build command for the hello_world Zephyr application on the imx93_evk board's A55 core with optional CONSOLE and RTOS_ID parameters.
+
+- Building application in heterogeneous_multicore project by using building script
+
+  ```bash
+  cd workspace/heterogeneous-multicore/apps/hello_world/zephyr/boards/evkmimx8mm/ca53/armgcc_aarch64
+  ./build_release.sh
+  ```
+
+  Then the following binary Zephyr images are built out:
+  ```bash
+  ./build_RTOS0_UART4/zephyr/hello_world_ca53_RTOS0_UART4.bin
+  ./build_RTOS0_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS0_RAM_CONSOLE-0x93d00000.bin
+  ./build_RTOS1_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS1_RAM_CONSOLE-0x94d00000.bin
+  ./build_RTOS2_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS2_RAM_CONSOLE-0x95d00000.bin
+  ./build_RTOS3_UART2/zephyr/hello_world_ca53_RTOS3_UART2.bin
+  ./build_RTOS3_RAM_CONSOLE/zephyr/hello_world_ca53_RTOS3_RAM_CONSOLE-0x96d00000.bin
+  ```
 
 ### Build with Helper Script
 
@@ -225,21 +340,23 @@ For example:
      ./build_apps.sh m-core hello_world clean       -clean all m-core hello_world applications
 ```
 
-Need to set toolchain enviroment variables "ARMGCC_DIR" firstly before using the tool, and set enviroment variables "Zephyr_DIR" for Zephyr building.
+***Note***: need to set toolchain enviroment variables "ARMGCC_DIR" firstly before using the tool, and set enviroment variables "ZEPHYR_TOOLCHAIN_VARIANT", "CROSS_COMPILE" and "CROSS_COMPILE_TOOLCHAIN_PATH" for Zephyr building if use cross compile toolchain.
+
 For example, use the tool to build all hello_world application on Cortex-M Core for all supported boards:
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
+export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
 cd ~/workspace/heterogeneous-multicore/
 ./build_apps.sh m-core hello_world
 ```
-Use the tool to build all Zephyr application on Cortex-A Core for all supported boards:
+Use the cross compile toolchain to build all Zephyr application on Cortex-A Core for all supported boards:
 ```bash
-export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-elf
-export Zephyr_DIR=~/workspace/zephyr
+export ZEPHYR_TOOLCHAIN_VARIANT="cross-compile"
+export CROSS_COMPILE=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+export CROSS_COMPILE_TOOLCHAIN_PATH=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf
 cd ~/workspace/heterogeneous-multicore/
 ./build_apps.sh a-core zephyr
 ```
-After executing the tool, all binary images built out can be found in the directory: "deploy/images"
+After executing the tool, all binary images built out can be found in the directory: "*deploy/images*"
 
 # Running Multicore Applications
 
@@ -254,7 +371,7 @@ Running backend firmware on Cortex-M Core, execute the following command in uboo
 
 ```bash
 # Loading the image if the image is copied to root FS example directory:
-=> ext4load mmc 1:2 0x48000000 /examples/heterogeneous-multicore/virtio-net-backend-cm/release/virtio_net_backend_cm4.bin
+=> ext4load mmc 1:2 0x48000000 /examples/heterogeneous-multicore/virtio-net-backend-freertos/virtio_net_backend_cm4.bin
 # Or loading the image from tftp server
 => tftp 0x48000000 virtio_net_backend_cm4.bin;
 
@@ -272,7 +389,7 @@ Or Running the backend on Cortex-A53 of i.MX8MM
 Executing the following command in uboot command line:
 ```bash
 # Loading the image if the image is copied to root FS example directory:
-=> ext4load mmc 1:2 0x93c00000 /examples/heterogeneous-multicore/virtio-net-backend-ca/ddr_release/virtio_net_backend_ca53.bin
+=> ext4load mmc 1:2 0x93c00000 /examples/heterogeneous-multicore/virtio-net-backend/virtio_net_backend_ca53.bin
 # Or loading the image from tftp server
 => tftp 0x93c00000 virtio_net_backend_ca53.bin
 

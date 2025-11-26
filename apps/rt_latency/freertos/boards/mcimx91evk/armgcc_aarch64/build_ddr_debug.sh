@@ -1,0 +1,7 @@
+#!/bin/bash
+
+target_type="ddr_debug"
+app_root_path="../../../"
+
+rm -rf ${target_type}
+west sdk_build -p always ${app_root_path} -b mcimx91evk --config ${target_type} -d ${target_type}

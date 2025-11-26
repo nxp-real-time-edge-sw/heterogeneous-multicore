@@ -1,0 +1,166 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2025-11-20T03:42:35Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.20"
+  },
+  "name": "heterogeneous-multicore-3.3",
+  "dataLicense": "CC0-1.0",
+  "hasExtractedLicensingInfos": [
+    {
+      "licenseId": "LicenseRef-19bd4215-a4d4-4ffe-8e54-fcd9558d4e96",
+      "extractedText": "Expat License\n=============\n\nCopyright (c) 1998, 1999, 2000 Thai Open Source Software Center Ltd\n                               and Clark Cooper\nCopyright (c) 2001, 2002, 2003, 2004, 2005, 2006 Expat maintainers.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without limitation the rights to use,\ncopy, modify, merge, publish, distribute, sublicense, and/or sell copies of the\nSoftware, and to permit persons to whom the Software is furnished to do so,\nsubject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS\nFOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR\nCOPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN\nAN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\nWITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "name": "Expat License"
+    },
+    {
+      "licenseId": "LicenseRef-21bd269c-2674-43d6-9d07-65d77e5a6ea3",
+      "extractedText": "libxml2 License\n===============\n\nExcept where otherwise noted in the source code (e.g. the files hash.c, list.c\nand the trio files, which are covered by a similar licence but with different\nCopyright notices) all the files are:\n\nCopyright (C) 1998-2003 Daniel Veillard. All Rights Reserved.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of\nthis software and associated documentation files (the \"Software\"), to deal in the\nSoftware without restriction, including without limitation the rights to use,\ncopy, modify, merge, publish, distribute, sublicense, and/or sell copies of the\nSoftware, and to permit persons to whom the Software is furnished to do so,\nsubject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS\nFOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE DANIEL\nVEILLARD BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN\nACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH\nTHE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\nExcept as contained in this notice, the name of Daniel Veillard shall not be used\nin advertising or otherwise to promote the sale, use or other dealings in this\nSoftware without prior written authorization from him.",
+      "name": "libxml2 License"
+    },
+    {
+      "licenseId": "LicenseRef-8fb456cc-8c55-4120-8676-8e3baa90c415",
+      "extractedText": "License must be obtained from [Company]",
+      "name": "Alternative Commercial License Available"
+    }
+  ],
+  "documentNamespace": "https://nxp.com/spdx/be27fec4-24a4-4678-ba1f-8d1f3350fd03",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-63b25926-8ffc-494a-b044-a6219eaf34ea",
+      "name": "zephyr",
+      "versionInfo": "v4.3.0",
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0",
+      "homepage": "https://zephyrproject.org/doc",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: zephyr",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:zephyrproject:zephyr:4.3.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:zephyrproject_rtos:zephyr:4.3.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:o:zephyrproject:zephyr:4.3.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-65d939ca-1f78-4f06-9dc7-1735b2b97445",
+      "name": "mcuxsdk-core",
+      "versionInfo": "v25.09.00",
+      "licenseConcluded": "BSD-3-Clause",
+      "licenseDeclared": "BSD-3-Clause",
+      "homepage": "https://github.com/nxp-mcuxpresso/mcuxsdk-core",
+      "downloadLocation": "https://github.com/nxp-mcuxpresso/mcuxsdk-core",
+      "originator": "Organization: NXP",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-6860d35e-9d89-4b6d-b8bb-33d8caf5250a",
+      "name": "FreeRTOS Real Time Kernel",
+      "versionInfo": "V11.1.0",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "homepage": "https://sourceforge.net/projects/freertos",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: FreeRTOS Real Time Kernel",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:amazon:freertos:11.1.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:amazon:aws-freertos-kernel:11.1.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:o:amazon:freertos:11.1.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-a119243b-afce-4848-93f4-7f88b57b4589",
+      "name": "NXPmicro/rpmsg-lite",
+      "versionInfo": "v2.2.0",
+      "licenseConcluded": "BSD-3-Clause",
+      "licenseDeclared": "BSD-3-Clause",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: nxpmicro",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:github/NXPmicro/rpmsg-lite@v2.2.0",
+          "referenceType": "purl"
+        },
+        {
+          "referenceCategory": "OTHER",
+          "referenceLocator": "3777896f-7115-4fcb-8ba0-724c7136e050",
+          "referenceType": "BlackDuck-ComponentOrigin"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-be27fec4-24a4-4678-ba1f-8d1f3350fd03",
+      "name": "heterogeneous-multicore",
+      "versionInfo": "3.3",
+      "licenseConcluded": "(BSD-3-Clause)",
+      "licenseDeclared": "(BSD-3-Clause)",
+      "downloadLocation": "https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore",
+      "originator": "Organization: heterogeneous-multicore",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-package-be27fec4-24a4-4678-ba1f-8d1f3350fd03",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-63b25926-8ffc-494a-b044-a6219eaf34ea"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-be27fec4-24a4-4678-ba1f-8d1f3350fd03",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-65d939ca-1f78-4f06-9dc7-1735b2b97445"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-be27fec4-24a4-4678-ba1f-8d1f3350fd03",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-6860d35e-9d89-4b6d-b8bb-33d8caf5250a"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-be27fec4-24a4-4678-ba1f-8d1f3350fd03",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-a119243b-afce-4848-93f4-7f88b57b4589"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-be27fec4-24a4-4678-ba1f-8d1f3350fd03"
+    }
+  ]
+}

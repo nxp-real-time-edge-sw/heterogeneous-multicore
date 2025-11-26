@@ -6,8 +6,8 @@
 
 valid_apps=("hello_world" "lwip_ping" "rpmsg_perf" "rpmsg_pingpong" "rpmsg_str_echo" "rpmsg_uart_sharing" "rt_latency" "soem_digital_io" "soem_servo" "virtio_net_backend" "virtio_perf")
 
-valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx91evk_ca55" "mcimx91qsb_ca55" "mcimx93evk_ca55" "mcimx95evk_ca55")
-valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33")
+valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx91evk" "mcimx91qsb" "mcimx93evk_ca55" "imx95lpd5evk19_ca55" "imx943evk_ca55")
+valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33" "imx95lpd5evk19_cm7")
 
 valid_oss=("freertos" "zephyr")
 
@@ -186,6 +186,10 @@ multicore_dir=$(cd "$(dirname "$0")" || exit; pwd)
 for each_app in "${apps_list[@]}"; do
     for each_os in "${oss_list[@]}"; do
         for each_board in "${boards_list[@]}"; do
+            # convert evkmimx8mm_ca53 to evkmimx8mm/ca53
+            board_core_name="${each_board//_/\/}"
+            # convert evkmimx8mm_ca53 to evkmimx8mm
+            board_name="${each_board%%_*}"
             # clean
             if [ ${is_clean} == "yes" ]; then # clean
                 if array_contains_elem "valid_acore_boards" "${each_board}"; then
@@ -193,7 +197,7 @@ for each_app in "${apps_list[@]}"; do
                 else
                     target_dir="armgcc"
                 fi
-                board_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${each_board}"
+                board_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${board_core_name}"
                 if [ -d "${board_dir}" ]; then
                     cd "${board_dir}" || exit
                     for build_dir in `find . -type d -name ${target_dir}`; do
@@ -205,12 +209,12 @@ for each_app in "${apps_list[@]}"; do
                                 exit 1
                             fi
                             # delete binary and elf image
-                            bin_file="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}/${each_app}*.bin"
-                            elf_file="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}/${each_app}*.elf"
+                            bin_file="${multicore_dir}/${images_dir_name}/${board_name}/${each_os}/${each_app}*.bin"
+                            elf_file="${multicore_dir}/${images_dir_name}/${board_name}/${each_os}/${each_app}*.elf"
                             rm -f ${bin_file} ${elf_file}
 
-                            del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
-                            del_empty_dir "${multicore_dir}/${images_dir_name}/${each_board}"
+                            del_empty_dir "${multicore_dir}/${images_dir_name}/${board_name}/${each_os}"
+                            del_empty_dir "${multicore_dir}/${images_dir_name}/${board_name}"
                             del_empty_dir "${multicore_dir}/${images_dir_name}"
                             del_empty_dir "${multicore_dir}/${deploy_dir_name}"
                         fi
@@ -218,7 +222,7 @@ for each_app in "${apps_list[@]}"; do
                 fi
             # build
             else
-                board_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${each_board}"
+                board_dir="${multicore_dir}/apps/${each_app}/${each_os}/boards/${board_core_name}"
                 if [ -d "${board_dir}" ]; then
                     cd "${board_dir}" || exit
                     for build_dir in `find . -type d -name ${target_dir}`; do
@@ -232,7 +236,7 @@ for each_app in "${apps_list[@]}"; do
                                     exit 1
                                 fi
                                 # copy binary and elf image
-                                output_dir="${multicore_dir}/${images_dir_name}/${each_board}/${each_os}"
+                                output_dir="${multicore_dir}/${images_dir_name}/${board_name}/${each_os}"
                                 if [ ! -d "${output_dir}" ]; then
                                     mkdir -p "${output_dir}"
                                 fi
@@ -240,8 +244,16 @@ for each_app in "${apps_list[@]}"; do
                                     find . -name "${each_app}"_smp.bin -exec cp {} "${output_dir}" \;
                                     find . -name "${each_app}"_smp.elf -exec cp {} "${output_dir}" \;
                                 else
-                                    find . -name "${each_app}*".bin -exec cp {} "${output_dir}" \;
-                                    find . -name "${each_app}*".elf -exec cp {} "${output_dir}" \;
+                                    if [ -n "$(find . -name "${each_app}_ca5?_RTOS*.bin")" ]; then
+                                        find . -name "${each_app}_ca5?_RTOS*".bin -exec cp {} "${output_dir}" \;
+                                        find . -name "${each_app}_ca5?_RTOS*".elf -exec cp {} "${output_dir}" \;
+                                    elif [ -n "$(find . -name "${each_app}_cm*.bin")" ]; then
+                                        find . -name "${each_app}_cm*".bin -exec cp {} "${output_dir}" \;
+                                        find . -name "${each_app}_cm*".elf -exec cp {} "${output_dir}" \;
+                                    else
+                                        find . -name "${each_app}*".bin -exec cp {} "${output_dir}" \;
+                                        find . -name "${each_app}*".elf -exec cp {} "${output_dir}" \;
+                                    fi
                                 fi
                             fi
                         done

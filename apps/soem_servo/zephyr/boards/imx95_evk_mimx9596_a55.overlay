@@ -1,0 +1,59 @@
+/*
+ * Copyright 2025 NXP
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "tpm.dtsi"
+
+#define MU		mu3
+#define MU_SRAM		445d1000
+
+/delete-node/ &scmi_shmem0;
+
+/ {
+	chosen {
+		zephyr,console = &lpuart3;
+		zephyr,shell-uart = &lpuart3;
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		scmi_shmem0: memory@MU_SRAM {
+			compatible = "arm,scmi-shmem";
+			reg = <DT_ADDR(MU_SRAM) 0x80>;
+		};
+	};
+
+	firmware {
+		scmi {
+			mboxes = <&MU 0>;
+			shmem = <&scmi_shmem0>;
+		};
+	};
+};
+
+&mu2 {
+	status = "disabled";
+};
+
+&MU {
+	status = "okay";
+};
+
+&tpm2 {
+	interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL IRQ_HIGHEST_PRIORITY>;
+};
+
+&lpuart1 {
+	status = "disabled";
+};
+
+&lpuart3 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&lpuart3_default>;
+	pinctrl-names = "default";
+};
