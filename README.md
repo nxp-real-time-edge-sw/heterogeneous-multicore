@@ -156,22 +156,22 @@ pip3 install west
 1. Initialize development workspace with heterogeneous_multicore manifest repo:
 
 ```bash
-export revision=master
+export revision=main
 west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
 ```
 
-**NOTE**: Use ${revision} with "master" will use the latest development branch, or could replace with any Real-Time Edge release you wish to use, such as Real_Time_Edge_v3.3_202512
+**NOTE**: Use ${revision} with "main" will use the latest release branch, or could replace with any Real-Time Edge release you wish to use, such as Real_Time_Edge_v3.3_202512
 
 2. Enable west extensions commands:
 
 ```bash
+cd workspace
 west config commands.allow_extensions true
 ```
 
 3. Update workspace:
 
 ```bash
-cd workspace
 west update
 ```
 
@@ -218,6 +218,7 @@ Use ***west sdk_build*** extension command for building FreeRTOS applications, a
 
     For example, building hello_world application running on evkmimx8mm Cortex-M Core:
     ```bash
+    cd workspace/heterogeneous-multicore
     export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
     west sdk_build -p always apps/hello_world/freertos/ -b evkmimx8mm --config release -Dcore_id=cm4
     ```
@@ -229,8 +230,8 @@ Use ***west sdk_build*** extension command for building FreeRTOS applications, a
     For example, building network sharing backend firmware running on evkmimx8mm Cortex-M Core:
 
     ```bash
+    cd workspace/heterogenous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm/cm4/armgcc
     export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
-    cd ~/workspace/heterogenous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm/cm4/armgcc
     ./build_release.sh
     ```
 
@@ -242,7 +243,8 @@ Use ***west sdk_build*** extension command for building FreeRTOS applications, a
 
     For example, building hello_world application running on evkmimx8mm Cortex-A Core:
     ```bash
-    export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+    cd workspace/heterogeneous-multicore
+    export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf
     west sdk_build -p always apps/hello_world/freertos/ -b evkmimx8mm --config ddr_release -Dcore_id=ca53
     ```
 
@@ -253,8 +255,8 @@ Use ***west sdk_build*** extension command for building FreeRTOS applications, a
     For example, building network sharing backend firmware running on Cortex-A Core:
 
     ```bash
+    cd workspace/heterogeneous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm/ca53/armgcc_aarch64
     export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf
-    cd ~/workspace/heterogeneous-multicore/apps/virtio_net_backend/freertos/boards/evkmimx8mm/ca53/armgcc_aarch64
     ./build_ddr_release.sh
     ```
 
@@ -295,6 +297,7 @@ Use ***west build*** extension command for building Zephyr applications, and eac
 - Building application in heterogeneous_multicore project by using west build command
 
   ```bash
+  cd workspace/heterogeneous-multicore
   west build -p always -b imx93_evk/mimx9352/a55 apps/hello_world/zephyr/ -DCONSOLE=UART2 -DRTOS_ID=0
   ```
   Note: This completes the west build command for the hello_world Zephyr application on the imx93_evk board's A55 core with optional CONSOLE and RTOS_ID parameters.
@@ -344,16 +347,16 @@ For example:
 
 For example, use the tool to build all hello_world application on Cortex-M Core for all supported boards:
 ```bash
+cd workspace/heterogeneous-multicore/
 export ARMGCC_DIR=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
-cd ~/workspace/heterogeneous-multicore/
 ./build_apps.sh m-core hello_world
 ```
 Use the cross compile toolchain to build all Zephyr application on Cortex-A Core for all supported boards:
 ```bash
+cd workspace/heterogeneous-multicore/
 export ZEPHYR_TOOLCHAIN_VARIANT="cross-compile"
 export CROSS_COMPILE=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 export CROSS_COMPILE_TOOLCHAIN_PATH=~/toolchains/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-elf
-cd ~/workspace/heterogeneous-multicore/
 ./build_apps.sh a-core zephyr
 ```
 After executing the tool, all binary images built out can be found in the directory: "*deploy/images*"
