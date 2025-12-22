@@ -99,9 +99,9 @@ static void counter_init(os_counter_t *dev)
 	gptConfig.divider = 1;
 	GPT_Init((GPT_Type *)(dev->base), &gptConfig);
 
-	ret = os_irq_register(irqn, gpt_irq_handler, (void *)dev, dev->irq_prio);
+	ret = os_irq_register((unsigned int)irqn, gpt_irq_handler, (void *)dev, dev->irq_prio);
 	os_assert(!ret, "Failed to register counter's IRQ! (%d)", ret);
-	os_irq_enable(irqn);
+	os_irq_enable((unsigned int)irqn);
 
 	dev->initialized = true;
 

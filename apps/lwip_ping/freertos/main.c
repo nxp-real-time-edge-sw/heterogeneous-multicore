@@ -196,7 +196,7 @@ int main(void)
 	 * The default value of ENET_PRIORITY is defined in lwip:ethernetif.h, but it can
 	 * be customized by defining a different value in lwipopts.h.
 	 */
-	os_irq_register(ENET_IRQ, enet_irq_handler, NULL, ENET_PRIORITY);
+	os_irq_register((unsigned int)ENET_IRQ, enet_irq_handler, NULL, ENET_PRIORITY);
 
 	/* Initialize lwIP from thread */
 	if (sys_thread_new("main", stack_init, NULL, INIT_THREAD_STACKSIZE, INIT_THREAD_PRIO) == NULL)

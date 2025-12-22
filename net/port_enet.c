@@ -372,7 +372,7 @@ static int enet_setup(struct enet_device *enet_dev)
 
 	ENET_Init(ENET_PORT_BASE, &enet_handle, &config, &buffer_config, default_mac_addr,  enet_ipg_freq);
 
-	ret = os_irq_register(ENET_PORT_IRQ, enet_irq_handler, NULL, ENET_IRQ_PRIO);
+	ret = os_irq_register((unsigned int)ENET_PORT_IRQ, enet_irq_handler, NULL, ENET_IRQ_PRIO);
 	if (ret)
 		os_printf("Register ENET IRQ failed\r\n", ENET_PORT_IRQ);
 
@@ -465,7 +465,7 @@ int enet_port_init(void *switch_dev)
 	create_enet_thread(enet_dev);
 
 	enet_active();
-	os_irq_enable(ENET_PORT_IRQ);
+	os_irq_enable((unsigned int)ENET_PORT_IRQ);
 
 	return 0;
 }

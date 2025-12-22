@@ -102,9 +102,9 @@ static void counter_init(os_counter_t *dev)
 	/* Set the modulo to max value. */
 	base->MOD = TPM_MAX_COUNTER_VALUE(base);
 
-	ret = os_irq_register(irqn, tpm_irq_handler, (void *)dev, dev->irq_prio);
+	ret = os_irq_register((unsigned int)irqn, tpm_irq_handler, (void *)dev, dev->irq_prio);
 	os_assert(!ret, "Failed to register counter's IRQ! (%d)", ret);
-	os_irq_enable(irqn);
+	os_irq_enable((unsigned int)irqn);
 
 	dev->initialized = true;
 

@@ -84,8 +84,8 @@ int if_port_init(void)
     bdrConfig.txBdrConfig = &txBdrConfig;
     uint32_t msgAddr;
 
-    os_irq_register(MSGINTR2_IRQn, MSGINTR2_IRQHandler, NULL, portLOWEST_USABLE_INTERRUPT_PRIORITY - 1);
-    os_irq_enable(MSGINTR2_IRQn);
+    os_irq_register((unsigned int)MSGINTR2_IRQn, MSGINTR2_IRQHandler, NULL, portLOWEST_USABLE_INTERRUPT_PRIORITY - 1);
+    os_irq_enable((unsigned int)MSGINTR2_IRQn);
 
     /* MSIX and interrupt configuration. */
     MSGINTR_Init(MSGINTR2, &msgintrCallback);
