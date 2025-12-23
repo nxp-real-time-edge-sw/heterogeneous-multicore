@@ -38,22 +38,30 @@ set(MCUX_SDK_PROJECT_NAME app)
 
 zephyr_compile_definitions(RTOSID=${RTOS_ID})
 
-if(CONFIG_BOARD_IMX8MM_EVK_MIMX8MM6_A53)
-  set(BoardName "evkmimx8mm/ca53")
-elseif(CONFIG_BOARD_IMX8MP_EVK_MIMX8ML8_A53 OR CONFIG_BOARD_IMX8MP_EVK_MIMX8ML8_A53_SMP)
-  set(BoardName "evkmimx8mp/ca53")
-elseif(CONFIG_BOARD_IMX91_QSB_MIMX9111)
+if(CONFIG_BOARD_IMX8MM_EVK)
+  set(BoardName "evkmimx8mm")
+elseif(CONFIG_BOARD_IMX8MP_EVK)
+  set(BoardName "evkmimx8mp")
+elseif(CONFIG_BOARD_IMX91_QSB)
   set(BoardName "mcimx91qsb")
-elseif(CONFIG_BOARD_IMX91_EVK_MIMX9131)
+elseif(CONFIG_BOARD_IMX91_EVK)
   set(BoardName "mcimx91evk")
-elseif(CONFIG_BOARD_IMX93_EVK_MIMX9352_A55 OR CONFIG_BOARD_IMX93_EVK_MIMX9352_A55_SMP)
-  set(BoardName "mcimx93evk/ca55")
-elseif(CONFIG_BOARD_IMX943_EVK_MIMX94398_A55)
-  set(BoardName "imx943evk/ca55")
-elseif(CONFIG_BOARD_IMX95_EVK_MIMX9596_A55 OR CONFIG_BOARD_IMX95_EVK_MIMX9596_A55_SMP)
-  set(BoardName "imx95lpd5evk19/ca55")
+elseif(CONFIG_BOARD_IMX93_EVK)
+  set(BoardName "mcimx93evk")
+elseif(CONFIG_BOARD_IMX943_EVK)
+  set(BoardName "imx943evk")
+elseif(CONFIG_BOARD_IMX95_EVK)
+  set(BoardName "imx95lpd5evk19")
 else()
   message(FATAL_ERROR "unsupported board")
+endif()
+
+if(CONFIG_CPU_CORTEX_A53)
+  set(CpuName "ca53")
+elseif(CONFIG_CPU_CORTEX_A55)
+  set(CpuName "ca55")
+else()
+  message(FATAL_ERROR "unsupported CPU")
 endif()
 
 set(ProjDirPath ${CMAKE_CURRENT_SOURCE_DIR})
@@ -61,9 +69,11 @@ set(OsPath "${ProjDirPath}/../../../os")
 set(HeaderPath "${ProjDirPath}/../../../include")
 set(AppPath "${ProjDirPath}/..")
 set(BoardPath "${ProjDirPath}/boards/${BoardName}")
+set(CpuPath "${ProjDirPath}/boards/${BoardName}/${CpuName}")
 
 zephyr_include_directories(
 	${BoardPath}
+	${CpuPath}
 	${HeaderPath}
 	${OsPath}
 	${ProjDirPath}
