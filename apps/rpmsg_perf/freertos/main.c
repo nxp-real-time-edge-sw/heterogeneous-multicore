@@ -18,8 +18,8 @@
 #define rpmsg_recv_task_PRIORITY	(configMAX_PRIORITIES - 2)
 #define rpmsg_send_task_PRIORITY	(configMAX_PRIORITIES - 1)
 
-#define RPMSG_RECV_TASK_STACK_SIZE	(4096)
-#define RPMSG_SEND_TASK_STACK_SIZE	(4096)
+#define RPMSG_RECV_TASK_STACK_SIZE	(1024)
+#define RPMSG_SEND_TASK_STACK_SIZE	(1024)
 
 #define RPMSG_EPT_ADDR			(30)
 
