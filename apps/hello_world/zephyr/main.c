@@ -44,14 +44,6 @@ static uint64_t mpid_list[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5};
 #error "CPU Core is not supported"
 #endif
 
-#ifdef CONFIG_CPU_CORTEX_A55
-static char cpu_name[] = "Cortex-A55";
-#elif defined(CONFIG_CPU_CORTEX_A53)
-static char cpu_name[] = "Cortex-A53";
-#else
-static char cpu_name[] = "Unknown";
-#endif
-
 static int get_core_id(uint64_t mpid)
 {
 	int i;
@@ -73,7 +65,7 @@ static void hello_func(void *p1, void *p2, void *p3)
 
 	do {
 		k_sem_take(&hello_sem, K_FOREVER);
-		os_printf("%s: hello %ld times from %s core%d (MPID: 0x%llx)\r\n", name, times[my_id]++, cpu_name, id, mpid);
+		os_printf("%s: hello %ld times from %s core%d (MPID: 0x%llx)\r\n", name, times[my_id]++, CPU_CORE_NAME, id, mpid);
 	} while(1);
 }
 
