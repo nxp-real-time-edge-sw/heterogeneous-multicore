@@ -65,7 +65,7 @@ static void hello_func(void *p1, void *p2, void *p3)
 
 	do {
 		k_sem_take(&hello_sem, K_FOREVER);
-		os_printf("%s: hello %ld times from %s core%d (MPID: 0x%llx)\r\n", name, times[my_id]++, CPU_CORE_NAME, id, mpid);
+		os_printf("%s: hello %lld times from %s core%d (MPID: 0x%llx)\r\n", name, times[my_id]++, CPU_CORE_NAME, id, mpid);
 	} while(1);
 }
 
