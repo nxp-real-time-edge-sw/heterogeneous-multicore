@@ -41,7 +41,7 @@ static uint64_t mpid_list[] = {0x0, 0x100, 0x200, 0x300, 0x400, 0x500};
 #elif defined(CONFIG_CPU_CORTEX_A53)
 static uint64_t mpid_list[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5};
 #else
-#error "CPU Core is not supported"
+static uint64_t mpid_list[] = {0x0};
 #endif
 
 static int get_core_id(uint64_t mpid)
