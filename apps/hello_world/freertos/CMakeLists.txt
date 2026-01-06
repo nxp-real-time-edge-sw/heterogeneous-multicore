@@ -29,6 +29,7 @@ mcux_add_include(
 
 include(${SdkRootDirPath}/${hmc_app_board_path}/reconfig.cmake OPTIONAL)
 include(${SdkRootDirPath}/${hmc_app_board_core_path}/reconfig.cmake OPTIONAL)
+include(${SdkRootDirPath}/${hmc_app_board_core_path}/setting.cmake OPTIONAL)
 
 mcux_add_configuration(
     TARGETS debug
