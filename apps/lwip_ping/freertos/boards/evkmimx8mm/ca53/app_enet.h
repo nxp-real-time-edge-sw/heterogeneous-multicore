@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,6 +11,7 @@
 #include "fsl_phyar8031.h"
 
 typedef phy_ar8031_resource_t		phy_resource_t;
+extern phy_resource_t phy_resource;
 
 #define ENET				ENET1
 #define ENET_IRQ			ENET1_IRQn

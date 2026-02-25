@@ -8,10 +8,12 @@ mcux_add_macro(
 )
 
 mcux_add_source(
-    SOURCES app_enet.h
+    SOURCES app_board.h
+            app_enet.h
             app_mmu.h
             clock_config.c
             clock_config.h
+            hardware_init.c
             lwipopts.h
             pin_mux.c
             pin_mux.h
