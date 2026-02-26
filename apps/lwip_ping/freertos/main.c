@@ -110,7 +110,7 @@ static void stack_init(void *arg)
 	ethernetif_config_t enet_config = {
 		.phyHandle   = &phyHandle,
 		.phyAddr     = ENET_PHY_ADDRESS,
-		.phyOps      = &ENET_PHY_OPS,
+		.phyOps      = ENET_PHY_OPS,
 		.phyResource = &phy_resource,
 		.srcClockHz  = ENET_CLOCK_FREQ,
 #ifdef configMAC_ADDR
