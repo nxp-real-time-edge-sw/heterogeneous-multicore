@@ -16,6 +16,7 @@ extern phy_resource_t phy_resource;
 #define ENET_IRQ			ENET_IRQn
 #define ENET_PHY_ADDRESS		0x2U
 #define ENET_PHY_OPS			&phyrtl8211f_ops
+#define ENET_PHY_RESOURCE		&phy_resource
 #define ENET_CLOCK_FREQ			(CLOCK_GetIpFreq(kCLOCK_Root_WakeupAxi))
 
 /* MAC address configuration. */

@@ -111,7 +111,7 @@ static void stack_init(void *arg)
 		.phyHandle   = &phyHandle,
 		.phyAddr     = ENET_PHY_ADDRESS,
 		.phyOps      = ENET_PHY_OPS,
-		.phyResource = &phy_resource,
+		.phyResource = ENET_PHY_RESOURCE,
 		.srcClockHz  = ENET_CLOCK_FREQ,
 #ifdef configMAC_ADDR
 		.macAddress = configMAC_ADDR
