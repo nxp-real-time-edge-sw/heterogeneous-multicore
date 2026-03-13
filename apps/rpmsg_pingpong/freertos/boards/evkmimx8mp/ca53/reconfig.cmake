@@ -90,6 +90,9 @@ include(${SdkRootDirPath}/${hmc_libs_path}/log/lib_log.cmake)
 include(${SdkRootDirPath}/${hmc_libs_path}/rpmsg/lib_rpmsg.cmake)
 include(${SdkRootDirPath}/${hmc_libs_path}/gen_sw_mbox/lib_gen_sw_mbox.cmake)
 
+# linker script created by using memory defined in rtos_memory.h
+set(DDR_LD_FILE "MIMX8ML8xxxxx_ca53_ddr_ram_RTOS${RTOS_ID}.ld")
+
 mcux_remove_armgcc_linker_script(
     BASE_PATH ${SdkRootDirPath}
     LINKER ${device_root}/i.MX/i.MX8MP/MIMX8ML8/gcc/MIMX8ML8xxxLZ_ddr_ram.ld
@@ -99,11 +102,18 @@ mcux_remove_armgcc_linker_script(
 )
 
 mcux_add_armgcc_linker_script(
-    BASE_PATH ${SdkRootDirPath}
-    LINKER ${hmc_os_board_path}/armgcc_aarch64/MIMX8ML8xxxxx_ca53_ddr_ram.ld
+    BASE_PATH ${APPLICATION_BINARY_DIR}
+    LINKER ${DDR_LD_FILE}
     TARGETS
         ddr_debug
         ddr_release
+)
+
+mcux_add_custom_command(
+    TARGETS ddr_release ddr_debug
+    TOOLCHAINS armgcc
+    BUILD_EVENT PRE_BUILD
+    BUILD_COMMAND ${CMAKE_C_COMPILER} -E -P -x assembler-with-cpp -I${SdkRootDirPath}/${hmc_os_board_path} -DRTOSID=${RTOS_ID} -o ${DDR_LD_FILE}  ${SdkRootDirPath}/${hmc_os_board_path}/armgcc_aarch64/MIMX8ML8xxxxx_ca53_ddr_ram.ld.S
 )
 
 mcux_convert_binary(BINARY ${APPLICATION_BINARY_DIR}/${MCUX_SDK_PROJECT_NAME}.bin)
