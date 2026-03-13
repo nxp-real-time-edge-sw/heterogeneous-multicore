@@ -58,6 +58,7 @@ mcux_add_macro(
 mcux_add_source(
     SOURCES app_board.c
             app_board.h
+            app_mmu.h
             clock_config.c
             clock_config.h
             pin_mux.c
