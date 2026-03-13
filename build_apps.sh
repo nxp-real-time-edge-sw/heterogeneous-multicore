@@ -7,7 +7,7 @@
 valid_apps=("hello_world" "lwip_ping" "rpmsg_perf" "rpmsg_pingpong" "rpmsg_str_echo" "rpmsg_uart_sharing" "rt_latency" "soem_digital_io" "soem_servo" "virtio_net_backend" "virtio_perf")
 
 valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx91evk" "mcimx91qsb" "mcimx93evk_ca55" "imx95lpd5evk19_ca55" "imx943evk_ca55")
-valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33" "imx95lpd5evk19_cm7")
+valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33" "imx943evk_cm33_core1" "imx95lpd5evk19_cm7")
 
 valid_oss=("freertos" "zephyr")
 
@@ -186,8 +186,10 @@ multicore_dir=$(cd "$(dirname "$0")" || exit; pwd)
 for each_app in "${apps_list[@]}"; do
     for each_os in "${oss_list[@]}"; do
         for each_board in "${boards_list[@]}"; do
-            # convert evkmimx8mm_ca53 to evkmimx8mm/ca53
-            board_core_name="${each_board//_/\/}"
+            # only convert the first '_' to '/':
+            #   will convert evkmimx8mm_ca53 to evkmimx8mm/ca53
+            #   will convert imx943evk_cm33_core1 to imx943evk/cm33_core1
+            board_core_name="${each_board/_/\/}"
             # convert evkmimx8mm_ca53 to evkmimx8mm
             board_name="${each_board%%_*}"
             # clean
