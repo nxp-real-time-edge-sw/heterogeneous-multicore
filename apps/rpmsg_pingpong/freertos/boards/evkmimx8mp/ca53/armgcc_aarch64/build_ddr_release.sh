@@ -29,6 +29,13 @@ do
 
                 # append console name to image name
                 image_name="rpmsg_pingpong_${name_str[$i]}_${cpu}_RTOS${i}_${console[$j]}"
+		# append RAM Console buffer address to image name
+		if [ ${console[$j]} = "RAM_CONSOLE" ]; then
+			# use helper to get the buffer address from rtos_memory.h
+			gcc -o  ${output_dir}/get_ram_console_addr -DRTOSID=${i} -I${hmc_root_path}/os/freertos/Core_AArch64/boards/${board}/ ${hmc_root_path}/tools/helper/get_ram_console_addr.c
+			buf_addr=$(./${output_dir}/get_ram_console_addr)
+			image_name=${image_name}-${buf_addr}
+		fi
                 ln -s rpmsg_pingpong_${cpu}.bin ${output_dir}/${image_name}.bin
                 ln -s rpmsg_pingpong_${cpu}.elf ${output_dir}/${image_name}.elf
         done
