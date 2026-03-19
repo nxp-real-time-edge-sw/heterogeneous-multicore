@@ -96,6 +96,23 @@ function del_empty_dir() {
     fi
 }
 
+# Check whether west command available
+if ! command -v west &> /dev/null; then
+    cat << EOF
+Error: west tool is not available!
+
+Please try one of the following:
+  1. Activate the virtual environment if it has been installed:
+     $ source workspace/.venv/bin/activate
+
+  2. Setup development environment from scratch:
+     See README.md for details
+
+EOF
+    exit 1
+fi
+
+
 for each_parm in "$@"
 do
     check_app "${each_parm}"
