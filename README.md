@@ -160,7 +160,7 @@ export revision=main
 west init -m https://github.com/nxp-real-time-edge-sw/heterogeneous-multicore.git --mr ${revision} workspace
 ```
 
-**NOTE**: Use ${revision} with "main" will use the latest release branch, or could replace with any Real-Time Edge release you wish to use, such as Real_Time_Edge_v3.3_202512
+**NOTE**: Use ${revision} with "main" will use the latest release branch, or could replace with any Real-Time Edge release you wish to use, such as Real_Time_Edge_v3.4_202604
 
 2. Enable west extensions commands:
 
