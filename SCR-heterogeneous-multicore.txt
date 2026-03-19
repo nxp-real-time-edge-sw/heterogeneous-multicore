@@ -1,11 +1,11 @@
 NXP Software Content Register
 
 Release Name: Heterogeneous Multicore Library and Application
-Release Version: 3.3
+Release Version: 3.4
 
 --------------------------------------------
 Package:                     Heterogeneous_Multicore
-Version:                     3.3
+Version:                     3.4
 Outgoing License:            BSD-3-Clause
 License Files:               LICENSE.txt
 Type of Content:             source code, project files, linker files, binary library.
