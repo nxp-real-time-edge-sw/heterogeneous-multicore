@@ -50,7 +50,7 @@ static void serror_handler(uint32_t iss)
 }
 
 /* ARMv8-A Architecture Reference Manual, Table D1-6 */
-static const struct exception_class_handler ec_handler[0x3f] = {
+static const struct exception_class_handler ec_handler[0x40] = {
 	[0b000000] = {"Unknown", },
 	[0b000001] = {"Trapped WF*", },
 	[0b000011] = {"Trapped MCR/MRC", },
