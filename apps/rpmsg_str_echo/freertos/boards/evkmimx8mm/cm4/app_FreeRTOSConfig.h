@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,7 +13,7 @@
 #undef configTOTAL_HEAP_SIZE
 #endif
 
-#define configTOTAL_HEAP_SIZE                   ((size_t)(80 * 1024))
+#define configTOTAL_HEAP_SIZE                   ((size_t)(100 * 1024))
 
 #endif /* APP_FREERTOS_CONFIG_H */
 #endif /* RPMSG_8M_BUF */
