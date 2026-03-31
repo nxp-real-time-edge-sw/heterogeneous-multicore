@@ -27,7 +27,7 @@ int irq_register(int nr, void (*func)(void *data), void *data, unsigned int prio
 	struct irq_handler *hdlr;
 	int ret = -1;
 
-	if (nr >= NR_IRQS)
+	if (nr < 0 || nr >= NR_IRQS)
 		goto exit;
 
 	portDISABLE_INTERRUPTS();
@@ -52,7 +52,7 @@ int irq_unregister(int nr)
 	struct irq_handler *hdlr;
 	int ret = -1;
 
-	if (nr >= NR_IRQS)
+	if (nr < 0 || nr >= NR_IRQS)
 		goto exit;
 
 	portDISABLE_INTERRUPTS();
