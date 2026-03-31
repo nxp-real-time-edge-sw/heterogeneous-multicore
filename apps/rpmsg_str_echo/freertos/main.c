@@ -18,7 +18,7 @@
 /* Task priority and stack size */
 #define rpmsg_init_task_PRIORITY	(configMAX_PRIORITIES - 1)
 #define rpmsg_ept_task_PRIORITY		(configMAX_PRIORITIES - 1)
-#define RPMSG_EPT_TASK_STACK_SIZE	(1024)
+#define RPMSG_EPT_TASK_STACK_SIZE	(configMINIMAL_STACK_SIZE + 256)
 
 /* Each RPMSG buffer can carry less than 512 payload */
 #ifndef	RPMSG_BUF_LEN
