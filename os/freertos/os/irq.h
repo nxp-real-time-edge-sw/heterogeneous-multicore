@@ -16,26 +16,41 @@
 static inline int os_irq_register(unsigned int irq, void (*func)(void *data),
 		void *data, unsigned int prio)
 {
+	if (irq >= NR_IRQS)
+		return -1;
+
 	return irq_register(irq, func, data, prio);
 }
 
 static inline int os_irq_unregister(unsigned int irq)
 {
+	if (irq >= NR_IRQS)
+		return -1;
+
 	return irq_unregister(irq);
 }
 
 static inline void os_irq_enable(unsigned int irq)
 {
+	if (irq >= NR_IRQS)
+		return;
+
 	EnableIRQ(irq);
 }
 
 static inline void os_irq_disable(unsigned int irq)
 {
+	if (irq >= NR_IRQS)
+		return;
+
 	DisableIRQ(irq);
 }
 
 static inline void os_irq_set_priority(unsigned int irq, unsigned int prio)
 {
+	if (irq >= NR_IRQS)
+		return;
+
 	if (prio)
 		GIC_SetPriority(irq, prio << portPRIORITY_SHIFT);
 }

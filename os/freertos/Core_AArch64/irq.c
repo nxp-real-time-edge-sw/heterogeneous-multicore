@@ -12,8 +12,6 @@
 
 #include "irq.h"
 
-#define NR_IRQS 0x3FFUL
-
 struct irq_handler {
 	void (*func)(void *data);
 	void *data;

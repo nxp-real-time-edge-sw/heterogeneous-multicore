@@ -8,6 +8,8 @@
 #ifndef _IRQ_H_
 #define _IRQ_H_
 
+#define NR_IRQS 0x3FFUL
+
 int irq_register(int nr, void (*func)(void *data), void *data, unsigned int prio);
 int irq_unregister(int nr);
 
