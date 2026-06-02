@@ -35,29 +35,39 @@ set(MCUX_SDK_PROJECT_NAME app)
 
 zephyr_compile_definitions(RTOSID=${RTOS_ID})
 
-if(CONFIG_BOARD_IMX8MP_EVK_MIMX8ML8_A53)
-  set(BoardName "evkmimx8mp/ca53")
-elseif(CONFIG_BOARD_IMX93_EVK_MIMX9352_A55)
-  set(BoardName "mcimx93evk/ca55")
-elseif(CONFIG_BOARD_IMX93_EVK_MIMX9352_M33)
-  set(BoardName "mcimx93evk/cm33")
-elseif(CONFIG_BOARD_IMX95_EVK_MIMX9596_A55)
-  set(BoardName "imx95lpd5evk19/ca55")
-elseif(CONFIG_BOARD_IMX95_EVK_MIMX9596_M7)
-  set(BoardName "imx95lpd5evk19/cm7")
+if(CONFIG_BOARD_IMX8MP_EVK)
+  set(BoardName "evkmimx8mp")
+elseif(CONFIG_BOARD_IMX93_EVK)
+  set(BoardName "mcimx93evk")
+elseif(CONFIG_BOARD_IMX95_EVK)
+  set(BoardName "imx95lpd5evk19")
 else()
   message(FATAL_ERROR "unsupported board")
+endif()
+
+if(CONFIG_CPU_CORTEX_A53)
+  set(CpuName "ca53")
+elseif(CONFIG_CPU_CORTEX_A55)
+  set(CpuName "ca55")
+elseif(CONFIG_CPU_CORTEX_M33)
+  set(CpuName "cm33")
+elseif(CONFIG_CPU_CORTEX_M7)
+  set(CpuName "cm7")
+else()
+  message(FATAL_ERROR "unsupported CPU")
 endif()
 
 set(ProjDirPath ${CMAKE_CURRENT_SOURCE_DIR})
 set(OsPath "${ProjDirPath}/../../../os")
 set(HeaderPath "${ProjDirPath}/../../../include")
-SET(LibsPath "${ProjDirPath}/../../../libs")
+set(LibsPath "${ProjDirPath}/../../../libs")
 set(AppPath "${ProjDirPath}/..")
 set(BoardPath "${ProjDirPath}/boards/${BoardName}")
+set(CpuPath "${ProjDirPath}/boards/${BoardName}/${CpuName}")
 
 zephyr_include_directories(
 	${BoardPath}
+	${CpuPath}
 	${HeaderPath}
 	${OsPath}
 	${ProjDirPath}
