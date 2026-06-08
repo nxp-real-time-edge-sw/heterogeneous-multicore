@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 NXP
+ * Copyright 2021-2024, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -370,9 +370,9 @@ void main_task(void *pvParameters)
 	struct main_ctx *ctx = pvParameters;
 
 	log_raw_info("\r\n");
-	log_raw_info("****************************************\r\n");
-	log_raw_info(" FreeRTOS Latency Benchmark on Cortex-A\r\n");
-	log_raw_info("****************************************\r\n");
+	log_raw_info("**********************************************************\r\n");
+	log_raw_info(" FreeRTOS Latency Benchmark on %s: %s\r\n", BOARD_NAME, CPU_CORE_NAME);
+	log_raw_info("**********************************************************\r\n");
 
 	ctx->started = false;
 
