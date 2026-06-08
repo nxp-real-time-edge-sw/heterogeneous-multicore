@@ -55,7 +55,14 @@ static inline void os_dcache_invd_all()
 
 static inline void os_icache_invd_all()
 {
+#if defined(__ARM_ARCH_8A__)
 	__asm volatile ("IC IALLUIS");
+#else
+	static int warn_once = 0;
+
+	if (!warn_once++)
+		os_printf("WARNING:  TODO: Flush I-Cache\n\r ");
+#endif
 }
 
 #endif /* _COMMON_CACHE_H_ */
