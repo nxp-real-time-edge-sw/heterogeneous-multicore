@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 NXP
+ * Copyright 2019-2023, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,6 +17,7 @@
  ******************************************************************************/
 /*! @brief The board name */
 #define BOARD_NAME        "MIMX8MP-EVK"
+#define CPU_CORE_NAME     "Cortex-A53"
 #define MANUFACTURER_NAME "NXP"
 #define BOARD_DOMAIN_ID   (0U)
 

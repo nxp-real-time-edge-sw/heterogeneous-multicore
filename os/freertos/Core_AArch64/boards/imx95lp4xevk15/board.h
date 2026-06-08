@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -32,6 +32,7 @@
  ******************************************************************************/
 /*! @brief The board name */
 #define BOARD_NAME        "IMX95LP4X-EVK"
+#define CPU_CORE_NAME     "Cortex-A55"
 #define MANUFACTURER_NAME "NXP"
 #define BOARD_DOMAIN_ID   (0U)
 

@@ -37,6 +37,7 @@
  ******************************************************************************/
 /*! @brief The board name */
 #define BOARD_NAME        "IMX952LPD5-EVK"
+#define CPU_CORE_NAME     "Cortex-A55"
 #define MANUFACTURER_NAME "NXP"
 #define BOARD_DOMAIN_ID   (0U)
 
