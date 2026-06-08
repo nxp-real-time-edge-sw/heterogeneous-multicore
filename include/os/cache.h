@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 NXP
+ * Copyright 2021-2022, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,6 +8,10 @@
 
 #include "fsl_cache.h"
 #include "os/stdio.h"
+
+#ifndef BIT
+#define BIT(n)  (1 << (n))
+#endif
 
 #if defined(OS_ZEPHYR)
 #define NONCACHEABLE	__nocache
