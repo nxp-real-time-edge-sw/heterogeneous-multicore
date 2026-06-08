@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 NXP
+ * Copyright 2021-2024, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -58,7 +58,7 @@ static void tpm_irq_ack(os_counter_t *dev, uint8_t chan_id, bool disable_irq)
 	}
 }
 
-static void tpm_irq_handler(void *irq_dev)
+void tpm_irq_handler(void *irq_dev)
 {
 	os_counter_t *dev = (os_counter_t *)irq_dev;
 	struct os_counter_alarm_cfg *alarm;
