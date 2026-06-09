@@ -801,7 +801,7 @@ void BOARD_ConfigMPU(void)
     MPU->RBAR = ARM_MPU_RBAR(regionIdx, 0x20200000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 0, 0, ARM_MPU_REGION_SIZE_512KB);
     regionIdx++;
-#elif defined(CACHE_MODE_WRITE_THROUGH) && CACHE_MODE_WRITE_BACK
+#elif defined(CACHE_MODE_WRITE_BACK) && CACHE_MODE_WRITE_BACK
     /* Region 4 setting: Memory with Normal type, not shareable, outer/inner write back for M33 System TCM(Include alias area) */
     MPU->RBAR = ARM_MPU_RBAR(regionIdx, 0x20200000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_512KB);
