@@ -1467,7 +1467,7 @@ void BOARD_InitDebugConsolePins(void)
 #if BOARD_DEBUG_UART_TYPE == kSerialPort_Uart
     BOARD_InitLpuartPins(BOARD_DEBUG_UART_INSTANCE);
 #else
-#warn "Not initialize any pins for debug console with non uart port"
+#warning "Not initialize any pins for debug console with non uart port"
 #endif
 }
 
