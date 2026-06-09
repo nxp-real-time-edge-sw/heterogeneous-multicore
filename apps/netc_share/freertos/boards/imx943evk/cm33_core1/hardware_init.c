@@ -162,20 +162,20 @@ static status_t SWT_PHY_Init(void)
     phygpy215Config.resource = &s_phy_gpy215_resource;
 
     for (int i = 0; i < EXAMPLE_SWT_PORT_NUM; i++) {
-	phy_config_t *phyConfig;
+        phy_config_t *phyConfig;
 
         phyConfig = &phygpy215Config;
         phyConfig->phyAddr = s_phy_addr[i];
 
-	/* Need phywrapper init */
-	if (i == EXAMPLE_SWT_PORT0)
-	{
+        /* Need phywrapper init */
+        if (i == EXAMPLE_SWT_PORT0)
+        {
             NETC_PHYInit(&s_mac0_mdio_handle, kNETC_SGMII2G5);
-	}
-	else if (i == EXAMPLE_SWT_PORT1)
-	{
+        }
+        else if (i == EXAMPLE_SWT_PORT1)
+        {
             NETC_PHYInit(&s_mac1_mdio_handle, kNETC_SGMII2G5);
-	}
+        }
 
         result = PHY_Init(&s_phy_handle[i], phyConfig);
         if (result != kStatus_Success)
@@ -183,7 +183,7 @@ static status_t SWT_PHY_Init(void)
             return result;
         }
 
-	/* Need to configure PHY SGMII mode */
+        /* Need to configure PHY SGMII mode */
         PHY_GPY215_WriteC45(&s_phy_handle[i], PHY_MMD_VSPEC1, VSPEC1_SGMII_CTRL_REG, 0x24faU);
 
         s_phy_link[i] = false;
