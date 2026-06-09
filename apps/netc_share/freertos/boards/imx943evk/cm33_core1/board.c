@@ -80,12 +80,12 @@ i2c_device_table_t g_i2cDevTbl[] = {
         .parent_id = BOARD_PCA9548_I2C3_ID,
     },
     [BOARD_PCA6416_I2C3_S6_ID & I2C_DEVICE_ARRAY_IDX_MASK] = {
-	 .handle = &g_pca6416Handle[BOARD_PCA6416_I2C3_S6_HANDLE_IDX],
-	 .parent_id = BOARD_PCA9548_I2C3_ID,
+         .handle = &g_pca6416Handle[BOARD_PCA6416_I2C3_S6_HANDLE_IDX],
+         .parent_id = BOARD_PCA9548_I2C3_ID,
      },
     [BOARD_PCA6408_I2C3_S7_ID & I2C_DEVICE_ARRAY_IDX_MASK] = {
-	 .handle = &g_pca6408Handle[BOARD_PCA6408_I2C3_S7_HANDLE_IDX],
-	 .parent_id = BOARD_PCA9548_I2C3_ID,
+         .handle = &g_pca6408Handle[BOARD_PCA6408_I2C3_S7_HANDLE_IDX],
+         .parent_id = BOARD_PCA9548_I2C3_ID,
      },
 
 };
@@ -94,37 +94,37 @@ static pca954x_t g_pca954xData[] = {
     [PCA9544_TYPE] = {
         .id = PCA9544_ID,
         .init = BOARD_InitPCA954X,
-	.select = BOARD_PCA954X_SelectChan,
-	.deselect = BOARD_PCA954X_DeselectMux,
+        .select = BOARD_PCA954X_SelectChan,
+        .deselect = BOARD_PCA954X_DeselectMux,
     },
     [PCA9548_TYPE] = {
         .id = PCA9548_ID,
         .init = BOARD_InitPCA954X,
-	.select = BOARD_PCA954X_SelectChan,
-	.deselect = BOARD_PCA954X_DeselectMux,
+        .select = BOARD_PCA954X_SelectChan,
+        .deselect = BOARD_PCA954X_DeselectMux,
     },
 };
 
 static pca64xx_t g_pca64xxData[] = {
     [PCA6408_TYPE - PCA6408_TYPE] = {
         .init = BOARD_InitPCA6408,
-	.set_pin_to_high = BOARD_PCA6408_SetPinToHigh,
-	.set_pin_to_low = BOARD_PCA6408_SetPinToLow,
-	.set_pin_as_input = BOARD_PCA6408_SetPinAsInput,
-	.set_pin_as_output = BOARD_PCA6408_SetPinAsOutput,
-	.select = BOARD_MUX_Select,
-	.deselect = BOARD_MUX_Deselect,
+        .set_pin_to_high = BOARD_PCA6408_SetPinToHigh,
+        .set_pin_to_low = BOARD_PCA6408_SetPinToLow,
+        .set_pin_as_input = BOARD_PCA6408_SetPinAsInput,
+        .set_pin_as_output = BOARD_PCA6408_SetPinAsOutput,
+        .select = BOARD_MUX_Select,
+        .deselect = BOARD_MUX_Deselect,
     },
     [PCA6416_TYPE - PCA6408_TYPE] = {
         .init = BOARD_InitPCA6416,
-	.select = BOARD_PCA954X_SelectChan,
-	.deselect = BOARD_PCA954X_DeselectMux,
-	.set_pin_to_high = BOARD_PCA6416_SetPinToHigh,
-	.set_pin_to_low = BOARD_PCA6416_SetPinToLow,
-	.set_pin_as_input = BOARD_PCA6416_SetPinAsInput,
-	.set_pin_as_output = BOARD_PCA6416_SetPinAsOutput,
-	.select = BOARD_MUX_Select,
-	.deselect = BOARD_MUX_Deselect,
+        .select = BOARD_PCA954X_SelectChan,
+        .deselect = BOARD_PCA954X_DeselectMux,
+        .set_pin_to_high = BOARD_PCA6416_SetPinToHigh,
+        .set_pin_to_low = BOARD_PCA6416_SetPinToLow,
+        .set_pin_as_input = BOARD_PCA6416_SetPinAsInput,
+        .set_pin_as_output = BOARD_PCA6416_SetPinAsOutput,
+        .select = BOARD_MUX_Select,
+        .deselect = BOARD_MUX_Deselect,
     },
 };
 
@@ -321,21 +321,21 @@ void BOARD_InitI2cDevice(uint32_t i2cDevId)
         pca954x_t *pca954xData = NULL;
 
         g_i2cDevTbl[i2cDevArrayIdx].data = &g_pca954xData[deviceType];
-	pca954xData = g_i2cDevTbl[i2cDevArrayIdx].data;
-	pca954xData->init(i2cDevId, base, clkFreq, i2cAddr);
+        pca954xData = g_i2cDevTbl[i2cDevArrayIdx].data;
+        pca954xData->init(i2cDevId, base, clkFreq, i2cAddr);
     }
     else if (deviceType < PCA64XX_TYPE)
     {
         pca64xx_t *pca64xxData = NULL;
 
         g_i2cDevTbl[i2cDevArrayIdx].data = &g_pca64xxData[deviceType - PCA6408_TYPE];
-	pca64xxData = g_i2cDevTbl[i2cDevArrayIdx].data;
-	pca64xxData->init(i2cDevId, base, clkFreq, i2cAddr);
+        pca64xxData = g_i2cDevTbl[i2cDevArrayIdx].data;
+        pca64xxData->init(i2cDevId, base, clkFreq, i2cAddr);
     }
     else
     {
         PRINTF("i2cDevId = %d, it's an unknown device, pls choose a correct device id\r\n", i2cDevId);
-	assert(false);
+        assert(false);
     }
 }
 
