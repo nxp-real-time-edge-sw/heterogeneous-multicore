@@ -559,7 +559,7 @@ static void APP_SRTM_InitAudioService(void)
     pdmConfig.dmaChannel    = APP_PDM_RX_DMA_CHANNEL;
     pdmConfig.extendConfig.audioDevInit = APP_SRTM_InitPdmDevice;
     pdmConfig.extendConfig.audioDevConf = APP_SRTM_ConfPdmDevice;
-    pdmConfig.pdmSrcClk                 = CLOCK_GetRate(kCLOCK_Pdm);;
+    pdmConfig.pdmSrcClk                 = CLOCK_GetRate(kCLOCK_Pdm);
     pdmConfig.config.qualityMode        = APP_PDM_QUALITY_MODE;
     pdmConfig.config.enableDoze         = false;
     pdmConfig.config.fifoWatermark      = FSL_FEATURE_PDM_FIFO_DEPTH / 2U;
