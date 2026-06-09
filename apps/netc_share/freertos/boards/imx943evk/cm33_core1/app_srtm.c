@@ -222,6 +222,9 @@ static srtm_status_t APP_SRTM_NETC_WritePCIConfig(srtm_netc_adapter_t adapter,
     uint32_t addr = PCIE_CONFIG_SPACE_BASE + ((uint32_t)rid * 4U * 1024U) + reg;
     uint32_t vaddr = PCIE_VIRTUAL_CONFIG_SPACE_BASE + ((uint32_t)rid * 4U * 1024U) + reg;
 
+    if (addr >= (PCIE_CONFIG_SPACE_BASE + PCIE_CONFIG_SPACE_SIZE))
+        return SRTM_Status_Error;
+
     /* Avoid writting shared ENETC PF except SR-IOV */
     if ((addr >= PCIE_CONFIG_SHARED_ENETC_BASE) && (addr < (PCIE_CONFIG_SHARED_ENETC_BASE + 0x150U)))
     {
