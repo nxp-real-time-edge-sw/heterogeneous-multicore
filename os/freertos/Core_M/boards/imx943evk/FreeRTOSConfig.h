@@ -160,7 +160,7 @@
 /* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
 #define configPRIO_BITS __NVIC_PRIO_BITS
 #else
-#define configPRIO_BITS 3 /* 7 priority levels */
+#define configPRIO_BITS 4 /* 15 priority levels */
 #endif
 
 #define configSTACK_DEPTH_TYPE uint32_t
