@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 NXP
+ * Copyright 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,10 +9,6 @@
 
 #undef configMAX_PRIORITIES
 #define configMAX_PRIORITIES                    18
-
-/* Used memory allocation (heap_x.c) */
-#undef configFRTOS_MEMORY_SCHEME
-#define configFRTOS_MEMORY_SCHEME               3
 
 /* Memory allocation related definitions. */
 #undef configSUPPORT_STATIC_ALLOCATION
