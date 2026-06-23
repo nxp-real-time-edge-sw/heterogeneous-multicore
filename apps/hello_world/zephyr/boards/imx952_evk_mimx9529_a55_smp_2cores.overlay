@@ -31,11 +31,11 @@
 		};
 
 		cpu@200 {
-			status = "disabled";
+			status = "okay";
 		};
 
 		cpu@300 {
-			status = "disabled";
+			status = "okay";
 		};
 	};
 

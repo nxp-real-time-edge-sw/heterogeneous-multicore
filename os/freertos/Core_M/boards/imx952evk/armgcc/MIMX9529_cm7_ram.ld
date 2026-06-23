@@ -1,13 +1,12 @@
 /*
 ** ###################################################################
 **     Processors:          MIMX9529xxVTx_cm7
-**                          MIMX9529xxVYx_cm7
 **                          MIMX9529xxVZx_cm7
 **
 **     Compiler:            GNU C Compiler
 **     Reference manual:    iMX952RM rev1 draftM
 **     Version:             rev. 1.0, 2021-11-16
-**     Build:               b260203
+**     Build:               b260410
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
@@ -29,8 +28,6 @@ HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
 STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
 M_VECTOR_RAM_SIZE = DEFINED(__ram_vector_table__) ? 0x0620 : 0x0;
 
-/* Memory region from [0x20040000-0x2007FFFF] is reserved for A35 ATF */
-
 /* Specify the memory areas */
 MEMORY
 {
@@ -40,7 +37,7 @@ MEMORY
   m_a55_suspend_ram     (RW)  : ORIGIN = 0x20002000, LENGTH = 0x00002000
   m_data                (RW)  : ORIGIN = 0x20004000, LENGTH = 0x0001A000
   m_ncache              (RW)  : ORIGIN = 0x2001E000, LENGTH = 0x00010000
-  m_reserved            (RW)  : ORIGIN = 0x20036000, LENGTH = 0x0000E000
+  m_reserved            (RW)  : ORIGIN = 0x2002E000, LENGTH = 0x0000E000
   m_rsc_tbl             (RW)  : ORIGIN = 0x2003C000, LENGTH = 0x00004000
   m_rsc_tbl_in_dram     (RW)  : ORIGIN = 0x88220000, LENGTH = 0x00004000
 }
@@ -48,9 +45,9 @@ MEMORY
 /* Define output sections */
 SECTIONS
 {
+  /* The startup code goes first into internal RAM */
   __NCACHE_REGION_START = ORIGIN(m_ncache);
   __NCACHE_REGION_SIZE  = LENGTH(m_ncache);
-  /* The startup code goes first into internal RAM */
   .interrupts :
   {
     __VECTOR_TABLE = .;
@@ -103,8 +100,21 @@ SECTIONS
  .ctors :
   {
     __CTOR_LIST__ = .;
+    /* gcc uses crtbegin.o to find the start of
+       the constructors, so we make sure it is
+       first.  Because this is a wildcard, it
+       doesn't matter if the user does not
+       actually link against crtbegin.o; the
+       linker won't look for a file to match a
+       wildcard.  The wildcard also means that it
+       doesn't matter which directory crtbegin.o
+       is in.  */
     KEEP (*crtbegin.o(.ctors))
     KEEP (*crtbegin?.o(.ctors))
+    /* We don't want to include the .ctor section from
+       from the crtend.o file until after the sorted ctors.
+       The .ctor section from the crtend file contains the
+       end of ctors marker and it must be last */
     KEEP (*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
@@ -253,8 +263,7 @@ SECTIONS
   __RscTblInDramEnd = ORIGIN(m_rsc_tbl_in_dram) + LENGTH(m_rsc_tbl_in_dram);
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
-   __RESERVED_START = ORIGIN(m_reserved);
-   __VECTOR_TABLE_SIZE = LENGTH(m_interrupts);
 
   ASSERT(__StackLimit >= __HeapLimit, "region m_data overflowed with stack and heap")
 }
+

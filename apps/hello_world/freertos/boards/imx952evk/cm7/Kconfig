@@ -1,0 +1,8 @@
+# Copyright 2026 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+config MCUX_HW_BOARD_imx952evk_cm7
+    bool
+    default y
+    imply MCUX_COMPONENT_middleware.freertos-kernel.cm7f if MCUX_COMPONENT_middleware.freertos-kernel
