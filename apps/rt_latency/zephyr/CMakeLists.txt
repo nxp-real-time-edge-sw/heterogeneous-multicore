@@ -30,10 +30,10 @@ else()
 endif()
 
 set(ProjDirPath ${CMAKE_CURRENT_SOURCE_DIR})
-SET(ProjRootPath "${ProjDirPath}/../../../")
+set(ProjRootPath "${ProjDirPath}/../../../")
 set(OsPath "${ProjDirPath}/../../../os")
 set(HeaderPath "${ProjRootPath}/include")
-SET(LibsPath "${ProjRootPath}/libs")
+set(LibsPath "${ProjRootPath}/libs")
 set(AppPath "${ProjDirPath}/..")
 set(BoardPath "${ProjDirPath}/boards/${BoardName}")
 set(CpuPath "${ProjDirPath}/boards/${BoardName}/${CpuName}")
@@ -41,7 +41,7 @@ set(CpuPath "${ProjDirPath}/boards/${BoardName}/${CpuName}")
 # config to select component, the format is CONFIG_USE_${component}
 set(CONFIG_USE_middleware_zephyr-kernel true)
 set(CONFIG_USE_middleware_multicore_rpmsg_lite_zephyr true)
-ADD_DEFINITIONS(-DAARCH64=1)
+add_definitions(-DAARCH64=1)
 
 zephyr_include_directories(
   ${AppPath}/common
