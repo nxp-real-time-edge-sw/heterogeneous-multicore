@@ -14,6 +14,7 @@
 
 #include "log/log.h"
 #include "rt_latency.h"
+#include "app_board.h"
 
 #define STACK_SIZE 4096
 #define TEST_DURATION_FOREVER 0
@@ -380,9 +381,9 @@ int main(void)
 	console_init();
 
 	log_raw_info("\r\n");
-	log_raw_info("**************************************\r\n");
-	log_raw_info(" Zephyr Latency Benchmark on Cortex-A\r\n");
-	log_raw_info("**************************************\r\n");
+	log_raw_info("**********************************************************\r\n");
+	log_raw_info(" Zephyr Latency Benchmark on %s: %s\r\n", CONFIG_BOARD, CPU_CORE_NAME);
+	log_raw_info("**********************************************************\r\n");
 
 	ctx->started = false;
 
