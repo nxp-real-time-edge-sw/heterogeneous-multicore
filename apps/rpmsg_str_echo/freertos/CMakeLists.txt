@@ -5,6 +5,10 @@ get_filename_component(BOARD_ROOT_ABSOLUTE ${ProjDirPath}/boards REALPATH)
 set(CUSTOM_BOARD_ROOT ${BOARD_ROOT_ABSOLUTE})
 message(STATUS "CUSTOM_BOARD_ROOT absolute path: ${CUSTOM_BOARD_ROOT}")
 
+if(${CONSOLE} STREQUAL "RAM_CONSOLE")
+  set(CONF_FILE ${CMAKE_CURRENT_SOURCE_DIR}/RAM_CONSOLE.conf)
+endif()
+
 include(${SdkRootDirPath}/cmake/extension/mcux.cmake)
 
 set(hmc_root_path "../../heterogeneous-multicore")
