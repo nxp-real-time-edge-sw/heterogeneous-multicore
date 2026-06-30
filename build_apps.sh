@@ -4,7 +4,7 @@
 # build or clean all applications: ./build_apps [clean]
 # build or clean specified applications: ./build_apps [clean] [core] [os] [board-list] [app-list]
 
-valid_apps=("hello_world" "lwip_ping" "netc_share" "rpmsg_perf" "rpmsg_pingpong" "rpmsg_str_echo" "rpmsg_uart_sharing" "rt_latency" "soem_digital_io" "soem_servo" "virtio_net_backend" "virtio_perf")
+valid_apps=("hello_world" "lwip_ping" "netc_share" "rpmsg_perf" "rpmsg_pingpong" "rpmsg_str_echo" "rpmsg_uart_sharing" "rt_latency" "soem_digital_io" "soem_servo" "virtio_net_backend" "virtio_perf" "driver_examples")
 
 valid_acore_boards=("evkmimx8mm_ca53" "evkmimx8mp_ca53" "mcimx91evk" "mcimx91qsb" "mcimx93evk_ca55" "imx95lp4xevk15_ca55" "imx95lpd5evk19_ca55" "imx943evk_ca55" "imx952evk_ca55")
 valid_mcore_boards=("evkmimx8mm_cm4" "evkmimx8mp_cm7" "mcimx93evk_cm33" "imx943evk_cm33_core1" "imx95lpd5evk19_cm7" "imx952evk_cm7")
