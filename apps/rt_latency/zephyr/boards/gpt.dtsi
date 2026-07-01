@@ -10,9 +10,11 @@
 &gpt1 {
 	interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL
 		IRQ_HIGHEST_PRIORITY>;
+	run-mode = "free-run";
 	status = "okay";
 };
 
 &gpt2 {
+	run-mode = "free-run";
 	status = "okay";
 };
