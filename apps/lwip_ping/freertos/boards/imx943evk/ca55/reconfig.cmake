@@ -9,8 +9,7 @@ mcux_add_macro(
         -DBOARD_USE_PCA6408=1 \
         -DBOARD_USE_PCA6416=1 \
         -DBOARD_USE_PCA954X=1 \
-        -DSDK_DEBUGCONSOLE=1 \
-        -DBOARD_DEBUG_UART_INSTANCE=1"
+        -DSDK_DEBUGCONSOLE=1"
 )
 
 mcux_add_linker_symbol(
