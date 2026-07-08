@@ -143,7 +143,8 @@ Create a new virtual environment:
 # create workspace directory
 mkdir workspace
 # create a virtual environment in the workspace directory
-python3 -m venv workspace/.venv
+# use python 3.12 or later version
+python3.12 -m venv workspace/.venv
 # active the virtual environment
 source workspace/.venv/bin/activate
 # install west
