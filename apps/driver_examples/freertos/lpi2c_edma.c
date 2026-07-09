@@ -77,12 +77,12 @@ int lpi2c_edma_test(void)
 	int rx_ok = 0;
 
 	PRINTF("\r\n%d. LPI2C EDMA transfer example\r\n", get_test_idx());
-	PRINTF("This example use one lpi2c instance as master and another as slave on one board.\r\n");
+	PRINTF("This example use one lpi2c instance as controller and another as target on one board.\r\n");
 
 	LPI2C_ShowPinCfg();
 
 	PRINTF("\r\nthe connection is: \r\n");
-	PRINTF("LPI2C_master -- LPI2C_slave   \r\n");
+	PRINTF("LPI2C_controller -- LPI2C_target   \r\n");
 	PRINTF("   SDA      --    SDA  \r\n");
 	PRINTF("   SCL      --    SCL \r\n");
 
@@ -113,7 +113,7 @@ int lpi2c_edma_test(void)
 	}
 
 	/* Set up i2c master to send data to slave */
-	PRINTF("\r\nMaster will send data :");
+	PRINTF("\r\nController will send data :");
 	for (i = 0; i < I2C_DATA_LENGTH; i++) {
 		s_master_buff[i] = i;
 		s_slave_buff[i] = 0;
@@ -164,7 +164,7 @@ int lpi2c_edma_test(void)
 	while (!s_slave_done);
 
 	/* Display the slave data */
-	PRINTF("\r\nSlave received data :");
+	PRINTF("\r\nTarget received data :");
 	for (i = 0; i < I2C_DATA_LENGTH; i++) {
 		if (i % 8 == 0)
 			PRINTF("\r\n");

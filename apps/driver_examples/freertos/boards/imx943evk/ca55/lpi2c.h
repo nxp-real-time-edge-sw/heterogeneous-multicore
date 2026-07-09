@@ -39,7 +39,7 @@ int lpi2c_edma_test(void);
 static inline void LPI2C_ShowPinCfg()
 {
 	PRINTF("\r\nFor i.MX943EVK, Pin is:\r\n");
-	PRINTF(" SLAVE(LPI2C6)      connect to    MASTER(LPI2C4) \r\n");
+	PRINTF(" Target(LPI2C6)      connect to    Controller(LPI2C4) \r\n");
 	PRINTF(" Pin Name   Board Location     Pin Name    Board Location \r\n");
 	PRINTF(" SDA        J13-3                SDA       J12-3 \r\n");
 	PRINTF(" SCL        J13-5                SCL       J12-5 \r\n");

@@ -46,9 +46,9 @@ static volatile bool s_master_done = false;
 static void LPSPI_SlaveUserCallback(LPSPI_Type *base, lpspi_slave_handle *handle, status_t status, void *userData)
 {
 	if (status == kStatus_Success)
-		PRINTF("LPSPI slave completed callback. Success!\r\n");
+		PRINTF("LPSPI peripheral completed callback. Success!\r\n");
 	else if (status == kStatus_LPSPI_Error)
-		PRINTF("LPSPI slave completed callback. Error!\r\n");
+		PRINTF("LPSPI peripheral completed callback. Error!\r\n");
 	else
 		__NOP();
 
@@ -58,9 +58,9 @@ static void LPSPI_SlaveUserCallback(LPSPI_Type *base, lpspi_slave_handle *handle
 static void LPSPI_MasterUserCallback(LPSPI_Type *base, lpspi_master_handle *handle, status_t status, void *userData)
 {
 	if (status == kStatus_Success)
-		PRINTF("LPSPI master completed callback. Success!\r\n");
+		PRINTF("LPSPI controller completed callback. Success!\r\n");
 	else if (status == kStatus_LPSPI_Error)
-		PRINTF("LPSPI master completed callback. Error!\r\n");
+		PRINTF("LPSPI controller completed callback. Error!\r\n");
 	else
 		__NOP();
 
@@ -80,12 +80,12 @@ int lpspi_base_test(void)
 	uint32_t i = 0;
 
 	PRINTF("\r\n%d. LPSPI transfer example\r\n", get_test_idx());
-	PRINTF("This example use one lpspi instance as master and another as slave on one board.\r\n");
+	PRINTF("This example use one lpspi instance as controller and another as peripheral on one board.\r\n");
 
 	LPSPI_ShowPinCfg();
 
 	PRINTF("\r\nthe connection is: \r\n");
-	PRINTF("LPSPI_master -- LPSPI_slave \r\n");
+	PRINTF("LPSPI_controller -- LPSPI_peripheral \r\n");
 	PRINTF("   CLK      --    CLK  \r\n");
 	PRINTF("   PCS      --    PCS  \r\n");
 	PRINTF("   SOUT     --    SIN  \r\n");
@@ -140,7 +140,7 @@ int lpspi_base_test(void)
 
 	/*Wait slave received all data. Even though the LPSPI_MasterTransferBlocking is a blocking transfer, but slave may
 	 * need a little bit of time to read the data of last frames from buffer.*/
-	PRINTF("Waiting LPSPI slave transfer complete... \r\n");
+	PRINTF("Waiting LPSPI peripheral transfer complete... \r\n");
 	while (!s_slave_done || !s_master_done);
 
 	errorCount = 0;

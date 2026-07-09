@@ -63,7 +63,7 @@ int lpspi_edma_test(void);
 static inline void LPSPI_ShowPinCfg()
 {
 	PRINTF("\r\nFor i.MX943EVK, Pin is:\r\n");
-	PRINTF(" SLAVE(LPSPI3)      connect to    MASTER(LPSPI8) \r\n");
+	PRINTF(" Peripheral(LPSPI3)      connect to    Controller(LPSPI8) \r\n");
 	PRINTF(" Pin Name   Board Location     Pin Name    Board Location \r\n");
 	PRINTF(" SOUT       J47-8                SIN       J43-10 \r\n");
 	PRINTF(" SIN        J47-10               SOUT      J43-8 \r\n");
