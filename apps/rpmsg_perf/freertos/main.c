@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 NXP
+ * Copyright 2023-2024, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -58,10 +58,6 @@ static TaskHandle_t rpmsg_send_task_handle;
 static volatile struct sender_args args;
 static SemaphoreHandle_t send_packet_sig;
 
-static uint32_t sender_poll_times;
-static uint32_t delayed_packets_count;
-static bool wait_buffer;
-
 void APP_SendPacket(struct rpmsg_ept *ept, void *p_buf, uint32_t buf_size, bool no_copy, bool have_preamble)
 {
 	uint32_t size = 0;
@@ -75,35 +71,19 @@ void APP_SendPacket(struct rpmsg_ept *ept, void *p_buf, uint32_t buf_size, bool 
 
 			do {
 				tx_buf = rpmsg_lite_alloc_tx_buffer(ept->ri->rl_inst, &tmp_size, RL_FALSE);
-				if (!have_preamble && (tx_buf == RL_NULL)) {
-					sender_poll_times++; /* record poll times when send data(invalid) packet */
-					wait_buffer = true;
-				}
 			} while (tx_buf == RL_NULL);
 
 			size = (buf_size > tmp_size) ? (tmp_size) : (buf_size);
 
 			if (have_preamble) {
 				memcpy(tx_buf, p_buf, size);
-			} else if (wait_buffer) {
-				wait_buffer = false;
-				delayed_packets_count++;
 			}
 			result = rpmsg_lite_send_nocopy(ept->ri->rl_inst, ept->rl_ept, ept->remote_addr, tx_buf, size);
 		} else {
 			size = (buf_size > APP_BUFFER_PAYLOAD_SIZE) ? (APP_BUFFER_PAYLOAD_SIZE) : (buf_size);
 			do {
 				result = rpmsg_send(ept, p_buf, size, RL_FALSE);
-				if (!have_preamble && (result != RL_SUCCESS)) {
-					sender_poll_times++; /* record poll times when send data(valid) packet */
-					wait_buffer = true;
-				}
 			} while (result != RL_SUCCESS);
-
-			if (wait_buffer) {
-				wait_buffer = false;
-				delayed_packets_count++;
-			}
 		}
 
 		os_assert(result == RL_SUCCESS, "ept%d: rpmsg send failed! (ret = %d)", ept->rl_ept->addr, result);
@@ -245,8 +225,6 @@ static void rpmsg_recv_task(void *param)
 			args.end_ticks = current_ticks + test_time_ticks;
 			no_copy = p_in->no_copy;
 			args.no_copy = p_in->no_copy;
-			sender_poll_times = 0U;
-			delayed_packets_count = 0U;
 			result = xSemaphoreGive(send_packet_sig);
 			os_assert(result == pdTRUE, "Failed to give semaphore send_packet_sig (ret: %d)", result);
 			break;
