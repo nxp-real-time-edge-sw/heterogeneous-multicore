@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,7 +14,7 @@
 
 struct rpmsg_config {
 	bool mode;
-	int32_t link_id;
+	uint32_t link_id;
 	uint32_t flags;
 	bool is_coherent;
 	uintptr_t rpmsg_shmem_pa;
