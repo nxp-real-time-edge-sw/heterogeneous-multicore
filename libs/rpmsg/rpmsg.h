@@ -46,7 +46,7 @@ struct rpmsg_ept {
 
 struct rpmsg_instance *rpmsg_init(const struct rpmsg_config *cfg);
 void rpmsg_deinit(struct rpmsg_instance *ri);
-struct rpmsg_ept *rpmsg_create_ept(struct rpmsg_instance *ri, int ept_addr, const char *sn);
+struct rpmsg_ept *rpmsg_create_ept(struct rpmsg_instance *ri, uint32_t ept_addr, const char *sn);
 int rpmsg_destroy_ept(struct rpmsg_ept *ept);
 int rpmsg_send(struct rpmsg_ept *ept, void *data, uint32_t len, uintptr_t timeout);
 int rpmsg_recv(struct rpmsg_ept *ept, void *data, uint32_t *len, uintptr_t timeout);

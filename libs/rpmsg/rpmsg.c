@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2023, 2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -195,7 +195,7 @@ int rpmsg_recv(struct rpmsg_ept *ept, void *data, uint32_t *len, uintptr_t timeo
 	return ret;
 }
 
-struct rpmsg_ept *rpmsg_create_ept(struct rpmsg_instance *ri, int ept_addr, const char *sn)
+struct rpmsg_ept *rpmsg_create_ept(struct rpmsg_instance *ri, uint32_t ept_addr, const char *sn)
 {
 	struct rpmsg_ept *ept;
 	int ret;
