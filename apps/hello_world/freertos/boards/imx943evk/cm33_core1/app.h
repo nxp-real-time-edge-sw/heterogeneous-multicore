@@ -12,6 +12,7 @@
  ******************************************************************************/
 #define CPU_CORTEX_M33
 #define CPU_CORE_NAME	"Cortex-M33"
+#define CPU_CORE_MPID	(1)
 #define RTOS_CNT	(1)
 
 void BOARD_InitHardware(void);

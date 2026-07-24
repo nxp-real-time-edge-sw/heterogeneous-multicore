@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 NXP
+ * Copyright 2024-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,6 +17,10 @@
 #define RTOSID		(0)
 #endif
 
+#ifndef CPU_CORE_MPID
+#define CPU_CORE_MPID	(0)
+#endif
+
 #define NUM_THREADS	CONFIG_MP_MAX_NUM_CPUS
 #define STACK_SIZE	4096
 
@@ -32,7 +36,7 @@ static uint64_t get_core_mpid(void)
 #if defined(MPIDR_TO_CORE) && defined(GET_MPIDR)
 	return MPIDR_TO_CORE(GET_MPIDR());
 #else
-	return 0;
+	return CPU_CORE_MPID;
 #endif
 }
 
@@ -40,8 +44,8 @@ static uint64_t get_core_mpid(void)
 static uint64_t mpid_list[] = {0x0, 0x100, 0x200, 0x300, 0x400, 0x500};
 #elif defined(CONFIG_CPU_CORTEX_A53)
 static uint64_t mpid_list[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5};
-#else
-static uint64_t mpid_list[] = {0x0};
+#else /* Cortex-M cores */
+static uint64_t mpid_list[] = {0x0, 0x1, 0x3, 0x4};
 #endif
 
 static int get_core_id(uint64_t mpid)

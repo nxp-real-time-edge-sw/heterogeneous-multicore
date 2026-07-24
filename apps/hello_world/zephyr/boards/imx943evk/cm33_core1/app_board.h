@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 NXP
+ * Copyright 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,6 +12,7 @@
  ******************************************************************************/
 
 #define CPU_CORE_NAME	"Cortex-M33"
+#define CPU_CORE_MPID	(1)
 #define RTOS_CNT	(1)
 
 #endif /* _APP_BOARD_H_ */

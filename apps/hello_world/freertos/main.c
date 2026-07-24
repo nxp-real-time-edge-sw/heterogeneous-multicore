@@ -1,5 +1,5 @@
 /*
- * Copyright 2023, 2025 NXP
+ * Copyright 2023, 2025-2026 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,6 +25,9 @@
 #define RTOSID		(0)
 #endif
 
+#ifndef CPU_CORE_MPID
+#define CPU_CORE_MPID	(0)
+#endif
 
 /*******************************************************************************
  * Definitions
@@ -45,15 +48,15 @@ static uint64_t times = 0;
 
 __WEAK uint64_t get_core_mpid(void)
 {
-	return 0;
+	return CPU_CORE_MPID;
 }
 
 #ifdef CPU_CORTEX_A55
 static uint64_t mpid_list[] = {0x0, 0x100, 0x200, 0x300, 0x400, 0x500};
 #elif defined(CPU_CORTEX_A53)
 static uint64_t mpid_list[] = {0x0, 0x1, 0x2, 0x3, 0x4, 0x5};
-#else
-static uint64_t mpid_list[] = {0x0};
+#else /* Cortex-M cores */
+static uint64_t mpid_list[] = {0x0, 0x1, 0x3, 0x4};
 #endif
 
 static int get_core_id(uint64_t mpid)
