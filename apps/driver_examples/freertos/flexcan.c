@@ -80,6 +80,9 @@ static int flexcan_init_port(int port, bool loopback)
 	flexcan_config_t flexcanConfig;
 	Flexcan_Session_t *ps = NULL;
 
+	if ((port < 0) || (port >= MAX_IDX))
+		return -1;
+
 	ps = s_flexcan_session + port;
 	if (!ps->pflexcan) {
 		ps->pflexcan = s_flexcan[port];
