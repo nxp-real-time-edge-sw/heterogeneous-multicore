@@ -65,7 +65,7 @@ int lpi2c_base_test(void)
 	lpi2c_master_transfer_t masterXfer = {0};
 	lpi2c_master_config_t masterConfig;
 	lpi2c_slave_config_t slaveConfig;
-	status_t reVal = kStatus_Fail;
+	status_t reVal;
 	uint32_t i = 0;
 	int rx_ok = 0;
 
