@@ -158,7 +158,7 @@ static int flexcan_init_port(int port, bool loopback)
 
 #ifdef USE_CANFD
 	for (int i = 0; i < DWORD_IN_MB; i++) {
-		ps->txFrame.dataWord[i] = (uint32_t)(i + 0x10 * port);
+		ps->txFrame.dataWord[i] = (uint32_t)i + 0x10U * (uint32_t)port;
 		ps->rxFrame.dataWord[i] = 0;
 	}
 	ps->rxXfer.framefd = &ps->rxFrame;
