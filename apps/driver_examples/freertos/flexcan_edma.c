@@ -110,7 +110,10 @@ static int flexcan_init_port(int port, bool loopback)
 		PRINTF("No found Improved Timing Configuration. Just used default configuration\r\n\r\n");
 #endif
 
-	FLEXCAN_Init(ps->pflexcan, &flexcanConfig, ps->srcClockHz);
+	if (ps->srcClockHz > UINT32_MAX)
+		return -1;
+
+	FLEXCAN_Init(ps->pflexcan, &flexcanConfig, (uint32_t)ps->srcClockHz);
 
 	EDMA_GetDefaultConfig(&edmaConfig);
 	EDMA_Init(FLEX_CAN_DMA, &edmaConfig);
