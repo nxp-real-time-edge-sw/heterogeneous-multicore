@@ -11,7 +11,11 @@ set(HMC_SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../")
 set(LIBRARY_SRC_PATH "${HMC_SRC_PATH}/net")
 set(PTP_STACK_SRC_PATH "${HMC_SRC_PATH}/net/ptp_stack")
 set(GenAVBPath "${SdkRootDirPath}/middleware/gen_avb")
-set(AVB_APPS_PATH "${SdkRootDirPath}/../freertos_avb_apps")
+if(NOT DEFINED app_root_path)
+    message(FATAL_ERROR "app_root_path is not set. The integrating application must define it.")
+else()
+    set(AVB_APPS_PATH "${app_root_path}")
+endif() 
 
 add_library(${LIBRARY_NAME}
     ${PTP_STACK_SRC_PATH}/ptp_multisoc_stack.c
