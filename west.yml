@@ -36,6 +36,9 @@ manifest:
           - mcux-devices-lpc
           - mcux-sdk-middleware-multicore
           - freertos-kernel
+          # SDK 26.09 moved the FreeRTOS kernel sources into this sibling project;
+          # freertos-kernel/CMakeLists.txt hard-fails without it.
+          - freertos-kernel-upstream
           - rpmsg-lite
           - lwip
           - soem
