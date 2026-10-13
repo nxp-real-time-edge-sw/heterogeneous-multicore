@@ -44,6 +44,8 @@ target_include_directories(${LIBRARY_NAME} PRIVATE
     ${SdkRootDirPath}/components/uart
     ${SdkRootDirPath}/rtos/freertos/freertos-kernel/include
     ${SdkRootDirPath}/rtos/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure
+    ${SdkRootDirPath}/rtos/freertos/freertos-kernel-upstream/include
+    ${SdkRootDirPath}/rtos/freertos/freertos-kernel-upstream/portable/GCC/ARM_CM33_NTZ/non_secure
     ${SdkRootDirPath}/drivers/common
     ${AVB_APPS_PATH}/devices/MIMXRT118x/common/cm33
     ${AVB_APPS_PATH}/boards/src/demo_apps
